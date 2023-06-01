@@ -10,27 +10,29 @@ class Login extends ConsumerWidget {
     final bool isSmallScreen = MediaQuery.of(context).size.width < 600;
 
     return Scaffold(
-        body: Center(
-            child: isSmallScreen
-                ? Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _Logo(),
-                      _FormContent(),
-                    ],
-                  )
-                : Container(
-                    padding: const EdgeInsets.all(32.0),
-                    constraints: const BoxConstraints(maxWidth: 800),
-                    child: Row(
-                      children: [
-                        Expanded(child: _Logo()),
-                        Expanded(
-                          child: Center(child: _FormContent()),
-                        ),
-                      ],
+      body: Center(
+        child: isSmallScreen
+            ? const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _Logo(),
+                  FormContent(),
+                ],
+              )
+            : Container(
+                padding: const EdgeInsets.all(32.0),
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: const Row(
+                  children: [
+                    Expanded(child: _Logo()),
+                    Expanded(
+                      child: Center(child: FormContent()),
                     ),
-                  )));
+                  ],
+                ),
+              ),
+      ),
+    );
   }
 }
 
@@ -64,14 +66,20 @@ class _Logo extends StatelessWidget {
   }
 }
 
-@immutable
-class _FormContent extends ConsumerWidget {
+class FormContent extends ConsumerStatefulWidget {
+  const FormContent({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _FormContent();
+}
+
+class _FormContent extends ConsumerState<FormContent> {
   final TextEditingController usernameC = TextEditingController(text: "");
   final TextEditingController pwC = TextEditingController(text: "");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final loginData = ref.watch(loginTokenProvider.notifier);
 
     return Container(
