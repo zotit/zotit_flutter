@@ -26,7 +26,7 @@ class LoginToken extends _$LoginToken {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     final token = prefs.getString('token');
-    return LoginData(token: token ?? "");
+    return LoginData(token: token ?? "", error: "");
   }
 
   Future<void> setToken(String token) async {
@@ -59,12 +59,37 @@ class LoginToken extends _$LoginToken {
       });
       if (res.body == "\"user not found\"") {
         state = AsyncError(res.body, StackTrace.current);
-        return LoginData(token: "");
+        return LoginData(token: "", error: res.body);
       }
       final resData = jsonDecode(res.body);
       prefs.setString("token", resData["token"]!);
 
       return _loadToken();
     });
+  }
+
+  Future<void> register(String username, String password) async {
+    state = const AsyncLoading();
+    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
+    final prefs = await fPrefs;
+    state = await AsyncValue.guard(() async {
+      final uri = Uri.https('zotit.twobits.in', '/register');
+      final res = await http.post(uri, body: {
+        "username": username,
+        "password": password,
+      });
+      if (res.body == "\"username taken\"") {
+        state = AsyncError(res.body, StackTrace.current);
+        return LoginData(token: "", error: res.body);
+      }
+      final resData = jsonDecode(res.body);
+      prefs.setString("token", resData["token"]!);
+
+      return _loadToken();
+    });
+  }
+
+  getData() {
+    return state.value;
   }
 }

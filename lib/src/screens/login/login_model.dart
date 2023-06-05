@@ -10,6 +10,7 @@ part 'login_model.g.dart';
 class LoginData with _$LoginData {
   factory LoginData({
     required String token,
+    required String error,
   }) = _LoginData;
 
   factory LoginData.fromJson(Map<String, dynamic> json) => _$LoginDataFromJson(json);

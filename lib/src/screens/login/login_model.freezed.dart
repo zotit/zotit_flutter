@@ -21,6 +21,7 @@ LoginData _$LoginDataFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$LoginData {
   String get token => throw _privateConstructorUsedError;
+  String get error => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -33,7 +34,7 @@ abstract class $LoginDataCopyWith<$Res> {
   factory $LoginDataCopyWith(LoginData value, $Res Function(LoginData) then) =
       _$LoginDataCopyWithImpl<$Res, LoginData>;
   @useResult
-  $Res call({String token});
+  $Res call({String token, String error});
 }
 
 /// @nodoc
@@ -50,11 +51,16 @@ class _$LoginDataCopyWithImpl<$Res, $Val extends LoginData>
   @override
   $Res call({
     Object? token = null,
+    Object? error = null,
   }) {
     return _then(_value.copyWith(
       token: null == token
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
+              as String,
+      error: null == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -67,7 +73,7 @@ abstract class _$$_LoginDataCopyWith<$Res> implements $LoginDataCopyWith<$Res> {
       __$$_LoginDataCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String token});
+  $Res call({String token, String error});
 }
 
 /// @nodoc
@@ -82,11 +88,16 @@ class __$$_LoginDataCopyWithImpl<$Res>
   @override
   $Res call({
     Object? token = null,
+    Object? error = null,
   }) {
     return _then(_$_LoginData(
       token: null == token
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
+              as String,
+      error: null == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -95,17 +106,19 @@ class __$$_LoginDataCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_LoginData with DiagnosticableTreeMixin implements _LoginData {
-  _$_LoginData({required this.token});
+  _$_LoginData({required this.token, required this.error});
 
   factory _$_LoginData.fromJson(Map<String, dynamic> json) =>
       _$$_LoginDataFromJson(json);
 
   @override
   final String token;
+  @override
+  final String error;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'LoginData(token: $token)';
+    return 'LoginData(token: $token, error: $error)';
   }
 
   @override
@@ -113,7 +126,8 @@ class _$_LoginData with DiagnosticableTreeMixin implements _LoginData {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'LoginData'))
-      ..add(DiagnosticsProperty('token', token));
+      ..add(DiagnosticsProperty('token', token))
+      ..add(DiagnosticsProperty('error', error));
   }
 
   @override
@@ -121,12 +135,13 @@ class _$_LoginData with DiagnosticableTreeMixin implements _LoginData {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_LoginData &&
-            (identical(other.token, token) || other.token == token));
+            (identical(other.token, token) || other.token == token) &&
+            (identical(other.error, error) || other.error == error));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, token);
+  int get hashCode => Object.hash(runtimeType, token, error);
 
   @JsonKey(ignore: true)
   @override
@@ -143,13 +158,17 @@ class _$_LoginData with DiagnosticableTreeMixin implements _LoginData {
 }
 
 abstract class _LoginData implements LoginData {
-  factory _LoginData({required final String token}) = _$_LoginData;
+  factory _LoginData(
+      {required final String token,
+      required final String error}) = _$_LoginData;
 
   factory _LoginData.fromJson(Map<String, dynamic> json) =
       _$_LoginData.fromJson;
 
   @override
   String get token;
+  @override
+  String get error;
   @override
   @JsonKey(ignore: true)
   _$$_LoginDataCopyWith<_$_LoginData> get copyWith =>

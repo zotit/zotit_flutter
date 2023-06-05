@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
-import 'package:zotit_flutter/src/screens/register/register.dart';
+import 'package:zotit_flutter/src/screens/common/components/link_button.dart';
 
-class Login extends ConsumerWidget {
-  const Login({super.key});
+class Register extends ConsumerWidget {
+  const Register({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -78,6 +78,7 @@ class _FormContent extends ConsumerState<FormContent> {
   final TextEditingController usernameC = TextEditingController(text: "");
   final TextEditingController pwC = TextEditingController(text: "");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool hasAggreedTNC = false;
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +131,7 @@ class _FormContent extends ConsumerState<FormContent> {
               obscureText: true,
               decoration: const InputDecoration(
                 labelText: 'Password',
-                hintText: 'Enter your password',
+                hintText: 'Enter new password',
                 prefixIcon: Icon(Icons.lock_outline_rounded),
                 border: OutlineInputBorder(),
               ),
@@ -138,25 +139,21 @@ class _FormContent extends ConsumerState<FormContent> {
             _gap(),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
-                  backgroundColor: MaterialStateProperty.all(
-                    const Color(0xFF3A568E),
+              child: Row(
+                children: [
+                  Checkbox(
+                    checkColor: Colors.white,
+                    value: hasAggreedTNC,
+                    fillColor: MaterialStateProperty.all(const Color(0xFF3A568E)),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        hasAggreedTNC = value!;
+                      });
+                    },
                   ),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(
-                    'Sign in',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    loginData.login(usernameC.text, pwC.text);
-                  }
-                },
+                  const Text("Check to accept our "),
+                  const LinkButton(urlLabel: "Privacy Policy", url: "https://zotit.twobits.in/privacy-policy.html"),
+                ],
               ),
             ),
             _gap(),
@@ -176,12 +173,55 @@ class _FormContent extends ConsumerState<FormContent> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<dynamic>(
-                      builder: (_) => const Register(),
-                    ),
-                  );
+                onPressed: () async {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    if (!hasAggreedTNC) {
+                      return showDialog<void>(
+                        context: context,
+                        builder: (c) {
+                          return ProviderScope(
+                            parent: ProviderScope.containerOf(context),
+                            child: AlertDialog(
+                              title: const Text('Error'),
+                              content: const Text("Please acccet the Privacy Policy"),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => {
+                                    Navigator.pop(context, 'OK'),
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    }
+                    await loginData.register(usernameC.text, pwC.text);
+
+                    if (context.mounted && loginData.getData().error != "") {
+                      showDialog<void>(
+                        context: context,
+                        builder: (c) {
+                          return ProviderScope(
+                            parent: ProviderScope.containerOf(context),
+                            child: AlertDialog(
+                              title: const Text('Error'),
+                              content: Text(loginData.getData().error),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => {
+                                    Navigator.pop(context, 'OK'),
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  }
                 },
               ),
             ),
