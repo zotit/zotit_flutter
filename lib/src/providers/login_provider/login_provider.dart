@@ -61,6 +61,11 @@ class LoginToken extends _$LoginToken {
         state = AsyncError(res.body, StackTrace.current);
         return LoginData(token: "", error: res.body);
       }
+      if (res.body == "{}") {
+        state = AsyncError(res.body, StackTrace.current);
+        return LoginData(token: "", error: "\"user not found\"");
+      }
+
       final resData = jsonDecode(res.body);
       prefs.setString("token", resData["token"]!);
 

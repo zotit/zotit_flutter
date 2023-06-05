@@ -152,9 +152,31 @@ class _FormContent extends ConsumerState<FormContent> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
-                    loginData.login(usernameC.text, pwC.text);
+                    await loginData.login(usernameC.text, pwC.text);
+                    if (context.mounted && loginData.getData().error != "") {
+                      showDialog<void>(
+                        context: context,
+                        builder: (c) {
+                          return ProviderScope(
+                            parent: ProviderScope.containerOf(context),
+                            child: AlertDialog(
+                              title: const Text('Error'),
+                              content: Text(loginData.getData().error),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => {
+                                    Navigator.pop(context, 'OK'),
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    }
                   }
                 },
               ),
