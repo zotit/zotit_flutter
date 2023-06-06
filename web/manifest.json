@@ -1,11 +1,11 @@
 {
-    "name": "Zotit",
-    "short_name": "zotit_flutter",
+    "name": "ZotIt",
+    "short_name": "Zotit",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Zot It Anywhere",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -83,11 +83,13 @@ class NoteDetails extends ConsumerWidget {
     TextEditingController textC = TextEditingController(text: note.text);
     final notesData = ref.watch(noteListProvider.notifier);
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Note details"),
-          backgroundColor: Color(0xFF3A568E),
-        ),
-        body: SingleChildScrollView(
+      appBar: AppBar(
+        title: Text("Note details"),
+        backgroundColor: Color(0xFF3A568E),
+      ),
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 600),
           child: Column(children: [
             Padding(
               padding: EdgeInsets.all(10),
@@ -121,6 +123,8 @@ class NoteDetails extends ConsumerWidget {
               ),
             ),
           ]),
-        ));
+        ),
+      ),
+    );
   }
 }

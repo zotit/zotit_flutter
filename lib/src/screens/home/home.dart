@@ -7,35 +7,7 @@ import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
 import 'package:zotit_flutter/src/screens/home/note_details.dart';
 import 'package:zotit_flutter/src/screens/home/providers/home_provider.dart';
 import 'package:http/http.dart' as http;
-
-final makeListTile = ListTile(
-    contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-    leading: Container(
-      padding: const EdgeInsets.only(right: 12.0),
-      decoration: new BoxDecoration(border: new Border(right: new BorderSide(width: 1.0, color: Colors.white24))),
-      child: const Icon(Icons.note_alt, color: Colors.white),
-    ),
-    title: const Text(
-      "Introduction to Driving",
-      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-    ),
-    // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-
-    subtitle: const Row(
-      children: <Widget>[
-        Icon(Icons.linear_scale, color: Colors.yellowAccent),
-        Text(" Intermediate", style: TextStyle(color: Colors.white))
-      ],
-    ),
-    trailing: const Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0));
-final makeCard = Card(
-  elevation: 8.0,
-  margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-  child: Container(
-    decoration: const BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
-    child: makeListTile,
-  ),
-);
+import 'package:share_plus/share_plus.dart';
 
 class Home extends ConsumerWidget {
   const Home({super.key});
@@ -99,6 +71,89 @@ class Home extends ConsumerWidget {
     }
   }
 
+  _shareNote(String note) async {
+    Share.share("$note \nShared from https://zotit.twobits.in", subject: "note shared from Zotit | Zot anywhere");
+  }
+
+  _deleteNote(context, ref, id) async {
+    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
+    final prefs = await fPrefs;
+    final token = prefs.getString('token');
+    final uri = Uri.https('zotit.twobits.in', '/notes');
+    return showDialog<void>(
+      context: context,
+      builder: (c) {
+        return ProviderScope(
+          parent: ProviderScope.containerOf(context),
+          child: AlertDialog(
+            title: const Text('AlertDialog Title'),
+            content: const Text("Are you sure ?"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(context, 'OK');
+                  try {
+                    final res = await http.delete(uri, headers: {
+                      "Authorization": "Bearer $token"
+                    }, body: {
+                      "id": id,
+                    });
+                    if (res.statusCode == 200) {
+                      final _ = ref.refresh(noteListProvider.future);
+                    } else {
+                      showDialog<void>(
+                        context: context,
+                        builder: (c) {
+                          return ProviderScope(
+                            parent: ProviderScope.containerOf(context),
+                            child: AlertDialog(
+                              title: const Text('AlertDialog Title'),
+                              content: Text(res.body),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => {
+                                    Navigator.pop(context, 'OK'),
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  } catch (e) {
+                    showDialog<void>(
+                      context: context,
+                      builder: (c) {
+                        return ProviderScope(
+                          parent: ProviderScope.containerOf(context),
+                          child: AlertDialog(
+                            title: const Text('AlertDialog Title'),
+                            content: Text(e.toString()),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () => {
+                                  Navigator.pop(context, 'OK'),
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loginData = ref.watch(loginTokenProvider.notifier);
@@ -107,11 +162,14 @@ class Home extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Color(0xFF3A568E),
-        title: Text(
-          "ZotIt",
-          style: TextStyle(fontFamily: 'Satisfy', fontSize: 35),
-        ),
+        backgroundColor: const Color(0xFF3A568E),
+        title: Row(children: [
+          const Text(
+            "ZotIt ",
+            style: TextStyle(fontFamily: 'Satisfy', fontSize: 35),
+          ),
+          Text("  |  @${loginData.getData().username}"),
+        ]),
         actions: [
           IconButton(
             onPressed: () => ref.refresh(noteListProvider.future),
@@ -130,7 +188,7 @@ class Home extends ConsumerWidget {
           constraints: const BoxConstraints(maxWidth: 600),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Container(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 vertical: 10,
                 horizontal: 10.0,
               ),
@@ -150,16 +208,16 @@ class Home extends ConsumerWidget {
                       maxLines: 20,
                     ),
                   ),
-                  Gap(10),
+                  const Gap(10),
                   ElevatedButton(
-                    child: const Icon(Icons.done),
                     onPressed: () async {
                       await _submit(context, textC.text);
                       final _ = ref.refresh(noteListProvider.future);
                     },
                     style: ButtonStyle(
-                        padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 20)),
-                        backgroundColor: MaterialStateProperty.all(Color(0xFF3A568E))),
+                        padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
+                        backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                    child: const Icon(Icons.done),
                   ),
                 ],
               ),
@@ -187,10 +245,10 @@ class Home extends ConsumerWidget {
                                           Clipboard.setData(ClipboardData(text: notes[i].text));
                                         },
                                         style: ButtonStyle(
-                                          foregroundColor: MaterialStateProperty.all<Color>(Color(0xFF3A568E)),
+                                          foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
                                         ),
                                         icon: const Icon(Icons.copy),
-                                        label: Text("Copy"),
+                                        label: const Text("Copy"),
                                       ),
                                       TextButton.icon(
                                         onPressed: () {
@@ -202,36 +260,40 @@ class Home extends ConsumerWidget {
                                           ));
                                         },
                                         style: ButtonStyle(
-                                          foregroundColor: MaterialStateProperty.all<Color>(Color(0xFF3A568E)),
+                                          foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
                                         ),
                                         icon: const Icon(Icons.edit_document),
-                                        label: Text("Edit"),
+                                        label: const Text("Edit"),
                                       ),
                                       TextButton.icon(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          _shareNote(notes[i].text);
+                                        },
                                         style: ButtonStyle(
-                                          foregroundColor: MaterialStateProperty.all<Color>(Color(0xFF3A568E)),
+                                          foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
                                         ),
                                         icon: const Icon(Icons.share),
-                                        label: Text("Share"),
+                                        label: const Text("Share"),
                                       ),
                                       TextButton.icon(
-                                        onPressed: () {},
+                                        onPressed: () async {
+                                          await _deleteNote(context, ref, notes[i].id);
+                                        },
                                         style: ButtonStyle(
                                           foregroundColor: MaterialStateProperty.all<Color>(
-                                            Color(0xFF3A568E),
+                                            const Color(0xFF3A568E),
                                           ),
                                         ),
                                         icon: const Icon(Icons.delete),
-                                        label: Text("Delete"),
+                                        label: const Text("Delete"),
                                       ),
                                     ],
                                   ),
-                                  Divider(),
-                                  Gap(5),
+                                  const Divider(),
+                                  const Gap(5),
                                   Text(
                                     notes[i].text,
-                                    style: TextStyle(color: Color(0xFF3A568E), fontWeight: FontWeight.bold),
+                                    style: const TextStyle(color: Color(0xFF3A568E), fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -239,7 +301,7 @@ class Home extends ConsumerWidget {
                           ),
                         )
                     else
-                      Center(
+                      const Center(
                         child: Padding(
                           padding: EdgeInsets.all(50),
                           child: Text(

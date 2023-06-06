@@ -155,7 +155,7 @@ class _FormContent extends ConsumerState<FormContent> {
                 onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
                     await loginData.login(usernameC.text, pwC.text);
-                    if (context.mounted && loginData.getData().error != "") {
+                    if (context.mounted) {
                       showDialog<void>(
                         context: context,
                         builder: (c) {

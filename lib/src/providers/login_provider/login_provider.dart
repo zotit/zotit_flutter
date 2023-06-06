@@ -26,7 +26,8 @@ class LoginToken extends _$LoginToken {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     final token = prefs.getString('token');
-    return LoginData(token: token ?? "", error: "");
+    final username = prefs.getString('username') ?? "";
+    return LoginData(token: token ?? "", error: "", username: username);
   }
 
   Future<void> setToken(String token) async {
@@ -42,7 +43,7 @@ class LoginToken extends _$LoginToken {
     state = const AsyncLoading();
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
-    await prefs.setString('token', "");
+    await prefs.clear();
     final loginData = await _loadToken();
     state = AsyncData(loginData);
   }
@@ -59,16 +60,16 @@ class LoginToken extends _$LoginToken {
       });
       if (res.body == "\"user not found\"") {
         state = AsyncError(res.body, StackTrace.current);
-        return LoginData(token: "", error: res.body);
+        return LoginData(token: "", error: res.body, username: '');
       }
       if (res.body == "{}") {
         state = AsyncError(res.body, StackTrace.current);
-        return LoginData(token: "", error: "\"user not found\"");
+        return LoginData(token: "", error: "\"user not found\"", username: '');
       }
 
       final resData = jsonDecode(res.body);
       prefs.setString("token", resData["token"]!);
-
+      prefs.setString("username", username);
       return _loadToken();
     });
   }
@@ -85,11 +86,11 @@ class LoginToken extends _$LoginToken {
       });
       if (res.body == "\"username taken\"") {
         state = AsyncError(res.body, StackTrace.current);
-        return LoginData(token: "", error: res.body);
+        return LoginData(token: "", error: res.body, username: '');
       }
       final resData = jsonDecode(res.body);
       prefs.setString("token", resData["token"]!);
-
+      prefs.setString('username', username);
       return _loadToken();
     });
   }

@@ -1,5 +1,5 @@
 name: zotit_flutter
-description: A new Flutter project.
+description: Zot It Anywhere.
 publish_to: 'none'
 version: 1.0.0+1
 environment:
@@ -14,6 +14,7 @@ dependencies:
   http: ^0.13.6
   json_annotation: ^4.8.1
   riverpod_annotation: ^2.1.1
+  share_plus: ^7.0.2
   shared_preferences: ^2.1.1
   url_launcher: ^6.1.11
 dev_dependencies:

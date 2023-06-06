@@ -22,6 +22,7 @@ LoginData _$LoginDataFromJson(Map<String, dynamic> json) {
 mixin _$LoginData {
   String get token => throw _privateConstructorUsedError;
   String get error => throw _privateConstructorUsedError;
+  String get username => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +35,7 @@ abstract class $LoginDataCopyWith<$Res> {
   factory $LoginDataCopyWith(LoginData value, $Res Function(LoginData) then) =
       _$LoginDataCopyWithImpl<$Res, LoginData>;
   @useResult
-  $Res call({String token, String error});
+  $Res call({String token, String error, String username});
 }
 
 /// @nodoc
@@ -52,6 +53,7 @@ class _$LoginDataCopyWithImpl<$Res, $Val extends LoginData>
   $Res call({
     Object? token = null,
     Object? error = null,
+    Object? username = null,
   }) {
     return _then(_value.copyWith(
       token: null == token
@@ -61,6 +63,10 @@ class _$LoginDataCopyWithImpl<$Res, $Val extends LoginData>
       error: null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
+              as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -73,7 +79,7 @@ abstract class _$$_LoginDataCopyWith<$Res> implements $LoginDataCopyWith<$Res> {
       __$$_LoginDataCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String token, String error});
+  $Res call({String token, String error, String username});
 }
 
 /// @nodoc
@@ -89,6 +95,7 @@ class __$$_LoginDataCopyWithImpl<$Res>
   $Res call({
     Object? token = null,
     Object? error = null,
+    Object? username = null,
   }) {
     return _then(_$_LoginData(
       token: null == token
@@ -99,6 +106,10 @@ class __$$_LoginDataCopyWithImpl<$Res>
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -106,7 +117,8 @@ class __$$_LoginDataCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_LoginData with DiagnosticableTreeMixin implements _LoginData {
-  _$_LoginData({required this.token, required this.error});
+  _$_LoginData(
+      {required this.token, required this.error, required this.username});
 
   factory _$_LoginData.fromJson(Map<String, dynamic> json) =>
       _$$_LoginDataFromJson(json);
@@ -115,10 +127,12 @@ class _$_LoginData with DiagnosticableTreeMixin implements _LoginData {
   final String token;
   @override
   final String error;
+  @override
+  final String username;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'LoginData(token: $token, error: $error)';
+    return 'LoginData(token: $token, error: $error, username: $username)';
   }
 
   @override
@@ -127,7 +141,8 @@ class _$_LoginData with DiagnosticableTreeMixin implements _LoginData {
     properties
       ..add(DiagnosticsProperty('type', 'LoginData'))
       ..add(DiagnosticsProperty('token', token))
-      ..add(DiagnosticsProperty('error', error));
+      ..add(DiagnosticsProperty('error', error))
+      ..add(DiagnosticsProperty('username', username));
   }
 
   @override
@@ -136,12 +151,14 @@ class _$_LoginData with DiagnosticableTreeMixin implements _LoginData {
         (other.runtimeType == runtimeType &&
             other is _$_LoginData &&
             (identical(other.token, token) || other.token == token) &&
-            (identical(other.error, error) || other.error == error));
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.username, username) ||
+                other.username == username));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, token, error);
+  int get hashCode => Object.hash(runtimeType, token, error, username);
 
   @JsonKey(ignore: true)
   @override
@@ -160,7 +177,8 @@ class _$_LoginData with DiagnosticableTreeMixin implements _LoginData {
 abstract class _LoginData implements LoginData {
   factory _LoginData(
       {required final String token,
-      required final String error}) = _$_LoginData;
+      required final String error,
+      required final String username}) = _$_LoginData;
 
   factory _LoginData.fromJson(Map<String, dynamic> json) =
       _$_LoginData.fromJson;
@@ -169,6 +187,8 @@ abstract class _LoginData implements LoginData {
   String get token;
   @override
   String get error;
+  @override
+  String get username;
   @override
   @JsonKey(ignore: true)
   _$$_LoginDataCopyWith<_$_LoginData> get copyWith =>

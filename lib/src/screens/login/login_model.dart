@@ -11,6 +11,7 @@ class LoginData with _$LoginData {
   factory LoginData({
     required String token,
     required String error,
+    required String username,
   }) = _LoginData;
 
   factory LoginData.fromJson(Map<String, dynamic> json) => _$LoginDataFromJson(json);
