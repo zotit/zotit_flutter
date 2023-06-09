@@ -24,7 +24,7 @@ jobs:
       run: |
         sudo apt install zip 
 
-    - name: Web Build 
+    - name: Setup Flutter 
       uses: subosito/flutter-action@v2
       with:
         channel: 'stable' # or: 'beta', 'dev' or 'master'
@@ -50,10 +50,10 @@ jobs:
     
     - name: Zip Windows dist
       if: matrix.os == 'windows-latest'
-      uses: montudor/action-zip@v1
-      with:
-        args: zip -qq -r windows-dist.zip build/windows/runner/Release
-      # run: cd build/windows/runner/Release && zip -r web-dist.zip .
+      # uses: montudor/action-zip@v1
+      # with:
+      #   args: zip -qq -r windows-dist.zip build/windows/runner/Release
+      run: cd build/windows/runner/Release && Compress-Archive .  windows-dist.zip
     
     - uses: actions/upload-artifact@v3
       if: matrix.os == 'windows-latest'
