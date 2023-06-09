@@ -1,4 +1,4 @@
-name: Go
+name: Zotit CI
 
 on:
   push:
@@ -15,10 +15,31 @@ jobs:
       bin_name: api
     steps:
     - uses: actions/checkout@v3
-    - uses: subosito/flutter-action@v2
+    
+    - name: Install prequisites
+      run: |
+        sudo apt install zip 
+
+    - name: Web Build
+      uses: subosito/flutter-action@v2
       with:
         channel: 'stable' # or: 'beta', 'dev' or 'master'
     - run: flutter --version
     - run: flutter pub get
     # - run: flutter test
     - run: flutter build web --release
+
+    - name: Zip Web dist
+      run: zip -r web-dist.zip build/web/*
+    
+    - name: release
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: ${{ github.token }}
+        automatic_release_tag: "latest"
+        prerelease: false
+        title: ${{ github.event.head_commit.message }}
+        files: |
+          ./web-dist.zip
+
+
