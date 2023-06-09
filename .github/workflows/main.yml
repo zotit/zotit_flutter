@@ -1,0 +1,24 @@
+name: Go
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:
+      - '*'
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      bin_name: api
+    steps:
+    - uses: actions/checkout@v3
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable' # or: 'beta', 'dev' or 'master'
+    - run: flutter --version
+    - run: flutter pub get
+    # - run: flutter test
+    - run: flutter build web --release
