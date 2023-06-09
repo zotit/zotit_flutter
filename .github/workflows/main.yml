@@ -30,7 +30,8 @@ jobs:
     - run: flutter build web --release
 
     - name: Zip Web dist
-      run: zip -r web-dist.zip build/web/*
+      run: cd build/web/ && zip -r web-dist.zip .
+      
     
     - name: release
       uses: "marvinpinto/action-automatic-releases@latest"
@@ -40,6 +41,6 @@ jobs:
         prerelease: false
         title: ${{ github.event.head_commit.message }}
         files: |
-          ./web-dist.zip
+          ./build/web/web-dist.zip
 
 
