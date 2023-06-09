@@ -43,16 +43,10 @@ jobs:
 
     - name: Zip Web dist
       if: matrix.os == 'ubuntu-latest'
-      uses: montudor/action-zip@v1
-      with:
-        args: zip -qq -r web-dist.zip build/web
-      # run: cd build/web/ && zip -r web-dist.zip .
+      run: cd build/web/ && zip -r web-dist.zip .
     
     - name: Zip Windows dist
       if: matrix.os == 'windows-latest'
-      # uses: montudor/action-zip@v1
-      # with:
-      #   args: zip -qq -r windows-dist.zip build/windows/runner/Release
       run: cd build/windows/runner/Release && Compress-Archive .  windows-dist.zip
     
     - uses: actions/upload-artifact@v3
