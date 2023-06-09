@@ -1,0 +1,79 @@
+name: Zotit CI
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:
+      - '*'
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    # env:
+    #   bin_name: api
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install prequisites
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt install zip 
+
+    - name: Web Build 
+      uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable' # or: 'beta', 'dev' or 'master'
+    
+    - name: Web Build
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        flutter pub get
+        flutter build web --release
+
+    - name: Zip Web dist
+      if: matrix.os == 'ubuntu-latest'
+      run: cd build/web/ && zip -r web-dist.zip .
+    
+    - uses: actions/upload-artifact@v3
+      with:
+        name: zotit-${{ matrix.os }}
+        path: build/web/web-dist.zip
+        retention-days: 1 
+  release:
+    name: "Prelease"
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # We don't need the repo, grab all artifacts from the build stage
+      # The plugin puts each artifact in a folder of `artifactname`
+      - uses: actions/download-artifact@v3
+      - name: Display fetched artifacts
+        run: ls -R
+      
+      - name: Emit a Github Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "Development Build"
+          files: |
+            zotit-ubuntu-latest/*.zip
+      
+      
+    # - name: release
+    #   uses: "marvinpinto/action-automatic-releases@latest"
+    #   with:
+    #     repo_token: ${{ github.token }}
+    #     automatic_release_tag: "latest"
+    #     prerelease: false
+    #     title: ${{ github.event.head_commit.message }}
+    #     files: |
+    #       ./build/web/web-dist.zip
+
+
