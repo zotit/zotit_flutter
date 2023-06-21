@@ -10,7 +10,8 @@ import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 
 class Home extends ConsumerWidget {
-  const Home({super.key});
+  Home({super.key});
+  final ScrollController _scrollController = ScrollController();
 
   _submit(context, text) async {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
@@ -72,7 +73,8 @@ class Home extends ConsumerWidget {
   }
 
   _shareNote(String note) async {
-    Share.share("$note \nShared from https://zotit.twobits.in", subject: "note shared from Zotit | Zot anywhere");
+    Share.share("$note \nShared from https://zotit.twobits.in",
+        subject: "note shared from Zotit | Zot anywhere");
   }
 
   _deleteNote(context, ref, id) async {
@@ -159,6 +161,13 @@ class Home extends ConsumerWidget {
     final loginData = ref.watch(loginTokenProvider.notifier);
     TextEditingController textC = TextEditingController(text: "");
     final notesData = ref.watch(noteListProvider);
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        ref.read(noteListProvider.notifier).getNotesByPage();
+      }
+    });
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -186,7 +195,8 @@ class Home extends ConsumerWidget {
       body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 600),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Container(
               padding: const EdgeInsets.symmetric(
                 vertical: 10,
@@ -215,8 +225,10 @@ class Home extends ConsumerWidget {
                       final _ = ref.refresh(noteListProvider.future);
                     },
                     style: ButtonStyle(
-                        padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
-                        backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                        padding: MaterialStateProperty.all(
+                            const EdgeInsets.symmetric(vertical: 20)),
+                        backgroundColor:
+                            MaterialStateProperty.all(const Color(0xFF3A568E))),
                     child: const Icon(Icons.done),
                   ),
                 ],
@@ -225,16 +237,19 @@ class Home extends ConsumerWidget {
             Expanded(
               child: notesData.when(
                 data: (notes) => ListView(
+                  controller: _scrollController,
                   children: [
-                    if (notes.length > 0)
-                      for (int i = 0; i < notes.length; i++)
+                    if (notes.notes.isNotEmpty)
+                      for (int i = 0; i < notes.notes.length; i++)
                         Card(
                           elevation: 8.0,
-                          margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                          margin: new EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 6.0),
                           child: Container(
                             // decoration: const BoxDecoration(color: Color(0xFF3A568E)),
                             child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 10.0),
                               title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -242,45 +257,55 @@ class Home extends ConsumerWidget {
                                     children: [
                                       TextButton.icon(
                                         onPressed: () {
-                                          Clipboard.setData(ClipboardData(text: notes[i].text));
+                                          Clipboard.setData(ClipboardData(
+                                              text: notes.notes[i].text));
                                         },
                                         style: ButtonStyle(
-                                          foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
+                                          foregroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                                  const Color(0xFF3A568E)),
                                         ),
                                         icon: const Icon(Icons.copy),
                                         label: const Text("Copy"),
                                       ),
                                       TextButton.icon(
                                         onPressed: () {
-                                          Navigator.of(context).push(MaterialPageRoute<dynamic>(
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute<dynamic>(
                                             builder: (_) => NoteDetails(
-                                              note: notes[i],
+                                              note: notes.notes[i],
                                               noteIndex: i,
                                             ),
                                           ));
                                         },
                                         style: ButtonStyle(
-                                          foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
+                                          foregroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                                  const Color(0xFF3A568E)),
                                         ),
                                         icon: const Icon(Icons.edit_document),
                                         label: const Text("Edit"),
                                       ),
                                       TextButton.icon(
                                         onPressed: () {
-                                          _shareNote(notes[i].text);
+                                          _shareNote(notes.notes[i].text);
                                         },
                                         style: ButtonStyle(
-                                          foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
+                                          foregroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                                  const Color(0xFF3A568E)),
                                         ),
                                         icon: const Icon(Icons.share),
                                         label: const Text("Share"),
                                       ),
                                       TextButton.icon(
                                         onPressed: () async {
-                                          await _deleteNote(context, ref, notes[i].id);
+                                          await _deleteNote(
+                                              context, ref, notes.notes[i].id);
                                         },
                                         style: ButtonStyle(
-                                          foregroundColor: MaterialStateProperty.all<Color>(
+                                          foregroundColor:
+                                              MaterialStateProperty.all<Color>(
                                             const Color(0xFF3A568E),
                                           ),
                                         ),
@@ -292,8 +317,10 @@ class Home extends ConsumerWidget {
                                   const Divider(),
                                   const Gap(5),
                                   Text(
-                                    notes[i].text,
-                                    style: const TextStyle(color: Color(0xFF3A568E), fontWeight: FontWeight.bold),
+                                    notes.notes[i].text,
+                                    style: const TextStyle(
+                                        color: Color(0xFF3A568E),
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -306,7 +333,8 @@ class Home extends ConsumerWidget {
                           padding: EdgeInsets.all(50),
                           child: Text(
                             "No Notes Found",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),

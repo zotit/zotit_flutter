@@ -1,0 +1,8 @@
+signingConfigs {
+    release {
+        storeFile file("release-keystore.jks")
+        storePassword "wMj7lIFkM3PHPaK5R9nG"
+        keyAlias "upload"
+        keyPassword "wMj7lIFkM3PHPaK5R9nG"
+    }
+}

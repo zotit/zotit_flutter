@@ -45,7 +45,7 @@ class StartupPage extends ConsumerWidget {
     return loginData.when(
       data: (user) {
         if (user.token != "") {
-          return const Home();
+          return Home();
         } else {
           return const Login();
         }
@@ -53,7 +53,8 @@ class StartupPage extends ConsumerWidget {
       loading: () => const Center(
         child: CircularProgressIndicator(),
       ),
-      error: (error, st) => ErrorPage(message: error.toString() + st.toString()),
+      error: (error, st) =>
+          ErrorPage(message: error.toString() + st.toString()),
     );
   }
 }

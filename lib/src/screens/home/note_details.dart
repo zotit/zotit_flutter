@@ -95,8 +95,10 @@ class NoteDetails extends ConsumerWidget {
               padding: EdgeInsets.all(10),
               child: TextFormField(
                 controller: textC,
-                decoration:
-                    const InputDecoration(border: OutlineInputBorder(), labelText: 'Text', hintText: 'Zot it ...'),
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Text',
+                    hintText: 'Zot it ...'),
                 minLines: 5,
                 maxLines: 20,
               ),
@@ -105,12 +107,15 @@ class NoteDetails extends ConsumerWidget {
               height: 40,
               width: 250,
               child: ElevatedButton(
-                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Color(0xFF3A568E))),
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(Color(0xFF3A568E))),
                 onPressed: () {
                   _submit(context, textC.text, notesData);
                   notesData.update((p0) {
-                    final newNote = Note(id: p0[noteIndex].id, text: textC.text);
-                    p0[noteIndex] = newNote;
+                    final newNote =
+                        Note(id: p0.notes[noteIndex].id, text: textC.text);
+                    p0.notes[noteIndex] = newNote;
                     return p0;
                   });
                 },
