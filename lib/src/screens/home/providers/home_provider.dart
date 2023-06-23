@@ -32,8 +32,7 @@ class NoteList extends _$NoteList {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final uri = Uri.https('zotit.twobits.in', '/notes');
-    final res =
-        await http.get(uri, headers: {"Authorization": "Bearer $token"});
+    final res = await http.get(uri, headers: {"Authorization": "Bearer $token"});
     if (res.body == "Invalid or expired JWT") {
       final loginData = ref.read(loginTokenProvider.notifier);
       loginData.logout();
@@ -41,12 +40,13 @@ class NoteList extends _$NoteList {
     }
     final notes = jsonDecode(res.body) as List<dynamic>;
     return NoteListRepo(
-        notes: notes
-            .map((item) => Note(
-                  id: item['id'],
-                  text: item['text'],
-                ))
-            .toList(),
+        notes: notes.map((item) {
+          var runes = (item['text'] as String).runes.toList();
+          return Note(
+            id: item['id'],
+            text: utf8.decode(runes),
+          );
+        }).toList(),
         page: 1);
   }
 
@@ -55,10 +55,8 @@ class NoteList extends _$NoteList {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final newPage = state.value!.page + 1;
-    final uri =
-        Uri.https('zotit.twobits.in', '/notes', {'page': newPage.toString()});
-    final res =
-        await http.get(uri, headers: {"Authorization": "Bearer $token"});
+    final uri = Uri.https('zotit.twobits.in', '/notes', {'page': newPage.toString()});
+    final res = await http.get(uri, headers: {"Authorization": "Bearer $token"});
     if (res.body == "Invalid or expired JWT") {
       final loginData = ref.read(loginTokenProvider.notifier);
       loginData.logout();
@@ -73,13 +71,14 @@ class NoteList extends _$NoteList {
             ))
         .toList();
     var stateValue = state.value != null ? state.value?.notes : [];
-    state = AsyncValue.data(
-        NoteListRepo(notes: [...?stateValue, ...noteList], page: newPage));
-    // return notes
-    //     .map((item) => Note(
-    //           id: item['id'],
-    //           text: item['text'],
-    //         ))
-    //     .toList();
+    state = AsyncValue.data(NoteListRepo(notes: [...?stateValue, ...noteList], page: newPage));
+  }
+
+  updateLocalNote(String text, index) {
+    if (state.asData != null) {
+      var stateValue = state.value?.notes.toList();
+      stateValue?[index] = Note(id: stateValue[index].id, text: text);
+      state = AsyncValue.data(NoteListRepo(notes: [...?stateValue], page: state.value!.page));
+    }
   }
 }

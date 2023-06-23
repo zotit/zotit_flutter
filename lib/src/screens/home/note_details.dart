@@ -81,7 +81,7 @@ class NoteDetails extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     TextEditingController textC = TextEditingController(text: note.text);
-    final notesData = ref.watch(noteListProvider.notifier);
+    final notesData = ref.read(noteListProvider.notifier);
     return Scaffold(
       appBar: AppBar(
         title: Text("Note details"),
@@ -95,10 +95,8 @@ class NoteDetails extends ConsumerWidget {
               padding: EdgeInsets.all(10),
               child: TextFormField(
                 controller: textC,
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Text',
-                    hintText: 'Zot it ...'),
+                decoration:
+                    const InputDecoration(border: OutlineInputBorder(), labelText: 'Text', hintText: 'Zot it ...'),
                 minLines: 5,
                 maxLines: 20,
               ),
@@ -107,17 +105,10 @@ class NoteDetails extends ConsumerWidget {
               height: 40,
               width: 250,
               child: ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Color(0xFF3A568E))),
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Color(0xFF3A568E))),
                 onPressed: () {
                   _submit(context, textC.text, notesData);
-                  notesData.update((p0) {
-                    final newNote =
-                        Note(id: p0.notes[noteIndex].id, text: textC.text);
-                    p0.notes[noteIndex] = newNote;
-                    return p0;
-                  });
+                  notesData.updateLocalNote(textC.text, noteIndex);
                 },
                 child: const Text(
                   'Update Text',
