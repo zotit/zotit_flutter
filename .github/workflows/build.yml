@@ -72,14 +72,17 @@ jobs:
       # The plugin puts each artifact in a folder of `artifactname`
       - uses: actions/download-artifact@v3
       - name: Display fetched artifacts
-        run: ls -R
+        id: short_hash
+        run: |
+          ls -R
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
       
       - name: Emit a Github Release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: 'latest'
-          prerelease: true
+          automatic_release_tag: "${{steps.short_hash.outputs.sha_short}}"
+          prerelease: false
           title: ${{ github.event.head_commit.message }}
           files: |
             zotit-ubuntu-latest/*.zip
