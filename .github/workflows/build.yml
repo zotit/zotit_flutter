@@ -16,9 +16,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     # env:
     #   bin_name: api
+    outputs:
+      sha_short: ${{ steps.short_hash.outputs.sha_short }}
+
     steps:
     - uses: actions/checkout@v3
     
+    - name: Declare some variables
+      id: short_hash
+      shell: bash
+      run: |
+        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+        
     - name: Install prequisites
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -72,16 +81,13 @@ jobs:
       # The plugin puts each artifact in a folder of `artifactname`
       - uses: actions/download-artifact@v3
       - name: Display fetched artifacts
-        id: short_hash
-        run: |
-          ls -R
-          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+        run: ls -R
       
       - name: Emit a Github Release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{steps.short_hash.outputs.sha_short}}"
+          automatic_release_tag: ${{needs.build.outputs.sha_short}}
           prerelease: false
           title: ${{ github.event.head_commit.message }}
           files: |
