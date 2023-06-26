@@ -1,23 +1,33 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zotit_flutter/config.dart';
 import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
+import 'package:zotit_flutter/src/screens/common/components/show_hide_eye.dart';
 import 'package:zotit_flutter/src/screens/home/note_details.dart';
 import 'package:zotit_flutter/src/screens/home/providers/home_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
+import 'package:zotit_flutter/src/screens/home/side_drawer.dart';
 
-class Home extends ConsumerWidget {
+class Home extends ConsumerStatefulWidget {
   Home({super.key});
-  final ScrollController _scrollController = ScrollController();
 
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _Home();
+}
+
+class _Home extends ConsumerState<Home> {
   _submit(context, text) async {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     final token = prefs.getString('token');
-    final uri = Uri.https('zotit.twobits.in', '/notes');
+    final config = Config();
+    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "notes");
 
     try {
       final res = await http.post(uri, headers: {
@@ -33,7 +43,7 @@ class Home extends ConsumerWidget {
             return ProviderScope(
               parent: ProviderScope.containerOf(context),
               child: AlertDialog(
-                title: const Text('AlertDialog Title'),
+                title: const Text('Error'),
                 content: Text(res.body),
                 actions: <Widget>[
                   TextButton(
@@ -55,7 +65,7 @@ class Home extends ConsumerWidget {
           return ProviderScope(
             parent: ProviderScope.containerOf(context),
             child: AlertDialog(
-              title: const Text('AlertDialog Title'),
+              title: const Text('Error'),
               content: Text(e.toString()),
               actions: <Widget>[
                 TextButton(
@@ -76,18 +86,76 @@ class Home extends ConsumerWidget {
     Share.share("$note \nShared from https://zotit.twobits.in", subject: "note shared from Zotit | Zot anywhere");
   }
 
+  _updateNote(context, id, String isObScure) async {
+    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
+    final prefs = await fPrefs;
+    final token = prefs.getString('token');
+    final config = Config();
+    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "notes");
+
+    try {
+      final res = await http.put(uri,
+          headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+          body: jsonEncode({"id": id, "is_obscure": isObScure}));
+      if (res.statusCode != 200) {
+        showDialog<void>(
+          context: context,
+          builder: (c) {
+            return ProviderScope(
+              parent: ProviderScope.containerOf(context),
+              child: AlertDialog(
+                title: const Text('Error'),
+                content: Text(res.body),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => {
+                      Navigator.pop(context, 'OK'),
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      }
+    } catch (e) {
+      showDialog<void>(
+        context: context,
+        builder: (c) {
+          return ProviderScope(
+            parent: ProviderScope.containerOf(context),
+            child: AlertDialog(
+              title: const Text('Error'),
+              content: Text(e.toString()),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => {
+                    Navigator.pop(context, 'OK'),
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+  }
+
   _deleteNote(context, ref, id) async {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     final token = prefs.getString('token');
-    final uri = Uri.https('zotit.twobits.in', '/notes');
+    final config = Config();
+    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "notes");
     return showDialog<void>(
       context: context,
       builder: (c) {
         return ProviderScope(
           parent: ProviderScope.containerOf(context),
           child: AlertDialog(
-            title: const Text('AlertDialog Title'),
+            title: const Text('Delete this note'),
             content: const Text("Are you sure ?"),
             actions: <Widget>[
               TextButton(
@@ -108,7 +176,7 @@ class Home extends ConsumerWidget {
                           return ProviderScope(
                             parent: ProviderScope.containerOf(context),
                             child: AlertDialog(
-                              title: const Text('AlertDialog Title'),
+                              title: const Text('Error'),
                               content: Text(res.body),
                               actions: <Widget>[
                                 TextButton(
@@ -130,7 +198,7 @@ class Home extends ConsumerWidget {
                         return ProviderScope(
                           parent: ProviderScope.containerOf(context),
                           child: AlertDialog(
-                            title: const Text('AlertDialog Title'),
+                            title: const Text('Error'),
                             content: Text(e.toString()),
                             actions: <Widget>[
                               TextButton(
@@ -155,10 +223,12 @@ class Home extends ConsumerWidget {
     );
   }
 
+  TextEditingController textC = TextEditingController(text: "");
+  final ScrollController _scrollController = ScrollController();
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final loginData = ref.watch(loginTokenProvider.notifier);
-    TextEditingController textC = TextEditingController(text: "");
     final notesData = ref.watch(noteListProvider);
 
     _scrollController.addListener(() {
@@ -168,6 +238,7 @@ class Home extends ConsumerWidget {
     });
     return Scaffold(
       backgroundColor: Colors.white,
+      drawer: const SideDrawer(),
       appBar: AppBar(
         backgroundColor: const Color(0xFF3A568E),
         title: Row(children: [
@@ -245,60 +316,95 @@ class Home extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    TextButton.icon(
-                                      onPressed: () {
-                                        Clipboard.setData(ClipboardData(text: notes.notes[i].text));
-                                      },
-                                      style: ButtonStyle(
-                                        foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
-                                      ),
-                                      icon: const Icon(Icons.copy),
-                                      label: const Text("Copy"),
-                                    ),
-                                    TextButton.icon(
-                                      onPressed: () {
-                                        Navigator.of(context).push(MaterialPageRoute<dynamic>(
-                                          builder: (_) => NoteDetails(
-                                            note: notes.notes[i],
-                                            noteIndex: i,
+                                    Row(
+                                      children: [
+                                        TextButton.icon(
+                                          onPressed: () {
+                                            Clipboard.setData(ClipboardData(text: notes.notes[i].text));
+                                          },
+                                          style: ButtonStyle(
+                                            foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
                                           ),
-                                        ));
-                                      },
-                                      style: ButtonStyle(
-                                        foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
-                                      ),
-                                      icon: const Icon(Icons.edit_document),
-                                      label: const Text("Edit"),
-                                    ),
-                                    TextButton.icon(
-                                      onPressed: () {
-                                        _shareNote(notes.notes[i].text.toString());
-                                      },
-                                      style: ButtonStyle(
-                                        foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
-                                      ),
-                                      icon: const Icon(Icons.share),
-                                      label: const Text("Share"),
-                                    ),
-                                    TextButton.icon(
-                                      onPressed: () async {
-                                        await _deleteNote(context, ref, notes.notes[i].id);
-                                      },
-                                      style: ButtonStyle(
-                                        foregroundColor: MaterialStateProperty.all<Color>(
-                                          const Color(0xFF3A568E),
+                                          icon: const Icon(Icons.copy),
+                                          label: const Text("Copy"),
                                         ),
-                                      ),
-                                      icon: const Icon(Icons.delete),
-                                      label: const Text("Delete"),
+                                        TextButton.icon(
+                                          onPressed: () {
+                                            Navigator.of(context).push(MaterialPageRoute<dynamic>(
+                                              builder: (_) => NoteDetails(
+                                                note: notes.notes[i],
+                                                noteIndex: i,
+                                              ),
+                                            ));
+                                          },
+                                          style: ButtonStyle(
+                                            foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
+                                          ),
+                                          icon: const Icon(Icons.edit_document),
+                                          label: const Text("Edit"),
+                                        ),
+                                        ShowHideEye(
+                                            isVisible: !notes.notes[i].is_obscure,
+                                            onChange: (isTrue) async {
+                                              ref
+                                                  .watch(noteListProvider.notifier)
+                                                  .updateLocalNote(notes.notes[i].text, !isTrue, i);
+                                              await _updateNote(context, notes.notes[i].id, !isTrue ? "true" : "false");
+                                            })
+                                      ],
+                                    ),
+                                    PopupMenuButton<String>(
+                                      icon: const Icon(Icons.more_vert),
+                                      onSelected: (val) async {
+                                        switch (val) {
+                                          case "share":
+                                            _shareNote(notes.notes[i].text.toString());
+                                            break;
+                                          case "delete":
+                                            await _deleteNote(context, ref, notes.notes[i].id);
+                                            break;
+
+                                          default:
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) {
+                                        return [
+                                          const PopupMenuItem<String>(
+                                            value: "share",
+                                            child: Row(children: [
+                                              Icon(
+                                                Icons.share,
+                                                color: Color(0xFF3A568E),
+                                              ),
+                                              Gap(10),
+                                              Text(
+                                                "Share",
+                                                style: TextStyle(color: Color(0xFF3A568E)),
+                                              )
+                                            ]),
+                                          ),
+                                          const PopupMenuItem<String>(
+                                            value: "delete",
+                                            child: Row(children: [
+                                              Icon(Icons.delete, color: Color(0xFF3A568E)),
+                                              Gap(10),
+                                              Text(
+                                                "Delete",
+                                                style: TextStyle(color: Color(0xFF3A568E)),
+                                              )
+                                            ]),
+                                          ),
+                                        ];
+                                      },
                                     ),
                                   ],
                                 ),
                                 const Divider(),
                                 const Gap(5),
                                 Text(
-                                  notes.notes[i].text,
+                                  notes.notes[i].is_obscure ? "•••••••••••••••••••" : notes.notes[i].text,
                                   style: const TextStyle(color: Color(0xFF3A568E), fontWeight: FontWeight.bold),
                                 ),
                               ],

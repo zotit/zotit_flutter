@@ -11,6 +11,7 @@ class Note with _$Note {
   factory Note({
     required String id,
     required String text,
+    required bool is_obscure,
   }) = _Note;
 
   factory Note.fromJson(Map<String, dynamic> json) => _$NoteFromJson(json);

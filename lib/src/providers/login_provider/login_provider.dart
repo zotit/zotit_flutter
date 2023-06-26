@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zotit_flutter/config.dart';
 import 'package:zotit_flutter/src/screens/login/login_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -53,7 +54,8 @@ class LoginToken extends _$LoginToken {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     state = await AsyncValue.guard(() async {
-      final uri = Uri.https('zotit.twobits.in', '/login');
+      final config = Config();
+      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "login");
       final res = await http.post(uri, body: {
         "username": username,
         "password": password,
@@ -79,7 +81,8 @@ class LoginToken extends _$LoginToken {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     state = await AsyncValue.guard(() async {
-      final uri = Uri.https('zotit.twobits.in', '/register');
+      final config = Config();
+      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "register");
       final res = await http.post(uri, body: {
         "username": username,
         "password": password,

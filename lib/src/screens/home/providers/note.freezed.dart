@@ -22,6 +22,7 @@ Note _$NoteFromJson(Map<String, dynamic> json) {
 mixin _$Note {
   String get id => throw _privateConstructorUsedError;
   String get text => throw _privateConstructorUsedError;
+  bool get is_obscure => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -33,7 +34,7 @@ abstract class $NoteCopyWith<$Res> {
   factory $NoteCopyWith(Note value, $Res Function(Note) then) =
       _$NoteCopyWithImpl<$Res, Note>;
   @useResult
-  $Res call({String id, String text});
+  $Res call({String id, String text, bool is_obscure});
 }
 
 /// @nodoc
@@ -51,6 +52,7 @@ class _$NoteCopyWithImpl<$Res, $Val extends Note>
   $Res call({
     Object? id = null,
     Object? text = null,
+    Object? is_obscure = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -61,6 +63,10 @@ class _$NoteCopyWithImpl<$Res, $Val extends Note>
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
               as String,
+      is_obscure: null == is_obscure
+          ? _value.is_obscure
+          : is_obscure // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -71,7 +77,7 @@ abstract class _$$_NoteCopyWith<$Res> implements $NoteCopyWith<$Res> {
       __$$_NoteCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String text});
+  $Res call({String id, String text, bool is_obscure});
 }
 
 /// @nodoc
@@ -85,6 +91,7 @@ class __$$_NoteCopyWithImpl<$Res> extends _$NoteCopyWithImpl<$Res, _$_Note>
   $Res call({
     Object? id = null,
     Object? text = null,
+    Object? is_obscure = null,
   }) {
     return _then(_$_Note(
       id: null == id
@@ -95,6 +102,10 @@ class __$$_NoteCopyWithImpl<$Res> extends _$NoteCopyWithImpl<$Res, _$_Note>
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
               as String,
+      is_obscure: null == is_obscure
+          ? _value.is_obscure
+          : is_obscure // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -102,7 +113,7 @@ class __$$_NoteCopyWithImpl<$Res> extends _$NoteCopyWithImpl<$Res, _$_Note>
 /// @nodoc
 @JsonSerializable()
 class _$_Note with DiagnosticableTreeMixin implements _Note {
-  _$_Note({required this.id, required this.text});
+  _$_Note({required this.id, required this.text, required this.is_obscure});
 
   factory _$_Note.fromJson(Map<String, dynamic> json) => _$$_NoteFromJson(json);
 
@@ -110,10 +121,12 @@ class _$_Note with DiagnosticableTreeMixin implements _Note {
   final String id;
   @override
   final String text;
+  @override
+  final bool is_obscure;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Note(id: $id, text: $text)';
+    return 'Note(id: $id, text: $text, is_obscure: $is_obscure)';
   }
 
   @override
@@ -122,7 +135,8 @@ class _$_Note with DiagnosticableTreeMixin implements _Note {
     properties
       ..add(DiagnosticsProperty('type', 'Note'))
       ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('text', text));
+      ..add(DiagnosticsProperty('text', text))
+      ..add(DiagnosticsProperty('is_obscure', is_obscure));
   }
 
   @override
@@ -131,12 +145,14 @@ class _$_Note with DiagnosticableTreeMixin implements _Note {
         (other.runtimeType == runtimeType &&
             other is _$_Note &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.text, text) || other.text == text));
+            (identical(other.text, text) || other.text == text) &&
+            (identical(other.is_obscure, is_obscure) ||
+                other.is_obscure == is_obscure));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, text);
+  int get hashCode => Object.hash(runtimeType, id, text, is_obscure);
 
   @JsonKey(ignore: true)
   @override
@@ -153,8 +169,10 @@ class _$_Note with DiagnosticableTreeMixin implements _Note {
 }
 
 abstract class _Note implements Note {
-  factory _Note({required final String id, required final String text}) =
-      _$_Note;
+  factory _Note(
+      {required final String id,
+      required final String text,
+      required final bool is_obscure}) = _$_Note;
 
   factory _Note.fromJson(Map<String, dynamic> json) = _$_Note.fromJson;
 
@@ -162,6 +180,8 @@ abstract class _Note implements Note {
   String get id;
   @override
   String get text;
+  @override
+  bool get is_obscure;
   @override
   @JsonKey(ignore: true)
   _$$_NoteCopyWith<_$_Note> get copyWith => throw _privateConstructorUsedError;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zotit_flutter/config.dart';
 import 'package:zotit_flutter/src/screens/home/providers/home_provider.dart';
 import 'package:zotit_flutter/src/screens/home/providers/note.dart';
 import 'package:http/http.dart' as http;
@@ -21,7 +22,8 @@ class NoteDetails extends ConsumerWidget {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     final token = prefs.getString('token');
-    final uri = Uri.https('zotit.twobits.in', '/notes');
+    final config = Config();
+    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "notes");
 
     try {
       final res = await http.put(uri, headers: {
@@ -39,7 +41,7 @@ class NoteDetails extends ConsumerWidget {
             return ProviderScope(
               parent: ProviderScope.containerOf(context),
               child: AlertDialog(
-                title: const Text('AlertDialog Title'),
+                title: const Text('Error'),
                 content: Text(res.body),
                 actions: <Widget>[
                   TextButton(
@@ -61,7 +63,7 @@ class NoteDetails extends ConsumerWidget {
           return ProviderScope(
             parent: ProviderScope.containerOf(context),
             child: AlertDialog(
-              title: const Text('AlertDialog Title'),
+              title: const Text('Error'),
               content: Text(e.toString()),
               actions: <Widget>[
                 TextButton(
@@ -108,7 +110,7 @@ class NoteDetails extends ConsumerWidget {
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Color(0xFF3A568E))),
                 onPressed: () {
                   _submit(context, textC.text, notesData);
-                  notesData.updateLocalNote(textC.text, noteIndex);
+                  notesData.updateLocalNote(textC.text, false, noteIndex);
                 },
                 child: const Text(
                   'Update Text',
