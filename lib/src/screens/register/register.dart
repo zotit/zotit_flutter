@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zotit_flutter/src/app_router.dart';
 import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
 import 'package:zotit_flutter/src/screens/common/components/link_button.dart';
+import 'package:zotit_flutter/src/utils/utils.dart';
 
 class Register extends ConsumerWidget {
   const Register({super.key});
@@ -17,7 +19,7 @@ class Register extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _Logo(),
-                  FormContent(),
+                  RegisterFormContent(),
                 ],
               )
             : Container(
@@ -27,7 +29,7 @@ class Register extends ConsumerWidget {
                   children: [
                     Expanded(child: _Logo()),
                     Expanded(
-                      child: Center(child: FormContent()),
+                      child: Center(child: RegisterFormContent()),
                     ),
                   ],
                 ),
@@ -67,16 +69,17 @@ class _Logo extends StatelessWidget {
   }
 }
 
-class FormContent extends ConsumerStatefulWidget {
-  const FormContent({super.key});
+class RegisterFormContent extends ConsumerStatefulWidget {
+  const RegisterFormContent({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _FormContent();
+  ConsumerState<ConsumerStatefulWidget> createState() => _RegisterFormContent();
 }
 
-class _FormContent extends ConsumerState<FormContent> {
+class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
   final TextEditingController usernameC = TextEditingController(text: "");
   final TextEditingController pwC = TextEditingController(text: "");
+  final TextEditingController emailC = TextEditingController(text: "");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool hasAggreedTNC = false;
 
@@ -109,8 +112,27 @@ class _FormContent extends ConsumerState<FormContent> {
                 return null;
               },
               decoration: const InputDecoration(
-                labelText: 'Username/Email',
-                hintText: 'Enter your username/email',
+                labelText: 'Username',
+                hintText: 'Enter a username',
+                prefixIcon: Icon(Icons.person),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            _gap(),
+            TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your email id';
+                }
+                if (!isValidEmail(value)) {
+                  return 'Please enter a valid email';
+                }
+                return null;
+              },
+              controller: emailC,
+              decoration: const InputDecoration(
+                labelText: 'Email Id',
+                hintText: 'Enter your email Id',
                 prefixIcon: Icon(Icons.email_outlined),
                 border: OutlineInputBorder(),
               ),
@@ -197,30 +219,39 @@ class _FormContent extends ConsumerState<FormContent> {
                         },
                       );
                     }
-                    await loginData.register(usernameC.text, pwC.text);
-
-                    if (context.mounted && loginData.getData().error != "") {
-                      showDialog<void>(
-                        context: context,
-                        builder: (c) {
-                          return ProviderScope(
-                            parent: ProviderScope.containerOf(context),
-                            child: AlertDialog(
-                              title: const Text('Error'),
-                              content: Text(loginData.getData().error),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () => {
-                                    Navigator.pop(context, 'OK'),
-                                  },
-                                  child: const Text('OK'),
+                    try {
+                      await loginData.register(usernameC.text, pwC.text, emailC.text);
+                      if (context.mounted) {
+                        if (loginData.getData().error != "") {
+                          showDialog<void>(
+                            context: context,
+                            builder: (c) {
+                              return ProviderScope(
+                                parent: ProviderScope.containerOf(context),
+                                child: AlertDialog(
+                                  title: const Text('Error'),
+                                  content: Text(loginData.getData().error),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () => {
+                                        Navigator.pop(context, 'OK'),
+                                      },
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              );
+                            },
                           );
-                        },
-                      );
-                    }
+                        } else {
+                          final navigator = Navigator.of(context);
+                          await navigator.pushNamed(
+                            AppRoutes.startupPage,
+                            arguments: () => navigator.pop(),
+                          );
+                        }
+                      }
+                    } catch (e) {}
                   }
                 },
               ),

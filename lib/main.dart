@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zotit_flutter/src/app_router.dart';
 import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
 import 'package:zotit_flutter/src/screens/common/error_page.dart';
 import 'package:zotit_flutter/src/screens/home/home.dart';
@@ -31,7 +32,9 @@ class MyApp extends StatelessWidget {
         textTheme: const TextTheme(),
       ),
       debugShowCheckedModeBanner: false,
-      home: const StartupPage(),
+      // home: const StartupPage(),
+      onGenerateRoute: (settings) => AppRouter.onGenerateRoute(settings),
+      initialRoute: AppRoutes.startupPage,
     );
   }
 }
@@ -53,8 +56,7 @@ class StartupPage extends ConsumerWidget {
       loading: () => const Center(
         child: CircularProgressIndicator(),
       ),
-      error: (error, st) =>
-          ErrorPage(message: error.toString() + st.toString()),
+      error: (error, st) => ErrorPage(message: error.toString() + st.toString()),
     );
   }
 }

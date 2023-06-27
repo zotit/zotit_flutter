@@ -55,11 +55,13 @@ class LoginToken extends _$LoginToken {
     final prefs = await fPrefs;
     state = await AsyncValue.guard(() async {
       final config = Config();
-      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "login");
-      final res = await http.post(uri, body: {
-        "username": username,
-        "password": password,
-      });
+      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/login");
+      final res = await http.post(uri,
+          body: jsonEncode({
+            "username": username,
+            "password": password,
+          }),
+          headers: {"Content-Type": "application/json"});
       if (res.body == "\"user not found\"") {
         state = AsyncError(res.body, StackTrace.current);
         return LoginData(token: "", error: res.body, username: '');
@@ -76,18 +78,23 @@ class LoginToken extends _$LoginToken {
     });
   }
 
-  Future<void> register(String username, String password) async {
+  Future<void> register(String username, String password, String emailID) async {
     state = const AsyncLoading();
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     state = await AsyncValue.guard(() async {
       final config = Config();
-      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "register");
-      final res = await http.post(uri, body: {
-        "username": username,
-        "password": password,
-      });
-      if (res.body == "\"username taken\"") {
+      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/register");
+      final res = await http.post(
+        uri,
+        body: jsonEncode({
+          "username": username,
+          "password": password,
+          "email_id": emailID,
+        }),
+        headers: {"Content-Type": "application/json"},
+      );
+      if (res.body == "\"Username or emailID  already in use\"") {
         state = AsyncError(res.body, StackTrace.current);
         return LoginData(token: "", error: res.body, username: '');
       }

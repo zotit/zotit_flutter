@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,15 +25,17 @@ class NoteDetails extends ConsumerWidget {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "notes");
+    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/notes");
 
     try {
-      final res = await http.put(uri, headers: {
-        "Authorization": "Bearer $token"
-      }, body: {
-        "text": text,
-        "id": note.id,
-      });
+      final res = await http.put(
+        uri,
+        headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+        body: jsonEncode({
+          "text": text,
+          "id": note.id,
+        }),
+      );
       if (res.statusCode == 200) {
         Navigator.pop(context, 'OK');
       } else {

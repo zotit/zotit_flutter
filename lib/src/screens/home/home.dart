@@ -27,14 +27,16 @@ class _Home extends ConsumerState<Home> {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "notes");
+    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/notes");
 
     try {
-      final res = await http.post(uri, headers: {
-        "Authorization": "Bearer $token"
-      }, body: {
-        "text": text,
-      });
+      final res = await http.post(
+        uri,
+        headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+        body: jsonEncode({
+          "text": text,
+        }),
+      );
       if (res.statusCode == 200) {
       } else {
         showDialog<void>(
@@ -91,7 +93,7 @@ class _Home extends ConsumerState<Home> {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "notes");
+    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/notes");
 
     try {
       final res = await http.put(uri,
@@ -148,7 +150,7 @@ class _Home extends ConsumerState<Home> {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "notes");
+    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/notes");
     return showDialog<void>(
       context: context,
       builder: (c) {
@@ -162,11 +164,13 @@ class _Home extends ConsumerState<Home> {
                 onPressed: () async {
                   Navigator.pop(context, 'OK');
                   try {
-                    final res = await http.delete(uri, headers: {
-                      "Authorization": "Bearer $token"
-                    }, body: {
-                      "id": id,
-                    });
+                    final res = await http.delete(
+                      uri,
+                      headers: {"Authorization": "Bearer $token"},
+                      body: jsonEncode({
+                        "id": id,
+                      }),
+                    );
                     if (res.statusCode == 200) {
                       final _ = ref.refresh(noteListProvider.future);
                     } else {

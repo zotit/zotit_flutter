@@ -33,8 +33,8 @@ class NoteList extends _$NoteList {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "notes");
-    final res = await http.get(uri, headers: {"Authorization": "Bearer $token"});
+    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/notes");
+    final res = await http.get(uri, headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"});
     if (res.body == "Invalid or expired JWT") {
       final loginData = ref.read(loginTokenProvider.notifier);
       loginData.logout();
@@ -67,7 +67,7 @@ class NoteList extends _$NoteList {
       queryParameters: {'page': newPage.toString()},
     );
     // final uri = Uri.https('zotit.twobits.in', '/notes', {'page': newPage.toString()});
-    final res = await http.get(uri, headers: {"Authorization": "Bearer $token"});
+    final res = await http.get(uri, headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"});
     if (res.body == "Invalid or expired JWT") {
       final loginData = ref.read(loginTokenProvider.notifier);
       loginData.logout();

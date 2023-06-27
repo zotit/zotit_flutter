@@ -17,7 +17,7 @@ class Login extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _Logo(),
-                  FormContent(),
+                  LoginFormContent(),
                 ],
               )
             : Container(
@@ -27,7 +27,7 @@ class Login extends ConsumerWidget {
                   children: [
                     Expanded(child: _Logo()),
                     Expanded(
-                      child: Center(child: FormContent()),
+                      child: Center(child: LoginFormContent()),
                     ),
                   ],
                 ),
@@ -67,14 +67,14 @@ class _Logo extends StatelessWidget {
   }
 }
 
-class FormContent extends ConsumerStatefulWidget {
-  const FormContent({super.key});
+class LoginFormContent extends ConsumerStatefulWidget {
+  const LoginFormContent({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _FormContent();
+  ConsumerState<ConsumerStatefulWidget> createState() => _LoginFormContent();
 }
 
-class _FormContent extends ConsumerState<FormContent> {
+class _LoginFormContent extends ConsumerState<LoginFormContent> {
   final TextEditingController usernameC = TextEditingController(text: "");
   final TextEditingController pwC = TextEditingController(text: "");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -108,9 +108,9 @@ class _FormContent extends ConsumerState<FormContent> {
                 return null;
               },
               decoration: const InputDecoration(
-                labelText: 'Username/Email',
-                hintText: 'Enter your username/email',
-                prefixIcon: Icon(Icons.email_outlined),
+                labelText: 'Username',
+                hintText: 'Enter your username',
+                prefixIcon: Icon(Icons.person),
                 border: OutlineInputBorder(),
               ),
             ),
