@@ -1,6 +1,6 @@
 class Config {
   bool idDev = true;
-  String scheme = "http";
-  String host = "localhost"; //zotit.twobits.in
-  int? port = 4001;
+  String scheme = "https";
+  String host = "zotit.app"; //zotit.twobits.in
+  int? port = null;
 }

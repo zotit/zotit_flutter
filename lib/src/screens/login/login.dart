@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zotit_flutter/src/app_router.dart';
 import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
+import 'package:zotit_flutter/src/screens/login/login_model.dart';
 import 'package:zotit_flutter/src/screens/register/register.dart';
 
 class Login extends ConsumerWidget {
@@ -82,7 +84,7 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
   @override
   Widget build(BuildContext context) {
     final loginData = ref.watch(loginTokenProvider.notifier);
-
+    final logDataRead = ref.read(loginTokenProvider);
     return Container(
       constraints: const BoxConstraints(maxWidth: 300),
       child: Form(
@@ -91,6 +93,15 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: Text(
+                logDataRead.asData?.value.error ?? "",
+                style: const TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            ),
             TextFormField(
               controller: usernameC,
               validator: (value) {
@@ -155,28 +166,6 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
                 onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
                     await loginData.login(usernameC.text, pwC.text);
-                    if (context.mounted) {
-                      showDialog<void>(
-                        context: context,
-                        builder: (c) {
-                          return ProviderScope(
-                            parent: ProviderScope.containerOf(context),
-                            child: AlertDialog(
-                              title: const Text('Error'),
-                              content: Text(loginData.getData().error),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () => {
-                                    Navigator.pop(context, 'OK'),
-                                  },
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    }
                   }
                 },
               ),
@@ -199,11 +188,7 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<dynamic>(
-                      builder: (_) => const Register(),
-                    ),
-                  );
+                  loginData.setPage('register');
                 },
               ),
             ),

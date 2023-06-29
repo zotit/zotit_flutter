@@ -8,14 +8,6 @@ import 'package:http/http.dart' as http;
 
 part 'login_provider.g.dart';
 
-// @riverpod
-// Future<LoginData> getLoginData(GetLoginDataRef ref) async {
-//   final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-//   final prefs = await fPrefs;
-//   final token = prefs.getString('token');
-//   return LoginData(token: token ?? "");
-// }
-
 @riverpod
 class LoginToken extends _$LoginToken {
   @override
@@ -28,7 +20,7 @@ class LoginToken extends _$LoginToken {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final username = prefs.getString('username') ?? "";
-    return LoginData(token: token ?? "", error: "", username: username);
+    return LoginData(token: token ?? "", error: "", username: username, page: '');
   }
 
   Future<void> setToken(String token) async {
@@ -62,19 +54,16 @@ class LoginToken extends _$LoginToken {
             "password": password,
           }),
           headers: {"Content-Type": "application/json"});
-      if (res.body == "\"user not found\"") {
-        state = AsyncError(res.body, StackTrace.current);
-        return LoginData(token: "", error: res.body, username: '');
-      }
-      if (res.body == "{}") {
-        state = AsyncError(res.body, StackTrace.current);
-        return LoginData(token: "", error: "\"user not found\"", username: '');
-      }
 
-      final resData = jsonDecode(res.body);
-      prefs.setString("token", resData["token"]!);
-      prefs.setString("username", username);
-      return _loadToken();
+      try {
+        final resData = jsonDecode(res.body);
+
+        prefs.setString("token", resData["token"]!);
+        prefs.setString("username", username);
+        return _loadToken();
+      } catch (e) {
+        return LoginData(token: "", error: res.body.replaceAll("\"", ""), username: '', page: '');
+      }
     });
   }
 
@@ -94,15 +83,19 @@ class LoginToken extends _$LoginToken {
         }),
         headers: {"Content-Type": "application/json"},
       );
-      if (res.body == "\"Username or emailID  already in use\"") {
-        state = AsyncError(res.body, StackTrace.current);
-        return LoginData(token: "", error: res.body, username: '');
+      try {
+        final resData = jsonDecode(res.body);
+        prefs.setString("token", resData["token"]!);
+        prefs.setString('username', username);
+        return _loadToken();
+      } catch (e) {
+        return LoginData(token: "", error: res.body.replaceAll("\"", ""), username: '', page: 'register');
       }
-      final resData = jsonDecode(res.body);
-      prefs.setString("token", resData["token"]!);
-      prefs.setString('username', username);
-      return _loadToken();
     });
+  }
+
+  setPage(String page) {
+    state = AsyncData(LoginData(token: '', error: '', username: '', page: page));
   }
 
   getData() {

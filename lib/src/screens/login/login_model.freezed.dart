@@ -23,6 +23,7 @@ mixin _$LoginData {
   String get token => throw _privateConstructorUsedError;
   String get error => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
+  String get page => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -35,7 +36,7 @@ abstract class $LoginDataCopyWith<$Res> {
   factory $LoginDataCopyWith(LoginData value, $Res Function(LoginData) then) =
       _$LoginDataCopyWithImpl<$Res, LoginData>;
   @useResult
-  $Res call({String token, String error, String username});
+  $Res call({String token, String error, String username, String page});
 }
 
 /// @nodoc
@@ -54,6 +55,7 @@ class _$LoginDataCopyWithImpl<$Res, $Val extends LoginData>
     Object? token = null,
     Object? error = null,
     Object? username = null,
+    Object? page = null,
   }) {
     return _then(_value.copyWith(
       token: null == token
@@ -68,6 +70,10 @@ class _$LoginDataCopyWithImpl<$Res, $Val extends LoginData>
           ? _value.username
           : username // ignore: cast_nullable_to_non_nullable
               as String,
+      page: null == page
+          ? _value.page
+          : page // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -79,7 +85,7 @@ abstract class _$$_LoginDataCopyWith<$Res> implements $LoginDataCopyWith<$Res> {
       __$$_LoginDataCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String token, String error, String username});
+  $Res call({String token, String error, String username, String page});
 }
 
 /// @nodoc
@@ -96,6 +102,7 @@ class __$$_LoginDataCopyWithImpl<$Res>
     Object? token = null,
     Object? error = null,
     Object? username = null,
+    Object? page = null,
   }) {
     return _then(_$_LoginData(
       token: null == token
@@ -110,6 +117,10 @@ class __$$_LoginDataCopyWithImpl<$Res>
           ? _value.username
           : username // ignore: cast_nullable_to_non_nullable
               as String,
+      page: null == page
+          ? _value.page
+          : page // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -118,7 +129,10 @@ class __$$_LoginDataCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_LoginData with DiagnosticableTreeMixin implements _LoginData {
   _$_LoginData(
-      {required this.token, required this.error, required this.username});
+      {required this.token,
+      required this.error,
+      required this.username,
+      required this.page});
 
   factory _$_LoginData.fromJson(Map<String, dynamic> json) =>
       _$$_LoginDataFromJson(json);
@@ -129,10 +143,12 @@ class _$_LoginData with DiagnosticableTreeMixin implements _LoginData {
   final String error;
   @override
   final String username;
+  @override
+  final String page;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'LoginData(token: $token, error: $error, username: $username)';
+    return 'LoginData(token: $token, error: $error, username: $username, page: $page)';
   }
 
   @override
@@ -142,7 +158,8 @@ class _$_LoginData with DiagnosticableTreeMixin implements _LoginData {
       ..add(DiagnosticsProperty('type', 'LoginData'))
       ..add(DiagnosticsProperty('token', token))
       ..add(DiagnosticsProperty('error', error))
-      ..add(DiagnosticsProperty('username', username));
+      ..add(DiagnosticsProperty('username', username))
+      ..add(DiagnosticsProperty('page', page));
   }
 
   @override
@@ -153,12 +170,13 @@ class _$_LoginData with DiagnosticableTreeMixin implements _LoginData {
             (identical(other.token, token) || other.token == token) &&
             (identical(other.error, error) || other.error == error) &&
             (identical(other.username, username) ||
-                other.username == username));
+                other.username == username) &&
+            (identical(other.page, page) || other.page == page));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, token, error, username);
+  int get hashCode => Object.hash(runtimeType, token, error, username, page);
 
   @JsonKey(ignore: true)
   @override
@@ -178,7 +196,8 @@ abstract class _LoginData implements LoginData {
   factory _LoginData(
       {required final String token,
       required final String error,
-      required final String username}) = _$_LoginData;
+      required final String username,
+      required final String page}) = _$_LoginData;
 
   factory _LoginData.fromJson(Map<String, dynamic> json) =
       _$_LoginData.fromJson;
@@ -189,6 +208,8 @@ abstract class _LoginData implements LoginData {
   String get error;
   @override
   String get username;
+  @override
+  String get page;
   @override
   @JsonKey(ignore: true)
   _$$_LoginDataCopyWith<_$_LoginData> get copyWith =>

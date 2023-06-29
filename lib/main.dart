@@ -5,6 +5,7 @@ import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
 import 'package:zotit_flutter/src/screens/common/error_page.dart';
 import 'package:zotit_flutter/src/screens/home/home.dart';
 import 'package:zotit_flutter/src/screens/login/login.dart';
+import 'package:zotit_flutter/src/screens/register/register.dart';
 
 void main() {
   runApp(
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       // home: const StartupPage(),
       onGenerateRoute: (settings) => AppRouter.onGenerateRoute(settings),
-      initialRoute: AppRoutes.startupPage,
+      home: const StartupPage(),
     );
   }
 }
@@ -50,6 +51,9 @@ class StartupPage extends ConsumerWidget {
         if (user.token != "") {
           return Home();
         } else {
+          if (user.page == 'register') {
+            return const Register();
+          }
           return const Login();
         }
       },

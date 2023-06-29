@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zotit_flutter/src/app_router.dart';
 import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
 import 'package:zotit_flutter/src/screens/common/components/link_button.dart';
+import 'package:zotit_flutter/src/screens/login/login_model.dart';
 import 'package:zotit_flutter/src/utils/utils.dart';
 
 class Register extends ConsumerWidget {
@@ -86,6 +87,7 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
   @override
   Widget build(BuildContext context) {
     final loginData = ref.watch(loginTokenProvider.notifier);
+    final logDataRead = ref.read(loginTokenProvider);
 
     return Container(
       constraints: const BoxConstraints(maxWidth: 300),
@@ -95,6 +97,15 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: Text(
+                logDataRead.asData?.value.error ?? "",
+                style: const TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            ),
             TextFormField(
               controller: usernameC,
               validator: (value) {
@@ -219,40 +230,30 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
                         },
                       );
                     }
-                    try {
-                      await loginData.register(usernameC.text, pwC.text, emailC.text);
-                      if (context.mounted) {
-                        if (loginData.getData().error != "") {
-                          showDialog<void>(
-                            context: context,
-                            builder: (c) {
-                              return ProviderScope(
-                                parent: ProviderScope.containerOf(context),
-                                child: AlertDialog(
-                                  title: const Text('Error'),
-                                  content: Text(loginData.getData().error),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () => {
-                                        Navigator.pop(context, 'OK'),
-                                      },
-                                      child: const Text('OK'),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        } else {
-                          final navigator = Navigator.of(context);
-                          await navigator.pushNamed(
-                            AppRoutes.startupPage,
-                            arguments: () => navigator.pop(),
-                          );
-                        }
-                      }
-                    } catch (e) {}
+                    await loginData.register(usernameC.text, pwC.text, emailC.text);
                   }
+                },
+              ),
+            ),
+            _gap(),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
+                  backgroundColor: MaterialStateProperty.all(
+                    const Color(0xFF3A568E),
+                  ),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(
+                    'Sign In',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                onPressed: () {
+                  loginData.setPage('');
                 },
               ),
             ),
