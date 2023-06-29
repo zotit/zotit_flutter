@@ -1,35 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
 
-class SideDrawer extends StatelessWidget {
+class SideDrawer extends ConsumerWidget {
   const SideDrawer({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final loginData = ref.watch(loginTokenProvider.notifier);
     return Drawer(
       child: ListView(
         padding: const EdgeInsets.all(0),
         physics: const BouncingScrollPhysics(),
         children: <Widget>[
-          DrawerHeader(
+          const DrawerHeader(
             child: Center(
                 child: Text(
               "ZotIt ",
               style: TextStyle(fontFamily: 'Satisfy', fontSize: 35),
             )),
-            decoration: const BoxDecoration(
-              color: Color(0xfff3e0dd),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 221, 229, 243),
             ),
-            margin: const EdgeInsets.all(0),
+            margin: EdgeInsets.all(0),
           ),
           ListTile(
             leading: const Icon(Icons.home),
             title: const Text('Home'),
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).pop();
+            },
           ),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Logout'),
-            onTap: () async {},
+            onTap: () async {
+              loginData.logout();
+            },
           ),
         ],
       ),

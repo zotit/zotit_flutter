@@ -16,7 +16,6 @@ import 'package:zotit_flutter/src/screens/home/side_drawer.dart';
 
 class Home extends ConsumerStatefulWidget {
   Home({super.key});
-
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _Home();
 }
@@ -256,12 +255,6 @@ class _Home extends ConsumerState<Home> {
           IconButton(
             onPressed: () => ref.refresh(noteListProvider.future),
             icon: const Icon(Icons.refresh),
-          ),
-          IconButton(
-            onPressed: () {
-              loginData.logout();
-            },
-            icon: const Icon(Icons.logout),
           ),
         ],
       ),
