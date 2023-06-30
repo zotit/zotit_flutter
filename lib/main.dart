@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zotit_flutter/src/app_router.dart';
 import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
 import 'package:zotit_flutter/src/screens/common/error_page.dart';
+import 'package:zotit_flutter/src/screens/forgotpw/forgotpw.dart';
 import 'package:zotit_flutter/src/screens/home/home.dart';
 import 'package:zotit_flutter/src/screens/login/login.dart';
 import 'package:zotit_flutter/src/screens/register/register.dart';
+import 'package:zotit_flutter/src/screens/resetpw/resetpw.dart';
 
 void main() {
   runApp(
@@ -49,11 +51,18 @@ class StartupPage extends ConsumerWidget {
     return loginData.when(
       data: (user) {
         if (user.token != "") {
+          if (user.page == 'resetpw') {
+            return const Resetpw();
+          }
           return Home();
         } else {
           if (user.page == 'register') {
             return const Register();
           }
+          if (user.page == 'forgotpw') {
+            return const Forgotpw();
+          }
+
           return const Login();
         }
       },

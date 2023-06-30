@@ -20,7 +20,8 @@ class LoginToken extends _$LoginToken {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final username = prefs.getString('username') ?? "";
-    return LoginData(token: token ?? "", error: "", username: username, page: '');
+    final page = prefs.getString('page') ?? "";
+    return LoginData(token: token ?? "", error: "", username: username, page: page);
   }
 
   Future<void> setToken(String token) async {
@@ -60,9 +61,74 @@ class LoginToken extends _$LoginToken {
 
         prefs.setString("token", resData["token"]!);
         prefs.setString("username", username);
+
+        if (!resData['is_active']) {
+          prefs.setString("page", 'resetpw');
+          return _loadToken();
+        }
+        prefs.remove("page");
         return _loadToken();
       } catch (e) {
         return LoginData(token: "", error: res.body.replaceAll("\"", ""), username: '', page: '');
+      }
+    });
+  }
+
+  Future<void> forgotpw(
+    String username,
+  ) async {
+    state = const AsyncLoading();
+    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
+    final prefs = await fPrefs;
+    state = await AsyncValue.guard(() async {
+      final config = Config();
+      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/forgotpw");
+      final res = await http.post(uri,
+          body: jsonEncode({
+            "username": username,
+          }),
+          headers: {"Content-Type": "application/json"});
+
+      try {
+        final resData = jsonDecode(res.body);
+
+        prefs.setString("token", resData["token"]!);
+        prefs.setString("username", username);
+        return _loadToken();
+      } catch (e) {
+        return LoginData(token: "", error: res.body.replaceAll("\"", ""), username: '', page: '');
+      }
+    });
+  }
+
+  Future<void> resetpw(String username, String oldPassword, String newPassword) async {
+    state = const AsyncLoading();
+    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
+    final prefs = await fPrefs;
+    state = await AsyncValue.guard(() async {
+      final token = prefs.getString('token');
+      final config = Config();
+      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/activate");
+      final res = await http.post(uri,
+          body: jsonEncode({
+            "username": username,
+            "old_password": oldPassword,
+            "new_password": newPassword,
+          }),
+          headers: {
+            "Authorization": "Bearer $token",
+            "Content-Type": "application/json",
+          });
+
+      try {
+        final resData = jsonDecode(res.body);
+
+        prefs.setString("token", resData["token"]!);
+        prefs.setString("username", username);
+        prefs.remove('page');
+        return _loadToken();
+      } catch (e) {
+        return LoginData(token: "", error: res.body.replaceAll("\"", ""), username: '', page: 'resetpw');
       }
     });
   }
@@ -98,7 +164,7 @@ class LoginToken extends _$LoginToken {
     state = AsyncData(LoginData(token: '', error: '', username: '', page: page));
   }
 
-  getData() {
-    return state.value;
+  LoginData getData() {
+    return state.value ?? LoginData(token: "", error: "", username: "", page: "");
   }
 }

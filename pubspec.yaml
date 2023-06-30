@@ -8,6 +8,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
+  flutter_number_captcha: ^0.0.8
   flutter_riverpod: ^2.3.6
   freezed_annotation: ^2.2.0
   gap: ^3.0.0

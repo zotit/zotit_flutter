@@ -165,7 +165,7 @@ class _Home extends ConsumerState<Home> {
                   try {
                     final res = await http.delete(
                       uri,
-                      headers: {"Authorization": "Bearer $token"},
+                      headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
                       body: jsonEncode({
                         "id": id,
                       }),
@@ -287,6 +287,7 @@ class _Home extends ConsumerState<Home> {
                   ElevatedButton(
                     onPressed: () async {
                       await _submit(context, textC.text);
+                      textC.text = '';
                       final _ = ref.refresh(noteListProvider.future);
                     },
                     style: ButtonStyle(

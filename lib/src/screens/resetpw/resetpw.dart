@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_number_captcha/flutter_number_captcha.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zotit_flutter/src/app_router.dart';
 import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
+import 'package:zotit_flutter/src/screens/common/components/link_button.dart';
 import 'package:zotit_flutter/src/screens/login/login_model.dart';
-import 'package:zotit_flutter/src/screens/register/register.dart';
+import 'package:zotit_flutter/src/utils/utils.dart';
 
-class Login extends ConsumerWidget {
-  const Login({super.key});
+class Resetpw extends ConsumerWidget {
+  const Resetpw({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,7 +21,7 @@ class Login extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _Logo(),
-                  LoginFormContent(),
+                  ResetpwFormContent(),
                 ],
               )
             : Container(
@@ -29,7 +31,7 @@ class Login extends ConsumerWidget {
                   children: [
                     Expanded(child: _Logo()),
                     Expanded(
-                      child: Center(child: LoginFormContent()),
+                      child: Center(child: ResetpwFormContent()),
                     ),
                   ],
                 ),
@@ -69,21 +71,24 @@ class _Logo extends StatelessWidget {
   }
 }
 
-class LoginFormContent extends ConsumerStatefulWidget {
-  const LoginFormContent({super.key});
+class ResetpwFormContent extends ConsumerStatefulWidget {
+  const ResetpwFormContent({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _LoginFormContent();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ResetpwFormContent();
 }
 
-class _LoginFormContent extends ConsumerState<LoginFormContent> {
+class _ResetpwFormContent extends ConsumerState<ResetpwFormContent> {
   final TextEditingController usernameC = TextEditingController(text: "");
-  final TextEditingController pwC = TextEditingController(text: "");
+  final TextEditingController opwC = TextEditingController(text: "");
+  final TextEditingController npwC = TextEditingController(text: "");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final loginData = ref.read(loginTokenProvider.notifier);
+    final loginData = ref.watch(loginTokenProvider.notifier);
+    final logDataRead = ref.read(loginTokenProvider);
+
     return Container(
       constraints: const BoxConstraints(maxWidth: 300),
       child: Form(
@@ -95,7 +100,7 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15),
               child: Text(
-                loginData.getData().error,
+                logDataRead.asData?.value.error ?? "",
                 style: const TextStyle(
                   color: Colors.red,
                 ),
@@ -119,7 +124,7 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
               },
               decoration: const InputDecoration(
                 labelText: 'Username',
-                hintText: 'Enter your username',
+                hintText: 'Enter a username',
                 prefixIcon: Icon(Icons.person),
                 border: OutlineInputBorder(),
               ),
@@ -136,11 +141,32 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
                 }
                 return null;
               },
-              controller: pwC,
+              controller: opwC,
               obscureText: true,
               decoration: const InputDecoration(
-                labelText: 'Password',
-                hintText: 'Enter your password',
+                labelText: 'Current Password',
+                hintText: 'Enter password',
+                prefixIcon: Icon(Icons.lock_outline_rounded),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            _gap(),
+            TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+
+                if (value.length < 6) {
+                  return 'Password must be at least 6 characters';
+                }
+                return null;
+              },
+              controller: npwC,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'New Password',
+                hintText: 'Enter new password',
                 prefixIcon: Icon(Icons.lock_outline_rounded),
                 border: OutlineInputBorder(),
               ),
@@ -158,57 +184,17 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
                 child: const Padding(
                   padding: EdgeInsets.all(10.0),
                   child: Text(
-                    'Sign in',
+                    'Reset Password',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
-                    await loginData.login(usernameC.text, pwC.text);
+                    bool isValid = await FlutterNumberCaptcha.show(context);
+                    if (isValid) {
+                      await loginData.resetpw(usernameC.text, opwC.text, npwC.text);
+                    }
                   }
-                },
-              ),
-            ),
-            _gap(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
-                  backgroundColor: MaterialStateProperty.all(
-                    const Color(0xFF3A568E),
-                  ),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(
-                    'Register',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                onPressed: () {
-                  loginData.setPage('register');
-                },
-              ),
-            ),
-            _gap(),
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all(
-                    const Color(0xFF3A568E),
-                  ),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(
-                    'Forgot password',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                onPressed: () {
-                  loginData.setPage('forgotpw');
                 },
               ),
             ),
