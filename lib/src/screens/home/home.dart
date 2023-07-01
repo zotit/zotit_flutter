@@ -84,7 +84,7 @@ class _Home extends ConsumerState<Home> {
   }
 
   _shareNote(String note) async {
-    Share.share("$note \nShared from https://zotit.twobits.in", subject: "note shared from Zotit | Zot anywhere");
+    Share.share("$note \nShared from https://zotit.app", subject: "note shared from Zotit | Zot anywhere");
   }
 
   _updateNote(context, id, String isObScure) async {
@@ -310,6 +310,7 @@ class _Home extends ConsumerState<Home> {
                           margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
                           child: ListTile(
                             contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                            dense: true,
                             title: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -400,12 +401,13 @@ class _Home extends ConsumerState<Home> {
                                   ],
                                 ),
                                 const Divider(),
-                                const Gap(5),
-                                Text(
-                                  notes.notes[i].is_obscure ? "•••••••••••••••••••" : notes.notes[i].text,
-                                  style: const TextStyle(color: Color(0xFF3A568E), fontWeight: FontWeight.bold),
-                                ),
                               ],
+                            ),
+                            subtitle: Text(
+                              notes.notes[i].is_obscure ? "•••••••••••••••••••" : notes.notes[i].text,
+                              style: const TextStyle(
+                                color: Color(0xFF3A568E),
+                              ),
                             ),
                           ),
                         )

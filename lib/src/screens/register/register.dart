@@ -185,7 +185,7 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
                     },
                   ),
                   const Text("Check to accept our "),
-                  const LinkButton(urlLabel: "Privacy Policy", url: "https://zotit.twobits.in/privacy-policy.html"),
+                  const LinkButton(urlLabel: "Privacy Policy", url: "https://zotit.app/privacy-policy.html"),
                 ],
               ),
             ),
