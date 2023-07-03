@@ -5,14 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zotit_flutter/config.dart';
-import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
-import 'package:zotit_flutter/src/screens/common/components/show_hide_eye.dart';
-import 'package:zotit_flutter/src/screens/home/note_details.dart';
-import 'package:zotit_flutter/src/screens/home/providers/home_provider.dart';
+import 'package:zotit/config.dart';
+import 'package:zotit/src/providers/login_provider/login_provider.dart';
+import 'package:zotit/src/screens/common/components/show_hide_eye.dart';
+import 'package:zotit/src/screens/home/note_details.dart';
+import 'package:zotit/src/screens/home/providers/home_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
-import 'package:zotit_flutter/src/screens/home/side_drawer.dart';
+import 'package:zotit/src/screens/home/side_drawer.dart';
 
 class Home extends ConsumerStatefulWidget {
   Home({super.key});

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zotit_flutter/src/app_router.dart';
-import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
-import 'package:zotit_flutter/src/screens/common/error_page.dart';
-import 'package:zotit_flutter/src/screens/forgotpw/forgotpw.dart';
-import 'package:zotit_flutter/src/screens/home/home.dart';
-import 'package:zotit_flutter/src/screens/login/login.dart';
-import 'package:zotit_flutter/src/screens/register/register.dart';
-import 'package:zotit_flutter/src/screens/resetpw/resetpw.dart';
+import 'package:zotit/src/app_router.dart';
+import 'package:zotit/src/providers/login_provider/login_provider.dart';
+import 'package:zotit/src/screens/common/error_page.dart';
+import 'package:zotit/src/screens/forgotpw/forgotpw.dart';
+import 'package:zotit/src/screens/home/home.dart';
+import 'package:zotit/src/screens/login/login.dart';
+import 'package:zotit/src/screens/register/register.dart';
+import 'package:zotit/src/screens/resetpw/resetpw.dart';
 
 void main() {
   runApp(

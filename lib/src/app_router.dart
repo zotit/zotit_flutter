@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:zotit_flutter/src/screens/home/home.dart';
-import 'package:zotit_flutter/src/screens/login/login.dart';
-import 'package:zotit_flutter/src/screens/register/register.dart';
+import 'package:zotit/src/screens/home/home.dart';
+import 'package:zotit/src/screens/login/login.dart';
+import 'package:zotit/src/screens/register/register.dart';
 
 import '../main.dart';
 

@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zotit_flutter/config.dart';
-import 'package:zotit_flutter/src/screens/home/providers/home_provider.dart';
-import 'package:zotit_flutter/src/screens/home/providers/note.dart';
+import 'package:zotit/config.dart';
+import 'package:zotit/src/screens/home/providers/home_provider.dart';
+import 'package:zotit/src/screens/home/providers/note.dart';
 import 'package:http/http.dart' as http;
 
 @immutable

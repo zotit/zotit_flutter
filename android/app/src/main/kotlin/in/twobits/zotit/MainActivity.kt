@@ -1,4 +1,4 @@
-package `in`.twobits.zotit_flutter
+package `in`.twobits.zotit
 
 import io.flutter.embedding.android.FlutterActivity
 

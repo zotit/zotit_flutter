@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zotit_flutter/config.dart';
-import 'package:zotit_flutter/src/providers/login_provider/login_provider.dart';
-import 'package:zotit_flutter/src/screens/home/providers/note.dart';
+import 'package:zotit/config.dart';
+import 'package:zotit/src/providers/login_provider/login_provider.dart';
+import 'package:zotit/src/screens/home/providers/note.dart';
 import 'package:http/http.dart' as http;
-import 'package:zotit_flutter/src/screens/home/providers/note_list.dart';
+import 'package:zotit/src/screens/home/providers/note_list.dart';
 
 part 'home_provider.g.dart';
 

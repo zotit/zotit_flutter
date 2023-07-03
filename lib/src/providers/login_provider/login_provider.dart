@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zotit_flutter/config.dart';
-import 'package:zotit_flutter/src/screens/login/login_model.dart';
+import 'package:zotit/config.dart';
+import 'package:zotit/src/screens/login/login_model.dart';
 import 'package:http/http.dart' as http;
 
 part 'login_provider.g.dart';

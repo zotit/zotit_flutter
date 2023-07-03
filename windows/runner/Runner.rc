@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "in.twobits" "\0"
-            VALUE "FileDescription", "zotit_flutter" "\0"
+            VALUE "FileDescription", "zotit" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "zotit_flutter" "\0"
+            VALUE "InternalName", "zotit" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 in.twobits. All rights reserved." "\0"
-            VALUE "OriginalFilename", "zotit_flutter.exe" "\0"
-            VALUE "ProductName", "zotit_flutter" "\0"
+            VALUE "OriginalFilename", "zotit.exe" "\0"
+            VALUE "ProductName", "zotit" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

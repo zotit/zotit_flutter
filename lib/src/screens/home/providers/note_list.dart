@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:zotit_flutter/src/screens/home/providers/note.dart';
+import 'package:zotit/src/screens/home/providers/note.dart';
 
 part 'note_list.freezed.dart';
 // optional: Since our Person class is serializable, we must add this line.
@@ -14,6 +14,5 @@ class NoteListRepo with _$NoteListRepo {
     required int page,
   }) = _NoteListRepo;
 
-  factory NoteListRepo.fromJson(Map<String, dynamic> json) =>
-      _$NoteListRepoFromJson(json);
+  factory NoteListRepo.fromJson(Map<String, dynamic> json) => _$NoteListRepoFromJson(json);
 }
