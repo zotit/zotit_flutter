@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_number_captcha/flutter_number_captcha.dart';
+// import 'package:flutter_number_captcha/flutter_number_captcha.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zotit/src/app_router.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
@@ -190,10 +190,10 @@ class _ResetpwFormContent extends ConsumerState<ResetpwFormContent> {
                 ),
                 onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
-                    bool isValid = await FlutterNumberCaptcha.show(context);
-                    if (isValid) {
-                      await loginData.resetpw(usernameC.text, opwC.text, npwC.text);
-                    }
+                    // bool isValid = await FlutterNumberCaptcha.show(context);
+                    // if (isValid) {
+                    await loginData.resetpw(usernameC.text, opwC.text, npwC.text);
+                    // }
                   }
                 },
               ),

@@ -15,13 +15,33 @@ class LoginToken extends _$LoginToken {
     return _loadToken();
   }
 
+  Future<String> _getProfile(String token) async {
+    final config = Config();
+    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/me");
+    final res = await http.get(uri, headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    });
+
+    try {
+      final resData = jsonDecode(res.body);
+      return resData['email_id'];
+    } catch (e) {
+      return "";
+    }
+  }
+
   Future<LoginData> _loadToken() async {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
-    final token = prefs.getString('token');
+    final token = prefs.getString('token') ?? "";
     final username = prefs.getString('username') ?? "";
     final page = prefs.getString('page') ?? "";
-    return LoginData(token: token ?? "", error: "", username: username, page: page);
+    if (token != "") {
+      final emailId = await _getProfile(token);
+      return LoginData(token: token, error: "", username: username, page: page, emailId: emailId);
+    }
+    return LoginData(token: token, error: "", username: username, page: page, emailId: "");
   }
 
   Future<void> setToken(String token) async {
@@ -69,7 +89,7 @@ class LoginToken extends _$LoginToken {
         prefs.remove("page");
         return _loadToken();
       } catch (e) {
-        return LoginData(token: "", error: res.body.replaceAll("\"", ""), username: '', page: '');
+        return LoginData(token: "", error: res.body.replaceAll("\"", ""), username: '', page: '', emailId: '');
       }
     });
   }
@@ -96,7 +116,8 @@ class LoginToken extends _$LoginToken {
         prefs.setString("username", username);
         return _loadToken();
       } catch (e) {
-        return LoginData(token: "", error: res.body.replaceAll("\"", ""), username: '', page: '');
+        return LoginData(
+            token: "", error: res.body.replaceAll("\"", ""), username: '', page: '', emailId: state.value!.emailId);
       }
     });
   }
@@ -128,7 +149,12 @@ class LoginToken extends _$LoginToken {
         prefs.remove('page');
         return _loadToken();
       } catch (e) {
-        return LoginData(token: "", error: res.body.replaceAll("\"", ""), username: '', page: 'resetpw');
+        return LoginData(
+            token: "",
+            error: res.body.replaceAll("\"", ""),
+            username: '',
+            page: 'resetpw',
+            emailId: state.value!.emailId);
       }
     });
   }
@@ -155,16 +181,76 @@ class LoginToken extends _$LoginToken {
         prefs.setString('username', username);
         return _loadToken();
       } catch (e) {
-        return LoginData(token: "", error: res.body.replaceAll("\"", ""), username: '', page: 'register');
+        return LoginData(
+            token: "",
+            error: res.body.replaceAll("\"", ""),
+            username: '',
+            page: 'register',
+            emailId: state.value!.emailId);
       }
     });
   }
 
   setPage(String page) {
-    state = AsyncData(LoginData(token: '', error: '', username: '', page: page));
+    state = AsyncData(LoginData(token: '', error: '', username: '', page: page, emailId: state.value!.emailId));
   }
 
   LoginData getData() {
-    return state.value ?? LoginData(token: "", error: "", username: "", page: "");
+    return state.value ?? LoginData(token: "", error: "", username: "", page: "", emailId: "");
+  }
+
+  Future<void> updateProfile(String username, String emailId) async {
+    state = const AsyncLoading();
+    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
+    final prefs = await fPrefs;
+    state = await AsyncValue.guard(() async {
+      final token = prefs.getString('token');
+      final config = Config();
+      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/me");
+      final res = await http.patch(uri, body: jsonEncode({"username": username, "email_id": emailId}), headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      });
+
+      try {
+        final resData = jsonDecode(res.body);
+        prefs.setString("username", username);
+        return _loadToken();
+      } catch (e) {
+        return LoginData(
+            token: token!,
+            error: res.body.replaceAll("\"", ""),
+            username: username,
+            page: '',
+            emailId: state.value!.emailId);
+      }
+    });
+  }
+
+  Future<void> deleteAccount(String password, String reason, String otherReason) async {
+    state = const AsyncLoading();
+    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
+    final prefs = await fPrefs;
+    state = await AsyncValue.guard(() async {
+      final token = prefs.getString('token');
+      final config = Config();
+      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/me");
+      final res = await http.delete(uri,
+          body: jsonEncode({
+            "password": password,
+            "reason": reason,
+            "reason_other": otherReason,
+          }),
+          headers: {
+            "Authorization": "Bearer $token",
+            "Content-Type": "application/json",
+          });
+      if (res.statusCode == 200) {
+        await prefs.clear();
+        return LoginData(token: "", error: "", username: "", page: '', emailId: "");
+      } else {
+        return LoginData(token: "", error: res.body.replaceAll("\"", ""), username: "", page: '', emailId: "");
+      }
+    });
   }
 }

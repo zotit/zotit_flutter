@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_number_captcha/flutter_number_captcha.dart';
+// import 'package:flutter_number_captcha/flutter_number_captcha.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zotit/src/app_router.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
-import 'package:zotit/src/screens/common/components/link_button.dart';
-import 'package:zotit/src/screens/login/login_model.dart';
-import 'package:zotit/src/utils/utils.dart';
 
 class Forgotpw extends ConsumerWidget {
   const Forgotpw({super.key});
@@ -139,10 +135,10 @@ class _ForgotpwFormContent extends ConsumerState<ForgotpwFormContent> {
                 ),
                 onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
-                    bool isValid = await FlutterNumberCaptcha.show(context);
-                    if (isValid) {
-                      await loginData.forgotpw(usernameC.text);
-                    }
+                    // bool isValid = await FlutterNumberCaptcha.show(context);
+                    // if (isValid) {
+                    await loginData.forgotpw(usernameC.text);
+                    // }
                   }
                 },
               ),

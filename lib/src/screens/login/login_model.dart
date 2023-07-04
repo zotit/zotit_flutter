@@ -12,6 +12,7 @@ class LoginData with _$LoginData {
     required String token,
     required String error,
     required String username,
+    required String emailId,
     required String page,
   }) = _LoginData;
 

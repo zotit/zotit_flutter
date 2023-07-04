@@ -15,13 +15,14 @@ class Login extends ConsumerWidget {
     return Scaffold(
       body: Center(
         child: isSmallScreen
-            ? const Column(
+            ? const SingleChildScrollView(
+                child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _Logo(),
                   LoginFormContent(),
                 ],
-              )
+              ))
             : Container(
                 padding: const EdgeInsets.all(32.0),
                 constraints: const BoxConstraints(maxWidth: 800),

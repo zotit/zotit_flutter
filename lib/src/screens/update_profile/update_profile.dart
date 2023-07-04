@@ -1,85 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
 import 'package:zotit/src/app_router.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
 import 'package:zotit/src/screens/common/components/link_button.dart';
 import 'package:zotit/src/screens/login/login_model.dart';
 import 'package:zotit/src/utils/utils.dart';
 
-class Register extends ConsumerWidget {
-  const Register({super.key});
+class UpdateProfile extends ConsumerWidget {
+  const UpdateProfile({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool isSmallScreen = MediaQuery.of(context).size.width < 600;
 
     return Scaffold(
-      body: Center(
-        child: isSmallScreen
-            ? const SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _Logo(),
-                    RegisterFormContent(),
-                  ],
-                ),
-              )
-            : Container(
-                padding: const EdgeInsets.all(32.0),
-                constraints: const BoxConstraints(maxWidth: 800),
-                child: const Row(
-                  children: [
-                    Expanded(child: _Logo()),
-                    Expanded(
-                      child: Center(child: RegisterFormContent()),
-                    ),
-                  ],
-                ),
-              ),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF3A568E),
+        title: Text("Update Profile"),
       ),
+      body: const Center(
+          heightFactor: 1,
+          child: SingleChildScrollView(
+            child: UpdateProfileFormContent(),
+          )),
     );
   }
 }
 
-class _Logo extends StatelessWidget {
-  const _Logo({Key? key}) : super(key: key);
+class UpdateProfileFormContent extends ConsumerStatefulWidget {
+  const UpdateProfileFormContent({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final bool isSmallScreen = MediaQuery.of(context).size.width < 600;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // FlutterLogo(size: isSmallScreen ? 100 : 200),
-        Text(
-          "ZotIt",
-          style: TextStyle(fontFamily: 'Satisfy', fontSize: isSmallScreen ? 60 : 80),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            "Welcome to ZotIt",
-            textAlign: TextAlign.center,
-            style: isSmallScreen
-                ? Theme.of(context).textTheme.headlineSmall
-                : Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.black),
-          ),
-        )
-      ],
-    );
-  }
+  ConsumerState<ConsumerStatefulWidget> createState() => _UpdateProfileFormContent();
 }
 
-class RegisterFormContent extends ConsumerStatefulWidget {
-  const RegisterFormContent({super.key});
-
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _RegisterFormContent();
-}
-
-class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
+class _UpdateProfileFormContent extends ConsumerState<UpdateProfileFormContent> {
   final TextEditingController usernameC = TextEditingController(text: "");
   final TextEditingController pwC = TextEditingController(text: "");
   final TextEditingController emailC = TextEditingController(text: "");
@@ -90,6 +46,8 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
   Widget build(BuildContext context) {
     final loginData = ref.watch(loginTokenProvider.notifier);
     final logDataRead = ref.read(loginTokenProvider);
+    usernameC.text = logDataRead.hasValue ? logDataRead.value!.username : "";
+    emailC.text = logDataRead.hasValue ? logDataRead.value!.emailId : "";
 
     return Container(
       constraints: const BoxConstraints(maxWidth: 300),
@@ -97,7 +55,7 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15),
@@ -109,7 +67,11 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
               ),
             ),
             TextFormField(
-              controller: usernameC,
+              // controller: usernameC,
+              initialValue: logDataRead.hasValue ? logDataRead.value!.username : "",
+              onChanged: (value) {
+                usernameC.text = value;
+              },
               validator: (value) {
                 // add email validation
                 if (value == null || value.isEmpty) {
@@ -131,7 +93,7 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
                 border: OutlineInputBorder(),
               ),
             ),
-            _gap(),
+            const Gap(16),
             TextFormField(
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -142,7 +104,10 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
                 }
                 return null;
               },
-              controller: emailC,
+              initialValue: logDataRead.hasValue ? logDataRead.value!.emailId : "",
+              onChanged: (value) {
+                emailC.text = value;
+              },
               decoration: const InputDecoration(
                 labelText: 'Email Id',
                 hintText: 'Enter your email Id',
@@ -150,48 +115,7 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
                 border: OutlineInputBorder(),
               ),
             ),
-            _gap(),
-            TextFormField(
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-
-                if (value.length < 6) {
-                  return 'Password must be at least 6 characters';
-                }
-                return null;
-              },
-              controller: pwC,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                hintText: 'Enter new password',
-                prefixIcon: Icon(Icons.lock_outline_rounded),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            _gap(),
-            SizedBox(
-              width: double.infinity,
-              child: Row(
-                children: [
-                  Checkbox(
-                    checkColor: Colors.white,
-                    value: hasAggreedTNC,
-                    fillColor: MaterialStateProperty.all(const Color(0xFF3A568E)),
-                    onChanged: (bool? value) {
-                      setState(() {
-                        hasAggreedTNC = value!;
-                      });
-                    },
-                  ),
-                  const Text("Check to accept our "),
-                  const LinkButton(urlLabel: "Privacy Policy", url: "https://zotit.app/privacy-policy.html"),
-                ],
-              ),
-            ),
-            _gap(),
+            const Gap(16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -204,21 +128,22 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
                 child: const Padding(
                   padding: EdgeInsets.all(10.0),
                   child: Text(
-                    'Register',
+                    'Update Profile',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
-                    if (!hasAggreedTNC) {
-                      return showDialog<void>(
+                    await loginData.updateProfile(usernameC.text, emailC.text);
+                    if (context.mounted) {
+                      showDialog<void>(
                         context: context,
                         builder: (c) {
                           return ProviderScope(
                             parent: ProviderScope.containerOf(context),
                             child: AlertDialog(
-                              title: const Text('Error'),
-                              content: const Text("Please acccet the Privacy Policy"),
+                              title: const Text('Success'),
+                              content: const Text("Updated Profile"),
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () => {
@@ -232,30 +157,28 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
                         },
                       );
                     }
-                    await loginData.register(usernameC.text, pwC.text, emailC.text);
                   }
                 },
               ),
             ),
-            _gap(),
+            const Gap(50),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: TextButton(
                 style: ButtonStyle(
-                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
-                  backgroundColor: MaterialStateProperty.all(
-                    const Color(0xFF3A568E),
+                  foregroundColor: MaterialStateProperty.all(
+                    Color.fromARGB(255, 173, 174, 175),
                   ),
                 ),
                 child: const Padding(
                   padding: EdgeInsets.all(10.0),
                   child: Text(
-                    'Sign In',
+                    'Delete Profile',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 onPressed: () {
-                  loginData.setPage('');
+                  Navigator.of(context).pushNamed(AppRoutes.deleteAccount);
                 },
               ),
             ),
@@ -264,6 +187,4 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
       ),
     );
   }
-
-  Widget _gap() => const SizedBox(height: 16);
 }

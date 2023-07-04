@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zotit/src/app_router.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
 
 class SideDrawer extends ConsumerWidget {
@@ -29,6 +30,13 @@ class SideDrawer extends ConsumerWidget {
             title: const Text('Home'),
             onTap: () {
               Navigator.of(context).pop();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Update Profile'),
+            onTap: () {
+              Navigator.of(context).pushNamed(AppRoutes.updateProfile);
             },
           ),
           ListTile(
