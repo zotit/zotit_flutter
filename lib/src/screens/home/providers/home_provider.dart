@@ -63,7 +63,7 @@ class NoteList extends _$NoteList {
       scheme: config.scheme,
       host: config.host,
       port: config.port,
-      path: "notes",
+      path: "/api/notes",
       queryParameters: {'page': newPage.toString()},
     );
     // final uri = Uri.https('zotit.twobits.in', '/notes', {'page': newPage.toString()});
@@ -73,17 +73,20 @@ class NoteList extends _$NoteList {
       loginData.logout();
       return [];
     }
-    final notes = jsonDecode(res.body) as List<dynamic>;
-
-    var noteList = notes
-        .map((item) => Note(
-              id: item['id'],
-              text: item['text'],
-              is_obscure: item['is_obscure'],
-            ))
-        .toList();
-    var stateValue = state.value != null ? state.value?.notes : [];
-    state = AsyncValue.data(NoteListRepo(notes: [...?stateValue, ...noteList], page: newPage));
+    try {
+      final notes = jsonDecode(res.body) as List<dynamic>;
+      var noteList = notes
+          .map((item) => Note(
+                id: item['id'],
+                text: item['text'],
+                is_obscure: item['is_obscure'],
+              ))
+          .toList();
+      var stateValue = state.value != null ? state.value?.notes : [];
+      state = AsyncValue.data(NoteListRepo(notes: [...?stateValue, ...noteList], page: newPage));
+    } catch (e) {
+      state = AsyncError("error ${res.body}", StackTrace.current);
+    }
   }
 
   updateLocalNote(String text, bool isObscure, index) {

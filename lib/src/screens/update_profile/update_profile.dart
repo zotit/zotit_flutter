@@ -45,7 +45,7 @@ class _UpdateProfileFormContent extends ConsumerState<UpdateProfileFormContent> 
   @override
   Widget build(BuildContext context) {
     final loginData = ref.watch(loginTokenProvider.notifier);
-    final logDataRead = ref.watch(loginTokenProvider);
+    final logDataRead = ref.read(loginTokenProvider);
     usernameC.text = logDataRead.hasValue ? logDataRead.value!.username : "";
     emailC.text = logDataRead.hasValue ? logDataRead.value!.emailId : "";
 

@@ -66,8 +66,11 @@ class StartupPage extends ConsumerWidget {
           return const Login();
         }
       },
-      loading: () => const Center(
-        child: CircularProgressIndicator(),
+      loading: () => Container(
+        color: Colors.white,
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
       ),
       error: (error, st) => ErrorPage(message: error.toString() + st.toString()),
     );
