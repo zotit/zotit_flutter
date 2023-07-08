@@ -230,15 +230,20 @@ class _Home extends ConsumerState<Home> {
   final ScrollController _scrollController = ScrollController();
 
   @override
-  Widget build(BuildContext context) {
-    final loginData = ref.watch(loginTokenProvider.notifier);
-    final notesData = ref.watch(noteListProvider);
-
+  void initState() {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         ref.read(noteListProvider.notifier).getNotesByPage();
       }
     });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final loginData = ref.watch(loginTokenProvider.notifier);
+    final notesData = ref.watch(noteListProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       drawer: const SideDrawer(),
