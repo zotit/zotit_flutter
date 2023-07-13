@@ -84,7 +84,7 @@ class _Home extends ConsumerState<Home> {
   }
 
   _shareNote(String note) async {
-    Share.share("$note \nShared from https://zotit.app", subject: "note shared from Zotit | Zot anywhere");
+    Share.share("$note \nShared from https://web.zotit.app", subject: "note shared from Zotit | Note anywhere");
   }
 
   _updateNote(context, id, String isObScure) async {
@@ -217,7 +217,7 @@ class _Home extends ConsumerState<Home> {
                     );
                   }
                 },
-                child: const Text('OK'),
+                child: const Text('Delete'),
               ),
             ],
           ),
