@@ -1,13 +1,14 @@
 name: zotit
 description: Zot It Anywhere.
 publish_to: 'none'
-version: 1.0.6+7
+version: 1.0.7+8
 environment:
   sdk: '>=3.0.0 <4.0.0'
 dependencies:
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
+  flutter_linkify: ^6.0.0
   flutter_riverpod: ^2.3.6
   freezed_annotation: ^2.2.0
   gap: ^3.0.0

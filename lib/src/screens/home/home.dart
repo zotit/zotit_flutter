@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'dart:ui';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zotit/config.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
 import 'package:zotit/src/screens/common/components/show_hide_eye.dart';
@@ -21,7 +25,8 @@ class Home extends ConsumerStatefulWidget {
 }
 
 class _Home extends ConsumerState<Home> {
-  _submit(context, text) async {
+  bool isVisible = true;
+  _submit(context, text, isVisible) async {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     final token = prefs.getString('token');
@@ -32,9 +37,7 @@ class _Home extends ConsumerState<Home> {
       final res = await http.post(
         uri,
         headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
-        body: jsonEncode({
-          "text": text,
-        }),
+        body: jsonEncode({"text": text, "is_obscure": isVisible}),
       );
       if (res.statusCode == 200) {
       } else {
@@ -267,40 +270,63 @@ class _Home extends ConsumerState<Home> {
         child: Container(
           constraints: const BoxConstraints(maxWidth: 600),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 10.0,
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: textC,
-                      decoration: const InputDecoration(
-                          hintStyle: TextStyle(
-                            fontFamily: 'Satisfy',
-                          ),
-                          border: OutlineInputBorder(),
-                          labelText: 'Zot it',
-                          hintText: 'What needs to be zoted...'),
-                      minLines: 5,
-                      maxLines: 20,
+            Card(
+              elevation: 2.0,
+              shadowColor: Colors.grey,
+              margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 10.0,
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        ShowHideEye(
+                            isVisible: !isVisible,
+                            onChange: (isTrue) async {
+                              setState(() {
+                                isVisible = !isVisible;
+                              });
+                            })
+                      ],
                     ),
-                  ),
-                  const Gap(10),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await _submit(context, textC.text);
-                      textC.text = '';
-                      final _ = ref.refresh(noteListProvider.future);
-                    },
-                    style: ButtonStyle(
-                        padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
-                        backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
-                    child: const Icon(Icons.done),
-                  ),
-                ],
+                    const Divider(),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: textC,
+                            decoration: const InputDecoration(
+                                hintStyle: TextStyle(
+                                  fontFamily: 'Satisfy',
+                                ),
+                                border: OutlineInputBorder(),
+                                labelText: 'Zot it',
+                                hintText: 'What needs to be zoted...'),
+                            minLines: 5,
+                            maxLines: 20,
+                          ),
+                        ),
+                        const Gap(10),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (textC.text != '') {
+                              await _submit(context, textC.text, !isVisible);
+                              textC.text = '';
+                              final _ = ref.refresh(noteListProvider);
+                            }
+                          },
+                          style: ButtonStyle(
+                              padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
+                              backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                          child: const Icon(Icons.done),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             Expanded(
@@ -311,7 +337,7 @@ class _Home extends ConsumerState<Home> {
                     if (notes.notes.isNotEmpty)
                       for (int i = 0; i < notes.notes.length; i++)
                         Card(
-                          elevation: 8.0,
+                          elevation: 2.0,
                           margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
                           child: ListTile(
                             contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -408,12 +434,30 @@ class _Home extends ConsumerState<Home> {
                                 const Divider(),
                               ],
                             ),
-                            subtitle: Text(
-                              notes.notes[i].is_obscure ? "•••••••••••••••••••" : notes.notes[i].text,
-                              style: const TextStyle(
-                                color: Color(0xFF3A568E),
-                              ),
-                            ),
+                            subtitle: notes.notes[i].is_obscure
+                                ? ImageFiltered(
+                                    imageFilter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                    child: Linkify(
+                                      text: notes.notes[i].text,
+                                      options: const LinkifyOptions(humanize: false),
+                                      linkStyle: const TextStyle(fontSize: 16),
+                                      onOpen: (LinkableElement link) async {
+                                        if (!await launchUrl(Uri.parse(link.url))) {
+                                          throw Exception('Could not launch ${link.url}');
+                                        }
+                                      },
+                                    ),
+                                  )
+                                : Linkify(
+                                    text: notes.notes[i].text,
+                                    options: const LinkifyOptions(humanize: false),
+                                    linkStyle: const TextStyle(fontSize: 16),
+                                    onOpen: (LinkableElement link) async {
+                                      if (!await launchUrl(Uri.parse(link.url))) {
+                                        throw Exception('Could not launch ${link.url}');
+                                      }
+                                    },
+                                  ),
                           ),
                         )
                     else
