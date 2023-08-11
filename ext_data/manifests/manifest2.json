@@ -1,0 +1,22 @@
+{
+  "name": "ZotIt",
+  "version": "0.2.5",
+  "description": "Synched clipboard across browsers",
+  "browser_action": {
+    "default_icon": {
+      "16": "icons/zotit_16x16.png",
+      "24": "icons/zotit_24x24.png",
+      "32": "icons/zotit_32x32.png",
+      "48": "icons/zotit_48x48.png",
+      "128": "icons/zotit_128x128.png"
+    },
+    "default_title": "ZotIt",
+    "default_popup": "index.html"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "zotit@twobits.in"
+    }
+  },
+  "manifest_version": 2
+}

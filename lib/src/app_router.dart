@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zotit/src/screens/delete_account/delete_account.dart';
 import 'package:zotit/src/screens/home/home.dart';
+import 'package:zotit/src/screens/home/note_search.dart';
 import 'package:zotit/src/screens/login/login.dart';
 import 'package:zotit/src/screens/register/register.dart';
 import 'package:zotit/src/screens/update_profile/update_profile.dart';
@@ -10,6 +11,7 @@ import '../main.dart';
 class AppRoutes {
   static const startupPage = '/startup-page';
   static const homePage = '/home';
+  static const searchPage = '/search';
   static const updateProfile = '/update-profile';
   static const deleteAccount = '/delete-account';
   static const loginPage = '/login';
@@ -27,6 +29,11 @@ class AppRouter {
       case AppRoutes.homePage:
         return MaterialPageRoute<dynamic>(
           builder: (_) => Home(),
+          settings: settings,
+        );
+      case AppRoutes.searchPage:
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => const NoteSearch(),
           settings: settings,
         );
       case AppRoutes.loginPage:

@@ -10,7 +10,6 @@ import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zotit/config.dart';
-import 'package:zotit/src/app_router.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
 import 'package:zotit/src/screens/common/components/show_hide_eye.dart';
 import 'package:zotit/src/screens/home/note_details.dart';
@@ -19,13 +18,13 @@ import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 import 'package:zotit/src/screens/home/side_drawer.dart';
 
-class Home extends ConsumerStatefulWidget {
-  Home({super.key});
+class NoteSearch extends ConsumerStatefulWidget {
+  const NoteSearch({super.key});
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _Home();
+  ConsumerState<ConsumerStatefulWidget> createState() => _NoteSearch();
 }
 
-class _Home extends ConsumerState<Home> {
+class _NoteSearch extends ConsumerState<NoteSearch> {
   bool isVisible = true;
   _submit(context, text, isVisible) async {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
@@ -271,10 +270,6 @@ class _Home extends ConsumerState<Home> {
           Text("  |  @${loginData.getData().username}"),
         ]),
         actions: [
-          // IconButton(
-          //   onPressed: () => Navigator.pushNamed(context, AppRoutes.searchPage),
-          //   icon: const Icon(Icons.search),
-          // ),
           IconButton(
             onPressed: () => ref.refresh(noteListProvider.future),
             icon: const Icon(Icons.refresh),
@@ -294,51 +289,30 @@ class _Home extends ConsumerState<Home> {
                   vertical: 10,
                   horizontal: 10.0,
                 ),
-                child: Column(
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        ShowHideEye(
-                            isVisible: !isVisible,
-                            onChange: (isTrue) async {
-                              setState(() {
-                                isVisible = !isVisible;
-                              });
-                            })
-                      ],
+                    Expanded(
+                      child: TextFormField(
+                        controller: textC,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Search Here...',
+                        ),
+                      ),
                     ),
-                    const Divider(),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: textC,
-                            decoration: const InputDecoration(
-                                hintStyle: TextStyle(
-                                  fontFamily: 'Satisfy',
-                                ),
-                                border: OutlineInputBorder(),
-                                labelText: 'Zot it',
-                                hintText: 'What needs to be zoted...'),
-                            minLines: 5,
-                            maxLines: 20,
-                          ),
-                        ),
-                        const Gap(10),
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (textC.text != '') {
-                              await _submit(context, textC.text, !isVisible);
-                              textC.text = '';
-                              final _ = ref.refresh(noteListProvider);
-                            }
-                          },
-                          style: ButtonStyle(
-                              padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
-                              backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
-                          child: const Icon(Icons.done),
-                        ),
-                      ],
+                    const Gap(10),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (textC.text != '') {
+                          await _submit(context, textC.text, !isVisible);
+                          textC.text = '';
+                          final _ = ref.refresh(noteListProvider);
+                        }
+                      },
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
+                          backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                      child: const Icon(Icons.search),
                     ),
                   ],
                 ),
