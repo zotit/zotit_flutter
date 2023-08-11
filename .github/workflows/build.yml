@@ -113,7 +113,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       with:
         name: zotit-${{ matrix.os }}
-        path: build/build/chrome_ext/chrome-dist.zip
+        path: build/chrome_ext/chrome-dist.zip
         retention-days: 1 
   
   release:
