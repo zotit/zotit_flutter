@@ -4,6 +4,7 @@ import 'package:zotit/src/screens/home/home.dart';
 import 'package:zotit/src/screens/home/note_search.dart';
 import 'package:zotit/src/screens/login/login.dart';
 import 'package:zotit/src/screens/register/register.dart';
+import 'package:zotit/src/screens/tags/note_tags.dart';
 import 'package:zotit/src/screens/update_profile/update_profile.dart';
 
 import '../main.dart';
@@ -13,6 +14,7 @@ class AppRoutes {
   static const homePage = '/home';
   static const searchPage = '/search';
   static const updateProfile = '/update-profile';
+  static const tagList = '/tag-list';
   static const deleteAccount = '/delete-account';
   static const loginPage = '/login';
   static const registerPage = '/register';
@@ -29,6 +31,11 @@ class AppRouter {
       case AppRoutes.homePage:
         return MaterialPageRoute<dynamic>(
           builder: (_) => Home(),
+          settings: settings,
+        );
+      case AppRoutes.tagList:
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => NoteTags(),
           settings: settings,
         );
       case AppRoutes.searchPage:

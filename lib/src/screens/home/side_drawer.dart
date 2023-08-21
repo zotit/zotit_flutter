@@ -26,17 +26,24 @@ class SideDrawer extends ConsumerWidget {
             margin: EdgeInsets.all(0),
           ),
           ListTile(
-            leading: const Icon(Icons.home),
+            leading: const Icon(Icons.home_outlined),
             title: const Text('Home'),
             onTap: () {
               Navigator.of(context).pop();
             },
           ),
           ListTile(
-            leading: const Icon(Icons.person),
+            leading: const Icon(Icons.person_outline),
             title: const Text('Update Profile'),
             onTap: () {
               Navigator.of(context).pushNamed(AppRoutes.updateProfile);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.local_offer_outlined),
+            title: const Text('Tags'),
+            onTap: () {
+              Navigator.of(context).pushNamed(AppRoutes.tagList);
             },
           ),
           ListTile(

@@ -508,6 +508,10 @@ class _Home extends ConsumerState<Home> {
                               child: ListTile(
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                                 dense: true,
+                                leading: Text(
+                                  "test",
+                                  style: TextStyle(color: Color(noteEntry.value.tag!.color)),
+                                ),
                                 title: Column(
                                   key: globalKey,
                                   crossAxisAlignment: CrossAxisAlignment.start,

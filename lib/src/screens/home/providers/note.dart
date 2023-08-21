@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:zotit/src/screens/tags/providers/note_tag.dart';
 
 part 'note.freezed.dart';
 // optional: Since our Person class is serializable, we must add this line.
@@ -12,6 +13,7 @@ class Note with _$Note {
     required String id,
     required String text,
     required bool is_obscure,
+    required NoteTag? tag,
   }) = _Note;
 
   factory Note.fromJson(Map<String, dynamic> json) => _$NoteFromJson(json);

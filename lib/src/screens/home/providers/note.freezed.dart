@@ -23,6 +23,7 @@ mixin _$Note {
   String get id => throw _privateConstructorUsedError;
   String get text => throw _privateConstructorUsedError;
   bool get is_obscure => throw _privateConstructorUsedError;
+  NoteTag? get tag => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +35,9 @@ abstract class $NoteCopyWith<$Res> {
   factory $NoteCopyWith(Note value, $Res Function(Note) then) =
       _$NoteCopyWithImpl<$Res, Note>;
   @useResult
-  $Res call({String id, String text, bool is_obscure});
+  $Res call({String id, String text, bool is_obscure, NoteTag? tag});
+
+  $NoteTagCopyWith<$Res>? get tag;
 }
 
 /// @nodoc
@@ -53,6 +56,7 @@ class _$NoteCopyWithImpl<$Res, $Val extends Note>
     Object? id = null,
     Object? text = null,
     Object? is_obscure = null,
+    Object? tag = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -67,7 +71,23 @@ class _$NoteCopyWithImpl<$Res, $Val extends Note>
           ? _value.is_obscure
           : is_obscure // ignore: cast_nullable_to_non_nullable
               as bool,
+      tag: freezed == tag
+          ? _value.tag
+          : tag // ignore: cast_nullable_to_non_nullable
+              as NoteTag?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $NoteTagCopyWith<$Res>? get tag {
+    if (_value.tag == null) {
+      return null;
+    }
+
+    return $NoteTagCopyWith<$Res>(_value.tag!, (value) {
+      return _then(_value.copyWith(tag: value) as $Val);
+    });
   }
 }
 
@@ -77,7 +97,10 @@ abstract class _$$_NoteCopyWith<$Res> implements $NoteCopyWith<$Res> {
       __$$_NoteCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String text, bool is_obscure});
+  $Res call({String id, String text, bool is_obscure, NoteTag? tag});
+
+  @override
+  $NoteTagCopyWith<$Res>? get tag;
 }
 
 /// @nodoc
@@ -92,6 +115,7 @@ class __$$_NoteCopyWithImpl<$Res> extends _$NoteCopyWithImpl<$Res, _$_Note>
     Object? id = null,
     Object? text = null,
     Object? is_obscure = null,
+    Object? tag = freezed,
   }) {
     return _then(_$_Note(
       id: null == id
@@ -106,6 +130,10 @@ class __$$_NoteCopyWithImpl<$Res> extends _$NoteCopyWithImpl<$Res, _$_Note>
           ? _value.is_obscure
           : is_obscure // ignore: cast_nullable_to_non_nullable
               as bool,
+      tag: freezed == tag
+          ? _value.tag
+          : tag // ignore: cast_nullable_to_non_nullable
+              as NoteTag?,
     ));
   }
 }
@@ -113,7 +141,11 @@ class __$$_NoteCopyWithImpl<$Res> extends _$NoteCopyWithImpl<$Res, _$_Note>
 /// @nodoc
 @JsonSerializable()
 class _$_Note with DiagnosticableTreeMixin implements _Note {
-  _$_Note({required this.id, required this.text, required this.is_obscure});
+  _$_Note(
+      {required this.id,
+      required this.text,
+      required this.is_obscure,
+      required this.tag});
 
   factory _$_Note.fromJson(Map<String, dynamic> json) => _$$_NoteFromJson(json);
 
@@ -123,10 +155,12 @@ class _$_Note with DiagnosticableTreeMixin implements _Note {
   final String text;
   @override
   final bool is_obscure;
+  @override
+  final NoteTag? tag;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Note(id: $id, text: $text, is_obscure: $is_obscure)';
+    return 'Note(id: $id, text: $text, is_obscure: $is_obscure, tag: $tag)';
   }
 
   @override
@@ -136,7 +170,8 @@ class _$_Note with DiagnosticableTreeMixin implements _Note {
       ..add(DiagnosticsProperty('type', 'Note'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('text', text))
-      ..add(DiagnosticsProperty('is_obscure', is_obscure));
+      ..add(DiagnosticsProperty('is_obscure', is_obscure))
+      ..add(DiagnosticsProperty('tag', tag));
   }
 
   @override
@@ -147,12 +182,13 @@ class _$_Note with DiagnosticableTreeMixin implements _Note {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.text, text) || other.text == text) &&
             (identical(other.is_obscure, is_obscure) ||
-                other.is_obscure == is_obscure));
+                other.is_obscure == is_obscure) &&
+            (identical(other.tag, tag) || other.tag == tag));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, text, is_obscure);
+  int get hashCode => Object.hash(runtimeType, id, text, is_obscure, tag);
 
   @JsonKey(ignore: true)
   @override
@@ -172,7 +208,8 @@ abstract class _Note implements Note {
   factory _Note(
       {required final String id,
       required final String text,
-      required final bool is_obscure}) = _$_Note;
+      required final bool is_obscure,
+      required final NoteTag? tag}) = _$_Note;
 
   factory _Note.fromJson(Map<String, dynamic> json) = _$_Note.fromJson;
 
@@ -182,6 +219,8 @@ abstract class _Note implements Note {
   String get text;
   @override
   bool get is_obscure;
+  @override
+  NoteTag? get tag;
   @override
   @JsonKey(ignore: true)
   _$$_NoteCopyWith<_$_Note> get copyWith => throw _privateConstructorUsedError;
