@@ -91,7 +91,7 @@ class _Home extends ConsumerState<Home> {
     final box = context?.findRenderObject() as RenderBox?;
     await Scrollable.ensureVisible(
       context!,
-      duration: Duration(seconds: 1), // duration for scrolling time
+      duration: const Duration(seconds: 1), // duration for scrolling time
       alignment: .5, // 0 mean, scroll to the top, 0.5 mean, half
       curve: Curves.easeInOutCubic,
     );
@@ -157,6 +157,156 @@ class _Home extends ConsumerState<Home> {
         },
       );
     }
+  }
+
+  _shareNoteWithUser(context, userName, noteId) async {
+    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
+    final prefs = await fPrefs;
+    final token = prefs.getString('token');
+    final config = Config();
+    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/share-note");
+    if (userName == "") {
+      return showDialog<void>(
+        context: context,
+        builder: (c) {
+          return ProviderScope(
+            parent: ProviderScope.containerOf(context),
+            child: AlertDialog(
+              title: const Text('Error'),
+              content: Text("Please enter username of the receiver"),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => {
+                    Navigator.pop(context, 'OK'),
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+    try {
+      final res = await http.post(
+        uri,
+        headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+        body: jsonEncode({"user_name": userName, "note_id": noteId}),
+      );
+      if (res.statusCode == 200) {
+        showDialog<void>(
+          context: context,
+          builder: (c) {
+            return ProviderScope(
+              parent: ProviderScope.containerOf(context),
+              child: AlertDialog(
+                title: const Text('Success'),
+                content: Text(res.body),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => {
+                      rcvrUsernameC.text = "",
+                      Navigator.pop(context, 'OK'),
+                      Navigator.pop(context, 'OK'),
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+        return;
+      } else {
+        showDialog<void>(
+          context: context,
+          builder: (c) {
+            return ProviderScope(
+              parent: ProviderScope.containerOf(context),
+              child: AlertDialog(
+                title: const Text('Error'),
+                content: Text(res.body),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => {
+                      Navigator.pop(context, 'OK'),
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      }
+    } catch (e) {
+      showDialog<void>(
+        context: context,
+        builder: (c) {
+          return ProviderScope(
+            parent: ProviderScope.containerOf(context),
+            child: AlertDialog(
+              title: const Text('Error'),
+              content: Text(e.toString()),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => {
+                    Navigator.pop(context, 'OK'),
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  _shareNoteWithUserBS(context, globalKey, noteEntry) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 30),
+      child: Wrap(
+        children: [
+          ListTile(
+              trailing: ElevatedButton(
+                onPressed: () async {
+                  _shareNoteWithUser(context, rcvrUsernameC.text, noteEntry.value.id);
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E)),
+                  padding: MaterialStateProperty.all(const EdgeInsets.all(20)),
+                ),
+                child: const Icon(Icons.share),
+              ),
+              title: Padding(
+                padding: const EdgeInsets.all(2),
+                child: TextFormField(
+                  controller: rcvrUsernameC,
+                  decoration: const InputDecoration(
+                    hintStyle: TextStyle(
+                      fontFamily: 'Satisfy',
+                    ),
+                    border: OutlineInputBorder(),
+                    labelText: 'Enter zotit username of receiver',
+                  ),
+                ),
+              )),
+          ListTile(
+            title: ElevatedButton(
+              onPressed: () async {
+                _shareNote(globalKey.currentContext, noteEntry.value.text.toString());
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E)),
+                padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
+              ),
+              child: const Text("Search via other apps"),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   _deleteNote(context, ref, id) async {
@@ -242,6 +392,7 @@ class _Home extends ConsumerState<Home> {
   }
 
   TextEditingController textC = TextEditingController(text: "");
+  TextEditingController rcvrUsernameC = TextEditingController(text: "");
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -409,7 +560,13 @@ class _Home extends ConsumerState<Home> {
                                           onSelected: (val) async {
                                             switch (val) {
                                               case "share":
-                                                _shareNote(globalKey.currentContext, noteEntry.value.text.toString());
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return _shareNoteWithUserBS(context, globalKey, noteEntry);
+                                                  },
+                                                );
+                                                // _shareNote(globalKey.currentContext, noteEntry.value.text.toString());
                                                 break;
                                               case "delete":
                                                 await _deleteNote(context, ref, noteEntry.value.id);
