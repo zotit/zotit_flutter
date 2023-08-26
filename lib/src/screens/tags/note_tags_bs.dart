@@ -172,61 +172,59 @@ class _NoteTagsBS extends ConsumerState<NoteTagsBS> {
     final noteTagsData = ref.watch(noteTagListProvider);
     return Padding(
       padding: const EdgeInsets.all(10),
-      child: Expanded(
-        child: noteTagsData.when(
-          data: (noteTags) => Wrap(
-              children: noteTags.noteTags.isNotEmpty
-                  ? noteTags.noteTags.asMap().entries.map((noteEntry) {
-                      return Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: ChoiceChip(
-                          avatar: noteEntry.value.id == selectedId
-                              ? Icon(
-                                  Icons.done,
-                                  color: useWhiteForeground(Color(noteEntry.value.color)) ? Colors.white : Colors.black,
-                                )
-                              : null,
-                          label: Text(
-                            noteEntry.value.name,
-                            style: TextStyle(
-                              color: useWhiteForeground(Color(noteEntry.value.color)) ? Colors.white : Colors.black,
-                            ),
+      child: noteTagsData.when(
+        data: (noteTags) => Wrap(
+            children: noteTags.noteTags.isNotEmpty
+                ? noteTags.noteTags.asMap().entries.map((noteEntry) {
+                    return Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: ChoiceChip(
+                        avatar: noteEntry.value.id == selectedId
+                            ? Icon(
+                                Icons.done,
+                                color: useWhiteForeground(Color(noteEntry.value.color)) ? Colors.white : Colors.black,
+                              )
+                            : null,
+                        label: Text(
+                          noteEntry.value.name,
+                          style: TextStyle(
+                            color: useWhiteForeground(Color(noteEntry.value.color)) ? Colors.white : Colors.black,
                           ),
-                          backgroundColor: Color(noteEntry.value.color),
-                          selectedColor: Color(noteEntry.value.color),
-                          selected: noteEntry.value.id == selectedId,
-                          onSelected: (bool selected) {
-                            setState(() {
-                              selectedId = selected ? noteEntry.value.id : "";
-                            });
-                            if (selected) {
-                              assignTag(context);
-                            } else {
-                              removeTag(context);
-                            }
-                          },
                         ),
-                      );
-                    }).toList()
-                  : [
-                      const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(50),
-                          child: Text(
-                            "No Tags Found",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
+                        backgroundColor: Color(noteEntry.value.color),
+                        selectedColor: Color(noteEntry.value.color),
+                        selected: noteEntry.value.id == selectedId,
+                        onSelected: (bool selected) {
+                          setState(() {
+                            selectedId = selected ? noteEntry.value.id : "";
+                          });
+                          if (selected) {
+                            assignTag(context);
+                          } else {
+                            removeTag(context);
+                          }
+                        },
+                      ),
+                    );
+                  }).toList()
+                : [
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(50),
+                        child: Text(
+                          "No Tags Found",
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                       ),
-                    ]),
-          loading: () => Container(
-            height: 50,
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
+                    ),
+                  ]),
+        loading: () => const SizedBox(
+          height: 50,
+          child: Center(
+            child: CircularProgressIndicator(),
           ),
-          error: (err, stack) => Text('Error: $err'),
         ),
+        error: (err, stack) => Text('Error: $err'),
       ),
     );
   }
