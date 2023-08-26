@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
@@ -17,7 +18,13 @@ import 'package:zotit/src/screens/home/note_details.dart';
 import 'package:zotit/src/screens/home/providers/home_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
+import 'package:zotit/src/screens/home/providers/note.dart';
 import 'package:zotit/src/screens/home/side_drawer.dart';
+import 'package:zotit/src/screens/tags/providers/note_tag.dart';
+import 'package:zotit/src/screens/tags/providers/note_tags_provider.dart';
+
+import '../tags/note_tags.dart';
+import '../tags/note_tags_bs.dart';
 
 class Home extends ConsumerStatefulWidget {
   Home({super.key});
@@ -309,6 +316,14 @@ class _Home extends ConsumerState<Home> {
     );
   }
 
+  _updateTagBS(context, globalKey, Note noteEntry) {
+    final noteTags = ref.watch(noteTagListProvider);
+    return NoteTagsBS(
+      noteTag: noteEntry.tag ?? NoteTag(id: "", name: "", color: 0xff9e9e9e),
+      noteId: noteEntry.id,
+    );
+  }
+
   _deleteNote(context, ref, id) async {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
@@ -508,10 +523,6 @@ class _Home extends ConsumerState<Home> {
                               child: ListTile(
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                                 dense: true,
-                                leading: Text(
-                                  "test",
-                                  style: TextStyle(color: Color(noteEntry.value.tag!.color)),
-                                ),
                                 title: Column(
                                   key: globalKey,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -521,6 +532,30 @@ class _Home extends ConsumerState<Home> {
                                       children: [
                                         Row(
                                           children: [
+                                            ActionChip(
+                                              backgroundColor: Color.fromARGB(31, 112, 112, 112),
+                                              avatar: CircleAvatar(
+                                                backgroundColor: Color(noteEntry.value.tag!.color),
+                                                child: Icon(
+                                                  Icons.done,
+                                                  size: 14,
+                                                  color: useWhiteForeground(Color(noteEntry.value.tag!.color))
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                ),
+                                              ),
+                                              label: Text(
+                                                noteEntry.value.tag!.name,
+                                              ),
+                                              onPressed: () {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return _updateTagBS(context, globalKey, noteEntry.value);
+                                                  },
+                                                );
+                                              },
+                                            ),
                                             TextButton.icon(
                                               onPressed: () {
                                                 Clipboard.setData(ClipboardData(text: noteEntry.value.text));

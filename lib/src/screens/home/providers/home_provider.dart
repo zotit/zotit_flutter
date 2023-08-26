@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zotit/config.dart';
@@ -38,7 +39,9 @@ class NoteList extends _$NoteList {
             id: item['id'],
             text: utf8.decode(runes),
             is_obscure: item['is_obscure'],
-            tag: NoteTag(id: item['tag']['id'], name: item['tag']['name'], color: item['tag']['color']),
+            tag: item['tag'] != null
+                ? NoteTag(id: item['tag']['id'], name: item['tag']['name'], color: item['tag']['color'])
+                : NoteTag(id: "", name: "default", color: Color(0xff9e9e9e).value),
           );
         }).toList(),
         page: 1);

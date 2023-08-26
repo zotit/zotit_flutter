@@ -1,23 +1,15 @@
 import 'dart:convert';
-import 'dart:ui';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:zotit/config.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
-import 'package:zotit/src/screens/common/components/show_hide_eye.dart';
-import 'package:zotit/src/screens/home/note_details.dart';
 import 'package:http/http.dart' as http;
-import 'package:share_plus/share_plus.dart';
-import 'package:zotit/src/screens/home/side_drawer.dart';
 import 'package:zotit/src/screens/tags/note_tag_details.dart';
+import 'package:zotit/src/screens/tags/providers/note_tag.dart';
 import 'package:zotit/src/screens/tags/providers/note_tags_provider.dart';
 
 class NoteTags extends ConsumerStatefulWidget {
@@ -28,138 +20,6 @@ class NoteTags extends ConsumerStatefulWidget {
 
 class _NoteTags extends ConsumerState<NoteTags> {
   bool isVisible = true;
-  _submit(context, name, color) async {
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    final token = prefs.getString('token');
-    final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/tags");
-
-    try {
-      final res = await http.post(
-        uri,
-        headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
-        body: jsonEncode({"name": name, "color": color}),
-      );
-      if (res.statusCode == 200) {
-      } else {
-        showDialog<void>(
-          context: context,
-          builder: (c) {
-            return ProviderScope(
-              parent: ProviderScope.containerOf(context),
-              child: AlertDialog(
-                title: const Text('Error'),
-                content: Text(res.body),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => {
-                      Navigator.pop(context, 'OK'),
-                    },
-                    child: const Text('OK'),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      }
-    } catch (e) {
-      showDialog<void>(
-        context: context,
-        builder: (c) {
-          return ProviderScope(
-            parent: ProviderScope.containerOf(context),
-            child: AlertDialog(
-              title: const Text('Error'),
-              content: Text(e.toString()),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => {
-                    Navigator.pop(context, 'OK'),
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    }
-  }
-
-  _shareNote(BuildContext? context, String note) async {
-    final box = context?.findRenderObject() as RenderBox?;
-    await Scrollable.ensureVisible(
-      context!,
-      duration: Duration(seconds: 1), // duration for scrolling time
-      alignment: .5, // 0 mean, scroll to the top, 0.5 mean, half
-      curve: Curves.easeInOutCubic,
-    );
-    await Share.share(
-      "$note \nShared from https://web.zotit.app",
-      subject: "note shared from Zotit | Note anywhere",
-      sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-    );
-  }
-
-  _updateNote(context, id, String name) async {
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    final token = prefs.getString('token');
-    final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/tags");
-
-    try {
-      final res = await http.put(uri,
-          headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
-          body: jsonEncode({"id": id, "name": name}));
-      if (res.statusCode != 200) {
-        showDialog<void>(
-          context: context,
-          builder: (c) {
-            return ProviderScope(
-              parent: ProviderScope.containerOf(context),
-              child: AlertDialog(
-                title: const Text('Error'),
-                content: Text(res.body),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => {
-                      Navigator.pop(context, 'OK'),
-                    },
-                    child: const Text('OK'),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      }
-    } catch (e) {
-      showDialog<void>(
-        context: context,
-        builder: (c) {
-          return ProviderScope(
-            parent: ProviderScope.containerOf(context),
-            child: AlertDialog(
-              title: const Text('Error'),
-              content: Text(e.toString()),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => {
-                    Navigator.pop(context, 'OK'),
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    }
-  }
-
   _deleteNote(context, ref, id) async {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
@@ -262,6 +122,18 @@ class _NoteTags extends ConsumerState<NoteTags> {
     final noteTagsData = ref.watch(noteTagListProvider);
     return Scaffold(
       backgroundColor: Colors.white,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute<dynamic>(
+            builder: (_) => NoteTagDetails(
+              noteTag: NoteTag(color: _selectedColor.value, id: "", name: ""),
+              noteIndex: -1,
+            ),
+          ));
+        },
+        backgroundColor: const Color(0xFF3A568E),
+        child: const Icon(Icons.add),
+      ),
       appBar: AppBar(
         backgroundColor: const Color(0xFF3A568E),
         title: Text("Tags"),
@@ -276,107 +148,6 @@ class _NoteTags extends ConsumerState<NoteTags> {
         child: Container(
           constraints: const BoxConstraints(maxWidth: 600),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Card(
-              elevation: 2.0,
-              shadowColor: Colors.grey,
-              margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-              child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 10.0,
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: textC,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Enter a name for tag',
-                              ),
-                            ),
-                          ),
-                          const Gap(10),
-                          ElevatedButton(
-                            onPressed: () async {
-                              if (textC.text != '') {
-                                await _submit(
-                                  context,
-                                  textC.text,
-                                  _selectedColor.value,
-                                );
-                                textC.text = '';
-                                final _ = ref.refresh(noteTagListProvider);
-                              }
-                            },
-                            style: ButtonStyle(
-                                padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
-                                backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
-                            child: const Icon(Icons.done),
-                          ),
-                        ],
-                      ),
-                      BlockPicker(
-                        pickerColor: _selectedColor,
-                        onColorChanged: (Color color) {
-                          setState(() {
-                            _selectedColor = color;
-                          });
-                        },
-                        useInShowDialog: true,
-                        layoutBuilder: ((context, colors, child) => Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Gap(20),
-                                Text(
-                                  "Pick a Color",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Gap(2),
-                                SizedBox(
-                                  height: 220,
-                                  child: GridView.count(
-                                    primary: true,
-                                    crossAxisCount: 7,
-                                    crossAxisSpacing: 6.0,
-                                    mainAxisSpacing: 6.0,
-                                    shrinkWrap: true,
-                                    children: colors.map((e) => child(e)).toList(),
-                                  ),
-                                )
-                              ],
-                            )),
-                        itemBuilder: (Color color, bool isCurrentColor, void Function() changeColor) {
-                          return Container(
-                            margin: const EdgeInsets.all(7),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: color,
-                              boxShadow: [
-                                BoxShadow(color: color.withOpacity(0.8), offset: const Offset(1, 2), blurRadius: 5)
-                              ],
-                            ),
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: changeColor,
-                                borderRadius: BorderRadius.circular(50),
-                                child: AnimatedOpacity(
-                                  duration: const Duration(milliseconds: 210),
-                                  opacity: isCurrentColor ? 1 : 0,
-                                  child:
-                                      Icon(Icons.done, color: useWhiteForeground(color) ? Colors.white : Colors.black),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                    ],
-                  )),
-            ),
             Expanded(
               child: noteTagsData.when(
                 data: (noteTags) => ListView(
@@ -439,6 +210,38 @@ class _NoteTags extends ConsumerState<NoteTags> {
                                     ];
                                   },
                                 ),
+                                leading: Container(
+                                  width: 56,
+                                  height: 56,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(noteEntry.value.color),
+                                  ),
+                                  child: Icon(
+                                    Icons.local_offer_outlined,
+                                    size: 16,
+                                    color:
+                                        useWhiteForeground(Color(noteEntry.value.color)) ? Colors.white : Colors.black,
+                                  ),
+                                ),
+
+                                // Chip(
+                                //   backgroundColor: Color.fromARGB(31, 112, 112, 112),
+                                //   avatar: CircleAvatar(
+                                //     backgroundColor: Color(noteEntry.value.color),
+                                //     child: Icon(
+                                //       Icons.done,
+                                //       size: 14,
+                                //       color: useWhiteForeground(Color(noteEntry.value.color))
+                                //           ? Colors.white
+                                //           : Colors.black,
+                                //     ),
+                                //   ),
+                                //   label: Text(
+                                //     noteEntry.value.name,
+                                //   ),
+                                //   onPressed: () {},
+                                // ),
                                 title: Text(noteEntry.value.name),
                               ),
                             );

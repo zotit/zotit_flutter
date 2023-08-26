@@ -1,7 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zotit/config.dart';
 import 'package:zotit/src/screens/home/providers/home_provider.dart';
@@ -21,7 +24,7 @@ class NoteTagDetails extends ConsumerWidget {
     required this.noteIndex,
   });
 
-  _submit(context, name, NoteTagList noteList) async {
+  _submit(context, name, int color, NoteTagList noteList) async {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     final token = prefs.getString('token');
@@ -29,14 +32,28 @@ class NoteTagDetails extends ConsumerWidget {
     final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/tags");
 
     try {
-      final res = await http.put(
-        uri,
-        headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
-        body: jsonEncode({
-          "name": name,
-          "id": noteTag.id,
-        }),
-      );
+      Response res;
+      if (noteIndex == -1) {
+        res = await http.post(
+          uri,
+          headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+          body: jsonEncode({
+            "name": name,
+            "color": color,
+          }),
+        );
+      } else {
+        res = await http.put(
+          uri,
+          headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+          body: jsonEncode({
+            "name": name,
+            "id": noteTag.id,
+            "color": color,
+          }),
+        );
+      }
+
       if (res.statusCode == 200) {
         Navigator.pop(context, 'OK');
       } else {
@@ -89,44 +106,110 @@ class NoteTagDetails extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     TextEditingController textC = TextEditingController(text: noteTag.name);
     final notesData = ref.read(noteTagListProvider.notifier);
+    Color selectedColor = Color(noteTag.color);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Update Tag"),
+        title: noteIndex == -1 ? const Text("Create Tag") : const Text("Update Tag"),
         backgroundColor: Color(0xFF3A568E),
       ),
-      body: Center(
+      body: Card(
+        elevation: 2.0,
+        shadowColor: Colors.grey,
+        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
         child: Container(
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: Column(children: [
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: TextFormField(
-                controller: textC,
-                decoration:
-                    const InputDecoration(border: OutlineInputBorder(), labelText: 'Text', hintText: 'Update Tag'),
-                minLines: 5,
-                maxLines: 20,
-              ),
+            padding: const EdgeInsets.symmetric(
+              vertical: 10,
+              horizontal: 10.0,
             ),
-            Container(
-              height: 40,
-              width: 250,
-              child: ElevatedButton(
-                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Color(0xFF3A568E))),
-                onPressed: () {
-                  _submit(context, textC.text, notesData);
-                  notesData.updateLocalNoteTag(textC.text, 1235413, noteIndex);
-                },
-                child: const Text(
-                  'Update Text',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: textC,
+                        maxLength: 10,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Enter a name for tag',
+                        ),
+                      ),
+                    ),
+                    const Gap(10),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (textC.text != '') {
+                          await _submit(context, textC.text, selectedColor.value, notesData);
+                          final _ = ref.refresh(noteTagListProvider.future);
+                          if (noteIndex != -1) {
+                            notesData.updateLocalNoteTag(textC.text, selectedColor.value, noteIndex);
+                          }
+
+                          textC.text = '';
+                        }
+                      },
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
+                          backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                      child: const Icon(Icons.done),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-          ]),
-        ),
+                BlockPicker(
+                  pickerColor: selectedColor,
+                  onColorChanged: (Color color) {
+                    selectedColor = color;
+                  },
+                  useInShowDialog: true,
+                  layoutBuilder: ((context, colors, child) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Gap(20),
+                          Text(
+                            "Pick a Color",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Gap(2),
+                          SizedBox(
+                            height: 220,
+                            child: GridView.count(
+                              primary: true,
+                              crossAxisCount: 7,
+                              crossAxisSpacing: 6.0,
+                              mainAxisSpacing: 6.0,
+                              shrinkWrap: true,
+                              children: colors.map((e) => child(e)).toList(),
+                            ),
+                          )
+                        ],
+                      )),
+                  itemBuilder: (Color color, bool isCurrentColor, void Function() changeColor) {
+                    return Container(
+                      margin: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: color,
+                        boxShadow: [
+                          BoxShadow(color: color.withOpacity(0.8), offset: const Offset(1, 2), blurRadius: 5)
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: changeColor,
+                          borderRadius: BorderRadius.circular(50),
+                          child: AnimatedOpacity(
+                            duration: const Duration(milliseconds: 210),
+                            opacity: isCurrentColor ? 1 : 0,
+                            child: Icon(Icons.done, color: useWhiteForeground(color) ? Colors.white : Colors.black),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                )
+              ],
+            )),
       ),
     );
   }
