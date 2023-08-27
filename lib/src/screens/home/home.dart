@@ -316,11 +316,11 @@ class _Home extends ConsumerState<Home> {
     );
   }
 
-  _updateTagBS(context, globalKey, Note noteEntry) {
-    final noteTags = ref.watch(noteTagListProvider);
+  _updateTagBS(context, globalKey, Note noteEntry, int noteIndex) {
     return NoteTagsBS(
       noteTag: noteEntry.tag ?? NoteTag(id: "", name: "", color: 0xff9e9e9e),
       noteId: noteEntry.id,
+      noteIndex: noteIndex,
     );
   }
 
@@ -551,7 +551,8 @@ class _Home extends ConsumerState<Home> {
                                                 showModalBottomSheet(
                                                   context: context,
                                                   builder: (context) {
-                                                    return _updateTagBS(context, globalKey, noteEntry.value);
+                                                    return _updateTagBS(
+                                                        context, globalKey, noteEntry.value, noteEntry.key);
                                                   },
                                                 );
                                               },
@@ -586,9 +587,12 @@ class _Home extends ConsumerState<Home> {
                                             ShowHideEye(
                                                 isVisible: !noteEntry.value.is_obscure,
                                                 onChange: (isTrue) async {
-                                                  ref
-                                                      .watch(noteListProvider.notifier)
-                                                      .updateLocalNote(noteEntry.value.text, !isTrue, noteEntry.key);
+                                                  ref.watch(noteListProvider.notifier).updateLocalNote(
+                                                        noteEntry.value.text,
+                                                        !isTrue,
+                                                        noteEntry.key,
+                                                        null,
+                                                      );
                                                   await _updateNote(
                                                       context, noteEntry.value.id, !isTrue ? "true" : "false");
                                                 })

@@ -370,9 +370,8 @@ class _NoteSearch extends ConsumerState<NoteSearch> {
                                             ShowHideEye(
                                                 isVisible: !noteEntry.value.is_obscure,
                                                 onChange: (isTrue) async {
-                                                  ref
-                                                      .watch(noteListProvider.notifier)
-                                                      .updateLocalNote(noteEntry.value.text, !isTrue, noteEntry.key);
+                                                  ref.watch(noteListProvider.notifier).updateLocalNote(
+                                                      noteEntry.value.text, !isTrue, noteEntry.key, null);
                                                   await _updateNote(
                                                       context, noteEntry.value.id, !isTrue ? "true" : "false");
                                                 })

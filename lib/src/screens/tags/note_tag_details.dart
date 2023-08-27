@@ -124,6 +124,7 @@ class NoteTagDetails extends ConsumerWidget {
             child: Column(
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: TextFormField(

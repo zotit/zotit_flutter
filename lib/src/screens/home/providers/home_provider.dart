@@ -74,7 +74,9 @@ class NoteList extends _$NoteList {
                 id: item['id'],
                 text: item['text'],
                 is_obscure: item['is_obscure'],
-                tag: item['tag'],
+                tag: item['tag'] != null
+                    ? NoteTag(id: item['tag']['id'], name: item['tag']['name'], color: item['tag']['color'])
+                    : NoteTag(id: "", name: "default", color: Color(0xff9e9e9e).value),
               ))
           .toList();
       var stateValue = state.value != null ? state.value?.notes : [];
@@ -84,10 +86,14 @@ class NoteList extends _$NoteList {
     }
   }
 
-  updateLocalNote(String text, bool isObscure, index) {
+  updateLocalNote(String? text, bool? isObscure, index, NoteTag? tag) {
     if (state.asData != null) {
       var stateValue = state.value?.notes.toList();
-      stateValue?[index] = Note(id: stateValue[index].id, text: text, is_obscure: isObscure, tag: null);
+      stateValue?[index] = Note(
+          id: stateValue[index].id,
+          text: text ?? stateValue[index].text,
+          is_obscure: isObscure ?? stateValue[index].is_obscure,
+          tag: tag ?? stateValue[index].tag);
       state = AsyncValue.data(NoteListRepo(notes: [...?stateValue], page: state.value!.page));
     }
   }

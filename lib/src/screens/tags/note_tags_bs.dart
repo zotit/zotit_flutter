@@ -7,17 +7,20 @@ import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zotit/config.dart';
 import 'package:http/http.dart' as http;
+import 'package:zotit/src/screens/home/providers/home_provider.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
 import 'package:zotit/src/screens/tags/providers/note_tags_provider.dart';
 
 class NoteTagsBS extends ConsumerStatefulWidget {
   final NoteTag noteTag;
   final String noteId;
+  final int noteIndex;
 
   NoteTagsBS({
     super.key,
     required this.noteTag,
     required this.noteId,
+    required this.noteIndex,
   });
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _NoteTagsBS();
@@ -203,6 +206,9 @@ class _NoteTagsBS extends ConsumerState<NoteTagsBS> {
                           } else {
                             removeTag(context);
                           }
+                          ref
+                              .watch(noteListProvider.notifier)
+                              .updateLocalNote(null, null, widget.noteIndex, noteEntry.value);
                         },
                       ),
                     );
