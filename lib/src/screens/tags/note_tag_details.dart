@@ -112,105 +112,110 @@ class NoteTagDetails extends ConsumerWidget {
         title: noteIndex == -1 ? const Text("Create Tag") : const Text("Update Tag"),
         backgroundColor: Color(0xFF3A568E),
       ),
-      body: Card(
-        elevation: 2.0,
-        shadowColor: Colors.grey,
-        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      body: Center(
         child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 10,
-              horizontal: 10.0,
-            ),
-            child: Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: textC,
-                        maxLength: 10,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Enter a name for tag',
-                        ),
-                      ),
-                    ),
-                    const Gap(10),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (textC.text != '') {
-                          await _submit(context, textC.text, selectedColor.value, notesData);
-                          final _ = ref.refresh(noteTagListProvider.future);
-                          if (noteIndex != -1) {
-                            notesData.updateLocalNoteTag(textC.text, selectedColor.value, noteIndex);
-                          }
-
-                          textC.text = '';
-                        }
-                      },
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
-                          backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
-                      child: const Icon(Icons.done),
-                    ),
-                  ],
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: Card(
+            elevation: 2.0,
+            shadowColor: Colors.grey,
+            margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+            child: Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 10.0,
                 ),
-                BlockPicker(
-                  pickerColor: selectedColor,
-                  onColorChanged: (Color color) {
-                    selectedColor = color;
-                  },
-                  useInShowDialog: true,
-                  layoutBuilder: ((context, colors, child) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Gap(20),
-                          Text(
-                            "Pick a Color",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Gap(2),
-                          SizedBox(
-                            height: 220,
-                            child: GridView.count(
-                              primary: true,
-                              crossAxisCount: 7,
-                              crossAxisSpacing: 6.0,
-                              mainAxisSpacing: 6.0,
-                              shrinkWrap: true,
-                              children: colors.map((e) => child(e)).toList(),
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: textC,
+                            maxLength: 10,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Enter a name for tag',
                             ),
-                          )
-                        ],
-                      )),
-                  itemBuilder: (Color color, bool isCurrentColor, void Function() changeColor) {
-                    return Container(
-                      margin: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: color,
-                        boxShadow: [
-                          BoxShadow(color: color.withOpacity(0.8), offset: const Offset(1, 2), blurRadius: 5)
-                        ],
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: changeColor,
-                          borderRadius: BorderRadius.circular(50),
-                          child: AnimatedOpacity(
-                            duration: const Duration(milliseconds: 210),
-                            opacity: isCurrentColor ? 1 : 0,
-                            child: Icon(Icons.done, color: useWhiteForeground(color) ? Colors.white : Colors.black),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                )
-              ],
-            )),
+                        const Gap(10),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (textC.text != '') {
+                              await _submit(context, textC.text, selectedColor.value, notesData);
+                              final _ = ref.refresh(noteTagListProvider.future);
+                              if (noteIndex != -1) {
+                                notesData.updateLocalNoteTag(textC.text, selectedColor.value, noteIndex);
+                              }
+
+                              textC.text = '';
+                            }
+                          },
+                          style: ButtonStyle(
+                              padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
+                              backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                          child: const Icon(Icons.done),
+                        ),
+                      ],
+                    ),
+                    BlockPicker(
+                      pickerColor: selectedColor,
+                      onColorChanged: (Color color) {
+                        selectedColor = color;
+                      },
+                      useInShowDialog: true,
+                      layoutBuilder: ((context, colors, child) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Gap(20),
+                              Text(
+                                "Pick a Color",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Gap(2),
+                              SizedBox(
+                                height: 220,
+                                child: GridView.count(
+                                  primary: true,
+                                  crossAxisCount: 7,
+                                  crossAxisSpacing: 6.0,
+                                  mainAxisSpacing: 6.0,
+                                  shrinkWrap: true,
+                                  children: colors.map((e) => child(e)).toList(),
+                                ),
+                              )
+                            ],
+                          )),
+                      itemBuilder: (Color color, bool isCurrentColor, void Function() changeColor) {
+                        return Container(
+                          margin: const EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: color,
+                            boxShadow: [
+                              BoxShadow(color: color.withOpacity(0.8), offset: const Offset(1, 2), blurRadius: 5)
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: changeColor,
+                              borderRadius: BorderRadius.circular(50),
+                              child: AnimatedOpacity(
+                                duration: const Duration(milliseconds: 210),
+                                opacity: isCurrentColor ? 1 : 0,
+                                child: Icon(Icons.done, color: useWhiteForeground(color) ? Colors.white : Colors.black),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  ],
+                )),
+          ),
+        ),
       ),
     );
   }

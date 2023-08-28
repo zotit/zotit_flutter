@@ -20,6 +20,7 @@ import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 import 'package:zotit/src/screens/home/providers/note.dart';
 import 'package:zotit/src/screens/home/side_drawer.dart';
+import 'package:zotit/src/screens/tags/note_tags_s_list.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
 import 'package:zotit/src/screens/tags/providers/note_tags_provider.dart';
 
@@ -34,6 +35,8 @@ class Home extends ConsumerStatefulWidget {
 
 class _Home extends ConsumerState<Home> {
   bool isVisible = true;
+  bool isSearching = false;
+  NoteTag selectedTag = NoteTag(id: "", name: "default", color: 0xff9e9e9e);
   _submit(context, text, isVisible) async {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
@@ -407,6 +410,7 @@ class _Home extends ConsumerState<Home> {
   }
 
   TextEditingController textC = TextEditingController(text: "");
+  TextEditingController searchC = TextEditingController(text: "");
   TextEditingController rcvrUsernameC = TextEditingController(text: "");
   final ScrollController _scrollController = ScrollController();
 
@@ -414,7 +418,7 @@ class _Home extends ConsumerState<Home> {
   void initState() {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        ref.read(noteListProvider.notifier).getNotesByPage();
+        ref.read(noteListProvider.notifier).getNotesByPage(searchC.text, selectedTag.id);
       }
     });
     super.initState();
@@ -437,10 +441,20 @@ class _Home extends ConsumerState<Home> {
           Text("  |  @${loginData.getData().username}"),
         ]),
         actions: [
-          // IconButton(
-          //   onPressed: () => Navigator.pushNamed(context, AppRoutes.searchPage),
-          //   icon: const Icon(Icons.search),
-          // ),
+          IconButton(
+            onPressed: () {
+              setState(() {
+                isSearching = !isSearching;
+              });
+              if (!isSearching) {
+                searchC.text = "";
+                selectedTag = NoteTag(id: "", name: "", color: 0xff9e9e9e);
+
+                final _ = ref.refresh(noteListProvider);
+              }
+            },
+            icon: isSearching ? const Icon(Icons.search_off_outlined) : const Icon(Icons.search),
+          ),
           IconButton(
             onPressed: () => ref.refresh(noteListProvider.future),
             icon: const Icon(Icons.refresh),
@@ -451,64 +465,116 @@ class _Home extends ConsumerState<Home> {
         child: Container(
           constraints: const BoxConstraints(maxWidth: 600),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Card(
-              elevation: 2.0,
-              shadowColor: Colors.grey,
-              margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 10.0,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        ShowHideEye(
-                            isVisible: !isVisible,
-                            onChange: (isTrue) async {
-                              setState(() {
-                                isVisible = !isVisible;
-                              });
-                            })
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: textC,
-                            decoration: const InputDecoration(
-                                hintStyle: TextStyle(
-                                  fontFamily: 'Satisfy',
+            Container(
+              child: isSearching
+                  ? Card(
+                      elevation: 2.0,
+                      shadowColor: Colors.grey,
+                      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 10.0,
+                        ),
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Search here...',
+                                  hintText: 'At least 3 letters required to search'),
+                              minLines: 1,
+                              maxLines: 20,
+                              onChanged: ((value) {
+                                if (value.isEmpty) {
+                                  selectedTag = NoteTag(id: "", name: "", color: 0xff9e9e9e);
+                                  final _ = ref.refresh(noteListProvider);
+                                }
+                                if (value.length < 3) {
+                                  return;
+                                }
+                                searchC.text = value;
+                                ref.read(noteListProvider.notifier).searchNotes(searchC.text, selectedTag.id);
+                              }),
+                            ),
+                            Divider(),
+                            NoteTagSList(
+                              noteTagId: "",
+                              onSelected: (selectedNoteTag) {
+                                if (selectedNoteTag != null) {
+                                  setState(() {
+                                    selectedTag = selectedNoteTag;
+                                  });
+                                  ref.read(noteListProvider.notifier).searchNotes(searchC.text, selectedTag.id);
+                                } else {
+                                  selectedTag = NoteTag(id: "", name: "", color: 0xff9e9e9e);
+                                  final _ = ref.refresh(noteListProvider);
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Card(
+                      elevation: 2.0,
+                      shadowColor: Colors.grey,
+                      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 10.0,
+                        ),
+                        child: Column(
+                          children: [
+                            // Row(
+                            //   children: [
+                            //     ShowHideEye(
+                            //         isVisible: !isVisible,
+                            //         onChange: (isTrue) async {
+                            //           setState(() {
+                            //             isVisible = !isVisible;
+                            //           });
+                            //         })
+                            //   ],
+                            // ),
+                            // const Divider(),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: textC,
+                                    decoration: const InputDecoration(
+                                        hintStyle: TextStyle(
+                                          fontFamily: 'Satisfy',
+                                        ),
+                                        border: OutlineInputBorder(),
+                                        labelText: 'Zot it',
+                                        hintText: 'What needs to be zoted...'),
+                                    minLines: 1,
+                                    maxLines: 20,
+                                  ),
                                 ),
-                                border: OutlineInputBorder(),
-                                labelText: 'Zot it',
-                                hintText: 'What needs to be zoted...'),
-                            minLines: 5,
-                            maxLines: 20,
-                          ),
+                                const Gap(10),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    if (textC.text != '') {
+                                      await _submit(context, textC.text, !isVisible);
+                                      textC.text = '';
+                                      final _ = ref.refresh(noteListProvider);
+                                    }
+                                  },
+                                  style: ButtonStyle(
+                                      padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
+                                      backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                                  child: const Icon(Icons.done),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        const Gap(10),
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (textC.text != '') {
-                              await _submit(context, textC.text, !isVisible);
-                              textC.text = '';
-                              final _ = ref.refresh(noteListProvider);
-                            }
-                          },
-                          style: ButtonStyle(
-                              padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
-                              backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
-                          child: const Icon(Icons.done),
-                        ),
-                      ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
             ),
             Expanded(
               child: notesData.when(
@@ -521,7 +587,7 @@ class _Home extends ConsumerState<Home> {
                               elevation: 2.0,
                               margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
                               child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
                                 dense: true,
                                 title: Column(
                                   key: globalKey,
@@ -533,19 +599,14 @@ class _Home extends ConsumerState<Home> {
                                         Row(
                                           children: [
                                             ActionChip(
-                                              backgroundColor: Color.fromARGB(31, 112, 112, 112),
-                                              avatar: CircleAvatar(
-                                                backgroundColor: Color(noteEntry.value.tag!.color),
-                                                child: Icon(
-                                                  Icons.done,
-                                                  size: 14,
+                                              backgroundColor: Color(noteEntry.value.tag!.color),
+                                              label: Text(
+                                                noteEntry.value.tag!.name,
+                                                style: TextStyle(
                                                   color: useWhiteForeground(Color(noteEntry.value.tag!.color))
                                                       ? Colors.white
                                                       : Colors.black,
                                                 ),
-                                              ),
-                                              label: Text(
-                                                noteEntry.value.tag!.name,
                                               ),
                                               onPressed: () {
                                                 showModalBottomSheet(

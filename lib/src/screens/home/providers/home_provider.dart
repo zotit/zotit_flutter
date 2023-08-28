@@ -47,7 +47,7 @@ class NoteList extends _$NoteList {
         page: 1);
   }
 
-  getNotesByPage() async {
+  getNotesByPage(text, tagId) async {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     final token = prefs.getString('token');
@@ -58,7 +58,11 @@ class NoteList extends _$NoteList {
       host: config.host,
       port: config.port,
       path: "/api/notes",
-      queryParameters: {'page': newPage.toString()},
+      queryParameters: {
+        'page': newPage.toString(),
+        'text': text,
+        'tag_id': tagId,
+      },
     );
     // final uri = Uri.https('zotit.twobits.in', '/notes', {'page': newPage.toString()});
     final res = await http.get(uri, headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"});
@@ -81,6 +85,45 @@ class NoteList extends _$NoteList {
           .toList();
       var stateValue = state.value != null ? state.value?.notes : [];
       state = AsyncValue.data(NoteListRepo(notes: [...?stateValue, ...noteList], page: newPage));
+    } catch (e) {
+      state = AsyncError("error ${res.body}", StackTrace.current);
+    }
+  }
+
+  searchNotes(text, tagId) async {
+    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
+    final prefs = await fPrefs;
+    final token = prefs.getString('token');
+    final config = Config();
+    final uri = Uri(
+      scheme: config.scheme,
+      host: config.host,
+      port: config.port,
+      path: "/api/notes",
+      queryParameters: {
+        'text': text,
+        'tag_id': tagId,
+      },
+    );
+    final res = await http.get(uri, headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"});
+    if (res.body == "Invalid or expired JWT") {
+      final loginData = ref.read(loginTokenProvider.notifier);
+      loginData.logout();
+      return [];
+    }
+    try {
+      final notes = jsonDecode(res.body) as List<dynamic>;
+      var noteList = notes
+          .map((item) => Note(
+                id: item['id'],
+                text: item['text'],
+                is_obscure: item['is_obscure'],
+                tag: item['tag'] != null
+                    ? NoteTag(id: item['tag']['id'], name: item['tag']['name'], color: item['tag']['color'])
+                    : NoteTag(id: "", name: "default", color: Color(0xff9e9e9e).value),
+              ))
+          .toList();
+      state = AsyncValue.data(NoteListRepo(notes: [...noteList], page: state.value!.page));
     } catch (e) {
       state = AsyncError("error ${res.body}", StackTrace.current);
     }
