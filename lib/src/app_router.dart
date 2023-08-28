@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zotit/src/screens/delete_account/delete_account.dart';
 import 'package:zotit/src/screens/home/home.dart';
-import 'package:zotit/src/screens/home/note_search.dart';
 import 'package:zotit/src/screens/login/login.dart';
 import 'package:zotit/src/screens/register/register.dart';
 import 'package:zotit/src/screens/tags/note_tags.dart';
@@ -36,11 +35,6 @@ class AppRouter {
       case AppRoutes.tagList:
         return MaterialPageRoute<dynamic>(
           builder: (_) => NoteTags(),
-          settings: settings,
-        );
-      case AppRoutes.searchPage:
-        return MaterialPageRoute<dynamic>(
-          builder: (_) => const NoteSearch(),
           settings: settings,
         );
       case AppRoutes.loginPage:
