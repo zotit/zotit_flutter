@@ -439,6 +439,92 @@ class _Home extends ConsumerState<Home> {
     );
   }
 
+  _actionList(BuildContext context, MapEntry<int, Note> noteEntry) {
+    final bool isBigScreen = MediaQuery.of(context).size.width > 400;
+    if (isBigScreen) {
+      return [
+        TextButton.icon(
+          onPressed: () {
+            Clipboard.setData(ClipboardData(text: noteEntry.value.text));
+          },
+          style: ButtonStyle(
+            foregroundColor:
+                MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
+          ),
+          icon: const Icon(
+            Icons.copy,
+            size: 16,
+          ),
+          label: const Text("Copy"),
+        ),
+        TextButton.icon(
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute<dynamic>(
+              builder: (_) => NoteDetails(
+                note: noteEntry.value,
+                noteIndex: noteEntry.key,
+              ),
+            ));
+          },
+          style: ButtonStyle(
+            foregroundColor:
+                MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
+          ),
+          icon: const Icon(
+            Icons.edit_document,
+            size: 16,
+          ),
+          label: const Text("Edit"),
+        ),
+        ShowHideEye(
+            isVisible: !noteEntry.value.is_obscure,
+            onChange: (isTrue) async {
+              ref.watch(noteListProvider.notifier).updateLocalNote(
+                    noteEntry.value.text,
+                    !isTrue,
+                    noteEntry.key,
+                    null,
+                  );
+              await _updateNote(
+                  context, noteEntry.value.id, !isTrue ? "true" : "false");
+            })
+      ];
+    } else {
+      return [
+        IconButton(
+          color: const Color(0xFF3A568E),
+          onPressed: () {
+            Clipboard.setData(ClipboardData(text: noteEntry.value.text));
+          },
+          icon: const Icon(Icons.copy),
+        ),
+        IconButton(
+            icon: const Icon(Icons.edit_document),
+            color: const Color(0xFF3A568E),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute<dynamic>(
+                builder: (_) => NoteDetails(
+                  note: noteEntry.value,
+                  noteIndex: noteEntry.key,
+                ),
+              ));
+            }),
+        ShowHideEye(
+            isVisible: !noteEntry.value.is_obscure,
+            onChange: (isTrue) async {
+              ref.watch(noteListProvider.notifier).updateLocalNote(
+                    noteEntry.value.text,
+                    !isTrue,
+                    noteEntry.key,
+                    null,
+                  );
+              await _updateNote(
+                  context, noteEntry.value.id, !isTrue ? "true" : "false");
+            })
+      ];
+    }
+  }
+
   TextEditingController textC = TextEditingController(text: "");
   TextEditingController searchC = TextEditingController(text: "");
   TextEditingController rcvrUsernameC = TextEditingController(text: "");
@@ -461,7 +547,6 @@ class _Home extends ConsumerState<Home> {
   Widget build(BuildContext context) {
     final loginData = ref.watch(loginTokenProvider.notifier);
     final notesData = ref.watch(noteListProvider);
-    final bool isSmallScreen = MediaQuery.of(context).size.width < 400;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -682,66 +767,7 @@ class _Home extends ConsumerState<Home> {
                                                 );
                                               },
                                             ),
-                                            TextButton.icon(
-                                              onPressed: () {
-                                                Clipboard.setData(ClipboardData(
-                                                    text:
-                                                        noteEntry.value.text));
-                                              },
-                                              style: ButtonStyle(
-                                                foregroundColor:
-                                                    MaterialStateProperty
-                                                        .all<Color>(const Color(
-                                                            0xFF3A568E)),
-                                              ),
-                                              icon: const Icon(
-                                                Icons.copy,
-                                                size: 16,
-                                              ),
-                                              label: const Text("Copy"),
-                                            ),
-                                            TextButton.icon(
-                                              onPressed: () {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute<dynamic>(
-                                                  builder: (_) => NoteDetails(
-                                                    note: noteEntry.value,
-                                                    noteIndex: noteEntry.key,
-                                                  ),
-                                                ));
-                                              },
-                                              style: ButtonStyle(
-                                                foregroundColor:
-                                                    MaterialStateProperty
-                                                        .all<Color>(const Color(
-                                                            0xFF3A568E)),
-                                              ),
-                                              icon: const Icon(
-                                                Icons.edit_document,
-                                                size: 16,
-                                              ),
-                                              label: const Text("Edit"),
-                                            ),
-                                            ShowHideEye(
-                                                isVisible:
-                                                    !noteEntry.value.is_obscure,
-                                                onChange: (isTrue) async {
-                                                  ref
-                                                      .watch(noteListProvider
-                                                          .notifier)
-                                                      .updateLocalNote(
-                                                        noteEntry.value.text,
-                                                        !isTrue,
-                                                        noteEntry.key,
-                                                        null,
-                                                      );
-                                                  await _updateNote(
-                                                      context,
-                                                      noteEntry.value.id,
-                                                      !isTrue
-                                                          ? "true"
-                                                          : "false");
-                                                })
+                                            ..._actionList(context, noteEntry)
                                           ],
                                         ),
                                         PopupMenuButton<String>(

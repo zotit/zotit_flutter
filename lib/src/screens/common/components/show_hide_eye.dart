@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 class ShowHideEye extends StatefulWidget {
   final Function onChange;
   final bool isVisible;
-  const ShowHideEye({super.key, required this.isVisible, required this.onChange});
+  const ShowHideEye(
+      {super.key, required this.isVisible, required this.onChange});
 
   @override
   State<ShowHideEye> createState() => _ShowHideEyeState();
@@ -21,20 +22,36 @@ class _ShowHideEyeState extends State<ShowHideEye> {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton.icon(
-      style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
-      ),
-      icon: Icon(!isVisible ? Icons.visibility : Icons.visibility_off),
-      label: isVisible ? const Text("Obscure") : const Text("Visible"),
-      onPressed: () {
-        setState(
-          () {
-            isVisible = !isVisible;
-            widget.onChange(isVisible);
-          },
-        );
-      },
-    );
+    final bool isBigScreen = MediaQuery.of(context).size.width > 400;
+    if (isBigScreen) {
+      return TextButton.icon(
+        style: ButtonStyle(
+          foregroundColor:
+              MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
+        ),
+        icon: Icon(!isVisible ? Icons.visibility : Icons.visibility_off),
+        label: isVisible ? const Text("Hide") : const Text("Show"),
+        onPressed: () {
+          setState(
+            () {
+              isVisible = !isVisible;
+              widget.onChange(isVisible);
+            },
+          );
+        },
+      );
+    } else {
+      return IconButton(
+          color: const Color(0xFF3A568E),
+          icon: Icon(!isVisible ? Icons.visibility : Icons.visibility_off),
+          onPressed: () {
+            setState(
+              () {
+                isVisible = !isVisible;
+                widget.onChange(isVisible);
+              },
+            );
+          });
+    }
   }
 }
