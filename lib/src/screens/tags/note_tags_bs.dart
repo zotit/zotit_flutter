@@ -178,87 +178,88 @@ class _NoteTagsBS extends ConsumerState<NoteTagsBS> {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: noteTagsData.when(
-        data: (noteTags) => Row(
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushNamed(AppRoutes.tagList);
-              },
-              style: ButtonStyle(
-                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
-                  backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
-              child: const Icon(Icons.settings),
-            ),
-            Wrap(
-              children: noteTags.noteTags.isNotEmpty
-                  ? noteTags.noteTags.asMap().entries.map((noteTagEntry) {
-                      return Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: ChoiceChip(
-                          avatar: noteTagEntry.value.id == selectedId
-                              ? Icon(
-                                  Icons.done,
-                                  color:
-                                      useWhiteForeground(Color(noteTagEntry.value.color)) ? Colors.white : Colors.black,
-                                )
-                              : null,
-                          label: Text(
-                            noteTagEntry.value.name,
-                            style: TextStyle(
-                              color: useWhiteForeground(Color(noteTagEntry.value.color)) ? Colors.white : Colors.black,
-                            ),
+        data: (noteTags) => Wrap(
+          children: noteTags.noteTags.isNotEmpty
+              ? [
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pushNamed(AppRoutes.tagList);
+                      },
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
+                          backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                      child: const Icon(Icons.settings),
+                    ),
+                  ),
+                  ...noteTags.noteTags.asMap().entries.map((noteTagEntry) {
+                    return Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: ChoiceChip(
+                        avatar: noteTagEntry.value.id == selectedId
+                            ? Icon(
+                                Icons.done,
+                                color:
+                                    useWhiteForeground(Color(noteTagEntry.value.color)) ? Colors.white : Colors.black,
+                              )
+                            : null,
+                        label: Text(
+                          noteTagEntry.value.name,
+                          style: TextStyle(
+                            color: useWhiteForeground(Color(noteTagEntry.value.color)) ? Colors.white : Colors.black,
                           ),
-                          backgroundColor: Color(noteTagEntry.value.color),
-                          selectedColor: Color(noteTagEntry.value.color),
-                          selected: noteTagEntry.value.id == selectedId,
-                          onSelected: (bool selected) {
-                            setState(() {
-                              selectedId = selected ? noteTagEntry.value.id : "";
-                            });
-                            if (selected) {
-                              assignTag(context);
-                              ref
-                                  .watch(noteListProvider.notifier)
-                                  .updateLocalNote(null, null, widget.noteIndex, noteTagEntry.value, false);
-                            } else {
-                              removeTag(context);
-                              ref
-                                  .watch(noteListProvider.notifier)
-                                  .updateLocalNote(null, null, widget.noteIndex, null, true);
-                            }
-                          },
                         ),
-                      );
-                    }).toList()
-                  : [
-                      Center(
-                        child: Padding(
-                            padding: const EdgeInsets.all(50),
-                            child: Column(
-                              children: [
-                                const Text(
-                                  "No Tags Found",
-                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                                ),
-                                const Gap(20),
-                                ElevatedButton(
-                                  style: ButtonStyle(
-                                      padding: MaterialStateProperty.all(
-                                          const EdgeInsets.symmetric(vertical: 20, horizontal: 10)),
-                                      backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context).pushNamed(AppRoutes.tagList);
-                                  },
-                                  child: const Text("Manage Tags"),
-                                )
-                              ],
-                            )),
+                        backgroundColor: Color(noteTagEntry.value.color),
+                        selectedColor: Color(noteTagEntry.value.color),
+                        selected: noteTagEntry.value.id == selectedId,
+                        onSelected: (bool selected) {
+                          setState(() {
+                            selectedId = selected ? noteTagEntry.value.id : "";
+                          });
+                          if (selected) {
+                            assignTag(context);
+                            ref
+                                .watch(noteListProvider.notifier)
+                                .updateLocalNote(null, null, widget.noteIndex, noteTagEntry.value, false);
+                          } else {
+                            removeTag(context);
+                            ref
+                                .watch(noteListProvider.notifier)
+                                .updateLocalNote(null, null, widget.noteIndex, null, true);
+                          }
+                        },
                       ),
-                    ],
-            ),
-          ],
+                    );
+                  }).toList()
+                ]
+              : [
+                  Center(
+                    child: Padding(
+                        padding: const EdgeInsets.all(50),
+                        child: Column(
+                          children: [
+                            const Text(
+                              "No Tags Found",
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            const Gap(20),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                  padding: MaterialStateProperty.all(
+                                      const EdgeInsets.symmetric(vertical: 20, horizontal: 10)),
+                                  backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pushNamed(AppRoutes.tagList);
+                              },
+                              child: const Text("Manage Tags"),
+                            )
+                          ],
+                        )),
+                  ),
+                ],
         ),
         loading: () => const SizedBox(
           height: 50,
