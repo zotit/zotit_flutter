@@ -110,8 +110,8 @@ class _ForgotpwFormContent extends ConsumerState<ForgotpwFormContent> {
                 return null;
               },
               decoration: const InputDecoration(
-                labelText: 'Username',
-                hintText: 'Enter your username',
+                labelText: 'Username / EmailID',
+                hintText: 'Enter your Username / EmailID',
                 prefixIcon: Icon(Icons.person),
                 border: OutlineInputBorder(),
               ),

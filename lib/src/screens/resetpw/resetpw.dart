@@ -79,7 +79,6 @@ class ResetpwFormContent extends ConsumerStatefulWidget {
 }
 
 class _ResetpwFormContent extends ConsumerState<ResetpwFormContent> {
-  final TextEditingController usernameC = TextEditingController(text: "");
   final TextEditingController opwC = TextEditingController(text: "");
   final TextEditingController npwC = TextEditingController(text: "");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -107,30 +106,6 @@ class _ResetpwFormContent extends ConsumerState<ResetpwFormContent> {
               ),
             ),
             TextFormField(
-              controller: usernameC,
-              validator: (value) {
-                // add email validation
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-
-                // bool emailValid =
-                //     RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value);
-                // if (!emailValid) {
-                //   return 'Please enter a valid email';
-                // }
-
-                return null;
-              },
-              decoration: const InputDecoration(
-                labelText: 'Username',
-                hintText: 'Enter a username',
-                prefixIcon: Icon(Icons.person),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            _gap(),
-            TextFormField(
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter some text';
@@ -144,8 +119,8 @@ class _ResetpwFormContent extends ConsumerState<ResetpwFormContent> {
               controller: opwC,
               obscureText: true,
               decoration: const InputDecoration(
-                labelText: 'Current Password',
-                hintText: 'Enter password',
+                labelText: 'Password from Email',
+                hintText: 'Enter Password from Email',
                 prefixIcon: Icon(Icons.lock_outline_rounded),
                 border: OutlineInputBorder(),
               ),
@@ -192,7 +167,8 @@ class _ResetpwFormContent extends ConsumerState<ResetpwFormContent> {
                   if (_formKey.currentState?.validate() ?? false) {
                     // bool isValid = await FlutterNumberCaptcha.show(context);
                     // if (isValid) {
-                    await loginData.resetpw(usernameC.text, opwC.text, npwC.text);
+
+                    await loginData.resetpw(opwC.text, npwC.text);
                     // }
                   }
                 },

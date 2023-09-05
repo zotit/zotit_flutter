@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zotit/config.dart';
 import 'package:http/http.dart' as http;
+import 'package:zotit/src/app_router.dart';
 import 'package:zotit/src/screens/home/providers/home_provider.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
 import 'package:zotit/src/screens/tags/providers/note_tags_provider.dart';
@@ -176,54 +178,88 @@ class _NoteTagsBS extends ConsumerState<NoteTagsBS> {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: noteTagsData.when(
-        data: (noteTags) => Wrap(
-            children: noteTags.noteTags.isNotEmpty
-                ? noteTags.noteTags.asMap().entries.map((noteEntry) {
-                    return Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: ChoiceChip(
-                        avatar: noteEntry.value.id == selectedId
-                            ? Icon(
-                                Icons.done,
-                                color: useWhiteForeground(Color(noteEntry.value.color)) ? Colors.white : Colors.black,
-                              )
-                            : null,
-                        label: Text(
-                          noteEntry.value.name,
-                          style: TextStyle(
-                            color: useWhiteForeground(Color(noteEntry.value.color)) ? Colors.white : Colors.black,
+        data: (noteTags) => Row(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushNamed(AppRoutes.tagList);
+              },
+              style: ButtonStyle(
+                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
+                  backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+              child: const Icon(Icons.settings),
+            ),
+            Wrap(
+              children: noteTags.noteTags.isNotEmpty
+                  ? noteTags.noteTags.asMap().entries.map((noteTagEntry) {
+                      return Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: ChoiceChip(
+                          avatar: noteTagEntry.value.id == selectedId
+                              ? Icon(
+                                  Icons.done,
+                                  color:
+                                      useWhiteForeground(Color(noteTagEntry.value.color)) ? Colors.white : Colors.black,
+                                )
+                              : null,
+                          label: Text(
+                            noteTagEntry.value.name,
+                            style: TextStyle(
+                              color: useWhiteForeground(Color(noteTagEntry.value.color)) ? Colors.white : Colors.black,
+                            ),
                           ),
+                          backgroundColor: Color(noteTagEntry.value.color),
+                          selectedColor: Color(noteTagEntry.value.color),
+                          selected: noteTagEntry.value.id == selectedId,
+                          onSelected: (bool selected) {
+                            setState(() {
+                              selectedId = selected ? noteTagEntry.value.id : "";
+                            });
+                            if (selected) {
+                              assignTag(context);
+                              ref
+                                  .watch(noteListProvider.notifier)
+                                  .updateLocalNote(null, null, widget.noteIndex, noteTagEntry.value, false);
+                            } else {
+                              removeTag(context);
+                              ref
+                                  .watch(noteListProvider.notifier)
+                                  .updateLocalNote(null, null, widget.noteIndex, null, true);
+                            }
+                          },
                         ),
-                        backgroundColor: Color(noteEntry.value.color),
-                        selectedColor: Color(noteEntry.value.color),
-                        selected: noteEntry.value.id == selectedId,
-                        onSelected: (bool selected) {
-                          setState(() {
-                            selectedId = selected ? noteEntry.value.id : "";
-                          });
-                          if (selected) {
-                            assignTag(context);
-                          } else {
-                            removeTag(context);
-                          }
-                          ref
-                              .watch(noteListProvider.notifier)
-                              .updateLocalNote(null, null, widget.noteIndex, noteEntry.value);
-                        },
+                      );
+                    }).toList()
+                  : [
+                      Center(
+                        child: Padding(
+                            padding: const EdgeInsets.all(50),
+                            child: Column(
+                              children: [
+                                const Text(
+                                  "No Tags Found",
+                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
+                                const Gap(20),
+                                ElevatedButton(
+                                  style: ButtonStyle(
+                                      padding: MaterialStateProperty.all(
+                                          const EdgeInsets.symmetric(vertical: 20, horizontal: 10)),
+                                      backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pushNamed(AppRoutes.tagList);
+                                  },
+                                  child: const Text("Manage Tags"),
+                                )
+                              ],
+                            )),
                       ),
-                    );
-                  }).toList()
-                : [
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(50),
-                        child: Text(
-                          "No Tags Found",
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ]),
+                    ],
+            ),
+          ],
+        ),
         loading: () => const SizedBox(
           height: 50,
           child: Center(
