@@ -113,19 +113,25 @@ class LoginToken extends _$LoginToken {
         final resData = jsonDecode(res.body);
 
         prefs.setString("token", resData["token"]!);
-        prefs.setString("username", username);
+        await prefs.setString("username", username);
         return _loadToken();
       } catch (e) {
         return LoginData(
-            token: "", error: res.body.replaceAll("\"", ""), username: '', page: '', emailId: state.value!.emailId);
+          token: "",
+          error: res.body.replaceAll("\"", ""),
+          username: '',
+          page: 'forgotpw',
+          emailId: state.value!.emailId,
+        );
       }
     });
   }
 
-  Future<void> resetpw(String username, String oldPassword, String newPassword) async {
+  Future<void> resetpw(String oldPassword, String newPassword) async {
     state = const AsyncLoading();
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
+    String username = prefs.getString("username") ?? "";
     state = await AsyncValue.guard(() async {
       final token = prefs.getString('token');
       final config = Config();

@@ -114,7 +114,13 @@ class NoteDetails extends ConsumerWidget {
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Color(0xFF3A568E))),
                 onPressed: () {
                   _submit(context, textC.text, notesData);
-                  notesData.updateLocalNote(textC.text, false, noteIndex, null);
+                  notesData.updateLocalNote(
+                    textC.text,
+                    false,
+                    noteIndex,
+                    null,
+                    false,
+                  );
                 },
                 child: const Text(
                   'Update Text',
