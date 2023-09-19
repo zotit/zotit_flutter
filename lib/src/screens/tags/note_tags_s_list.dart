@@ -1,13 +1,7 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zotit/config.dart';
-import 'package:http/http.dart' as http;
-import 'package:zotit/src/screens/home/providers/home_provider.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
 import 'package:zotit/src/screens/tags/providers/note_tags_provider.dart';
 
@@ -15,7 +9,7 @@ class NoteTagSList extends ConsumerStatefulWidget {
   final String noteTagId;
   final Function(NoteTag?) onSelected;
 
-  NoteTagSList({
+  const NoteTagSList({
     super.key,
     required this.noteTagId,
     required this.onSelected,

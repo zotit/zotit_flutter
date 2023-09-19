@@ -219,7 +219,7 @@ class LoginToken extends _$LoginToken {
       });
 
       try {
-        final resData = jsonDecode(res.body);
+        final _ = jsonDecode(res.body);
         prefs.setString("username", username);
         return _loadToken();
       } catch (e) {

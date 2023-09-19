@@ -7,7 +7,6 @@ import 'package:gap/gap.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zotit/config.dart';
-import 'package:zotit/src/screens/home/providers/home_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
 import 'package:zotit/src/screens/tags/providers/note_tags_provider.dart';
@@ -110,7 +109,7 @@ class NoteTagDetails extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: noteIndex == -1 ? const Text("Create Tag") : const Text("Update Tag"),
-        backgroundColor: Color(0xFF3A568E),
+        backgroundColor: const Color(0xFF3A568E),
       ),
       body: Center(
         child: Container(
@@ -168,12 +167,12 @@ class NoteTagDetails extends ConsumerWidget {
                       layoutBuilder: ((context, colors, child) => Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Gap(20),
-                              Text(
+                              const Gap(20),
+                              const Text(
                                 "Pick a Color",
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              Gap(2),
+                              const Gap(2),
                               SizedBox(
                                 height: 220,
                                 child: GridView.count(

@@ -29,12 +29,12 @@ class AppRouter {
         );
       case AppRoutes.homePage:
         return MaterialPageRoute<dynamic>(
-          builder: (_) => Home(),
+          builder: (_) => const Home(),
           settings: settings,
         );
       case AppRoutes.tagList:
         return MaterialPageRoute<dynamic>(
-          builder: (_) => NoteTags(),
+          builder: (_) => const NoteTags(),
           settings: settings,
         );
       case AppRoutes.loginPage:

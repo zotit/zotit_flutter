@@ -104,7 +104,7 @@ class _NoteTags extends ConsumerState<NoteTags> {
 
   TextEditingController textC = TextEditingController(text: "");
   final ScrollController _scrollController = ScrollController();
-  Color _selectedColor = Color(0xff9e9e9e);
+  final Color _selectedColor = const Color(0xff9e9e9e);
 
   @override
   void initState() {
@@ -136,7 +136,7 @@ class _NoteTags extends ConsumerState<NoteTags> {
       ),
       appBar: AppBar(
         backgroundColor: const Color(0xFF3A568E),
-        title: Text("Tags"),
+        title: const Text("Tags"),
         actions: [
           IconButton(
             onPressed: () => ref.refresh(noteTagListProvider.future),

@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:zotit/src/screens/home/providers/note.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
 
 part 'note_tag_list.freezed.dart';

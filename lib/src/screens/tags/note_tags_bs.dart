@@ -18,7 +18,7 @@ class NoteTagsBS extends ConsumerStatefulWidget {
   final String noteId;
   final int noteIndex;
 
-  NoteTagsBS({
+  const NoteTagsBS({
     super.key,
     required this.noteTag,
     required this.noteId,

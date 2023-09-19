@@ -10,7 +10,7 @@ class ErrorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 40.0),
+      padding: const EdgeInsets.symmetric(horizontal: 40.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -19,8 +19,8 @@ class ErrorPage extends StatelessWidget {
             "Oops! Something went wrong",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
           ),
-          SizedBox(height: 15),
-          Text(message, style: TextStyle(fontSize: 16)),
+          const SizedBox(height: 15),
+          Text(message, style: const TextStyle(fontSize: 16)),
         ],
       ),
     );

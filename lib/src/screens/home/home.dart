@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -11,7 +10,6 @@ import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zotit/config.dart';
-import 'package:zotit/src/app_router.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
 import 'package:zotit/src/screens/common/components/show_hide_eye.dart';
 import 'package:zotit/src/screens/home/note_details.dart';
@@ -22,13 +20,11 @@ import 'package:zotit/src/screens/home/providers/note.dart';
 import 'package:zotit/src/screens/home/side_drawer.dart';
 import 'package:zotit/src/screens/tags/note_tags_s_list.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
-import 'package:zotit/src/screens/tags/providers/note_tags_provider.dart';
 
-import '../tags/note_tags.dart';
 import '../tags/note_tags_bs.dart';
 
 class Home extends ConsumerStatefulWidget {
-  Home({super.key});
+  const Home({super.key});
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _Home();
 }

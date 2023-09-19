@@ -90,15 +90,15 @@ class NoteDetails extends ConsumerWidget {
     final notesData = ref.read(noteListProvider.notifier);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Note details"),
-        backgroundColor: Color(0xFF3A568E),
+        title: const Text("Note details"),
+        backgroundColor: const Color(0xFF3A568E),
       ),
       body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 600),
           child: Column(children: [
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: TextFormField(
                 controller: textC,
                 decoration:
@@ -107,11 +107,11 @@ class NoteDetails extends ConsumerWidget {
                 maxLines: 20,
               ),
             ),
-            Container(
+            SizedBox(
               height: 40,
               width: 250,
               child: ElevatedButton(
-                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Color(0xFF3A568E))),
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
                 onPressed: () {
                   _submit(context, textC.text, notesData);
                   notesData.updateLocalNote(

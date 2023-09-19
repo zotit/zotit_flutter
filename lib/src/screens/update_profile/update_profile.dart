@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:zotit/src/app_router.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
-import 'package:zotit/src/screens/common/components/link_button.dart';
-import 'package:zotit/src/screens/login/login_model.dart';
 import 'package:zotit/src/utils/utils.dart';
 
 class UpdateProfile extends ConsumerWidget {
@@ -17,7 +15,7 @@ class UpdateProfile extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF3A568E),
-        title: Text("Update Profile"),
+        title: const Text("Update Profile"),
       ),
       body: const Center(
           heightFactor: 1,
@@ -167,7 +165,7 @@ class _UpdateProfileFormContent extends ConsumerState<UpdateProfileFormContent> 
               child: TextButton(
                 style: ButtonStyle(
                   foregroundColor: MaterialStateProperty.all(
-                    Color.fromARGB(255, 173, 174, 175),
+                    const Color.fromARGB(255, 173, 174, 175),
                   ),
                 ),
                 child: const Padding(

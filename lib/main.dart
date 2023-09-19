@@ -54,7 +54,7 @@ class StartupPage extends ConsumerWidget {
           if (user.page == 'resetpw') {
             return const Resetpw();
           }
-          return Home();
+          return const Home();
         } else {
           if (user.page == 'register') {
             return const Register();

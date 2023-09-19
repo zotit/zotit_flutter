@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zotit/src/app_router.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
-import 'package:zotit/src/screens/login/login_model.dart';
-import 'package:zotit/src/screens/register/register.dart';
 
 class Login extends ConsumerWidget {
   const Login({super.key});
