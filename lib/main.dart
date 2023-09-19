@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:zotit/src/app_router.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
 import 'package:zotit/src/screens/common/error_page.dart';
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
 
         // font
-        // fontFamily: 'Georgia',
+        fontFamily: GoogleFonts.notoSans().fontFamily,
         //text style
         textTheme: const TextTheme(),
       ),
