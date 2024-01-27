@@ -38,12 +38,19 @@ class _Home extends ConsumerState<Home> {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/notes");
+    final uri = Uri(
+        scheme: config.scheme,
+        host: config.host,
+        port: config.port,
+        path: "api/notes");
 
     try {
       final res = await http.post(
         uri,
-        headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
         body: jsonEncode({"text": text, "is_obscure": isVisible}),
       );
       if (res.statusCode == 200) {
@@ -113,11 +120,18 @@ class _Home extends ConsumerState<Home> {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/notes");
+    final uri = Uri(
+        scheme: config.scheme,
+        host: config.host,
+        port: config.port,
+        path: "api/notes");
 
     try {
       final res = await http.put(uri,
-          headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+          headers: {
+            "Authorization": "Bearer $token",
+            "Content-Type": "application/json"
+          },
           body: jsonEncode({"id": id, "is_obscure": isObScure}));
       if (res.statusCode != 200) {
         showDialog<void>(
@@ -170,7 +184,11 @@ class _Home extends ConsumerState<Home> {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/share-note");
+    final uri = Uri(
+        scheme: config.scheme,
+        host: config.host,
+        port: config.port,
+        path: "api/share-note");
     if (userName == "") {
       return showDialog<void>(
         context: context,
@@ -196,7 +214,10 @@ class _Home extends ConsumerState<Home> {
     try {
       final res = await http.post(
         uri,
-        headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
         body: jsonEncode({"user_name": userName, "note_id": noteId}),
       );
       if (res.statusCode == 200) {
@@ -277,10 +298,12 @@ class _Home extends ConsumerState<Home> {
           ListTile(
               trailing: ElevatedButton(
                 onPressed: () async {
-                  _shareNoteWithUser(context, rcvrUsernameC.text, noteEntry.value.id);
+                  _shareNoteWithUser(
+                      context, rcvrUsernameC.text, noteEntry.value.id);
                 },
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E)),
+                  backgroundColor:
+                      MaterialStateProperty.all(const Color(0xFF3A568E)),
                   padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
                 ),
                 child: const Icon(Icons.share),
@@ -298,11 +321,14 @@ class _Home extends ConsumerState<Home> {
           ListTile(
             title: ElevatedButton(
               onPressed: () async {
-                _shareNote(globalKey.currentContext, noteEntry.value.text.toString());
+                _shareNote(
+                    globalKey.currentContext, noteEntry.value.text.toString());
               },
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E)),
-                padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
+                backgroundColor:
+                    MaterialStateProperty.all(const Color(0xFF3A568E)),
+                padding: MaterialStateProperty.all(
+                    const EdgeInsets.symmetric(vertical: 10)),
               ),
               child: const Text("Search via other apps"),
             ),
@@ -325,7 +351,11 @@ class _Home extends ConsumerState<Home> {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/notes");
+    final uri = Uri(
+        scheme: config.scheme,
+        host: config.host,
+        port: config.port,
+        path: "api/notes");
     return showDialog<void>(
       context: context,
       builder: (c) {
@@ -341,7 +371,10 @@ class _Home extends ConsumerState<Home> {
                   try {
                     final res = await http.delete(
                       uri,
-                      headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+                      headers: {
+                        "Authorization": "Bearer $token",
+                        "Content-Type": "application/json"
+                      },
                       body: jsonEncode({
                         "id": id,
                       }),
@@ -411,7 +444,8 @@ class _Home extends ConsumerState<Home> {
             Clipboard.setData(ClipboardData(text: noteEntry.value.text));
           },
           style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
+            foregroundColor:
+                MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
           ),
           icon: const Icon(
             Icons.copy,
@@ -429,7 +463,8 @@ class _Home extends ConsumerState<Home> {
             ));
           },
           style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
+            foregroundColor:
+                MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
           ),
           icon: const Icon(
             Icons.edit_document,
@@ -447,7 +482,8 @@ class _Home extends ConsumerState<Home> {
                     null,
                     false,
                   );
-              await _updateNote(context, noteEntry.value.id, !isTrue ? "true" : "false");
+              await _updateNote(
+                  context, noteEntry.value.id, !isTrue ? "true" : "false");
             })
       ];
     } else {
@@ -480,7 +516,8 @@ class _Home extends ConsumerState<Home> {
                     null,
                     false,
                   );
-              await _updateNote(context, noteEntry.value.id, !isTrue ? "true" : "false");
+              await _updateNote(
+                  context, noteEntry.value.id, !isTrue ? "true" : "false");
             })
       ];
     }
@@ -494,8 +531,11 @@ class _Home extends ConsumerState<Home> {
   @override
   void initState() {
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        ref.read(noteListProvider.notifier).getNotesByPage(searchC.text, selectedTag.id);
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        ref
+            .read(noteListProvider.notifier)
+            .getNotesByPage(searchC.text, selectedTag.id);
       }
     });
     super.initState();
@@ -531,7 +571,9 @@ class _Home extends ConsumerState<Home> {
                 final _ = ref.refresh(noteListProvider);
               }
             },
-            icon: isSearching ? const Icon(Icons.search_off_outlined) : const Icon(Icons.search),
+            icon: isSearching
+                ? const Icon(Icons.search_off_outlined)
+                : const Icon(Icons.search),
           ),
           IconButton(
             onPressed: () => ref.refresh(noteListProvider.future),
@@ -542,13 +584,15 @@ class _Home extends ConsumerState<Home> {
       body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 600),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Container(
               child: isSearching
                   ? Card(
                       elevation: 2.0,
                       shadowColor: Colors.grey,
-                      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 6.0),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           vertical: 10,
@@ -560,19 +604,23 @@ class _Home extends ConsumerState<Home> {
                               decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   labelText: 'Search here...',
-                                  hintText: 'At least 3 letters required to search'),
+                                  hintText:
+                                      'At least 3 letters required to search'),
                               minLines: 1,
                               maxLines: 20,
                               onChanged: ((value) {
                                 if (value.isEmpty) {
-                                  selectedTag = NoteTag(id: "", name: "", color: 0xff9e9e9e);
+                                  selectedTag = NoteTag(
+                                      id: "", name: "", color: 0xff9e9e9e);
                                   final _ = ref.refresh(noteListProvider);
                                 }
                                 if (value.length < 3) {
                                   return;
                                 }
                                 searchC.text = value;
-                                ref.read(noteListProvider.notifier).searchNotes(searchC.text, selectedTag.id);
+                                ref
+                                    .read(noteListProvider.notifier)
+                                    .searchNotes(searchC.text, selectedTag.id);
                               }),
                             ),
                             const Divider(),
@@ -583,9 +631,13 @@ class _Home extends ConsumerState<Home> {
                                   setState(() {
                                     selectedTag = selectedNoteTag;
                                   });
-                                  ref.read(noteListProvider.notifier).searchNotes(searchC.text, selectedTag.id);
+                                  ref
+                                      .read(noteListProvider.notifier)
+                                      .searchNotes(
+                                          searchC.text, selectedTag.id);
                                 } else {
-                                  selectedTag = NoteTag(id: "", name: "", color: 0xff9e9e9e);
+                                  selectedTag = NoteTag(
+                                      id: "", name: "", color: 0xff9e9e9e);
                                   final _ = ref.refresh(noteListProvider);
                                 }
                               },
@@ -597,7 +649,8 @@ class _Home extends ConsumerState<Home> {
                   : Card(
                       elevation: 2.0,
                       shadowColor: Colors.grey,
-                      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 6.0),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           vertical: 10,
@@ -621,6 +674,10 @@ class _Home extends ConsumerState<Home> {
                               children: [
                                 Expanded(
                                   child: TextFormField(
+                                    onTapOutside: (b) {
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
+                                    },
                                     controller: textC,
                                     decoration: const InputDecoration(
                                         hintStyle: TextStyle(
@@ -637,14 +694,19 @@ class _Home extends ConsumerState<Home> {
                                 ElevatedButton(
                                   onPressed: () async {
                                     if (textC.text != '') {
-                                      await _submit(context, textC.text, !isVisible);
+                                      await _submit(
+                                          context, textC.text, !isVisible);
                                       textC.text = '';
                                       final _ = ref.refresh(noteListProvider);
                                     }
                                   },
                                   style: ButtonStyle(
-                                      padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
-                                      backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                                      padding: MaterialStateProperty.all(
+                                          const EdgeInsets.symmetric(
+                                              vertical: 20)),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              const Color(0xFF3A568E))),
                                   child: const Icon(Icons.done),
                                 ),
                               ],
@@ -657,33 +719,41 @@ class _Home extends ConsumerState<Home> {
             Expanded(
               child: notesData.when(
                 data: (notes) => ListView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
                     controller: _scrollController,
                     children: notes.notes.isNotEmpty
                         ? notes.notes.asMap().entries.map((noteEntry) {
                             final globalKey = GlobalKey();
                             return Card(
                               elevation: 2.0,
-                              margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 6.0),
                               child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 0.0),
                                 dense: true,
                                 title: Column(
                                   key: globalKey,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Row(
                                           children: [
                                             ActionChip(
                                               padding: const EdgeInsets.all(2),
-                                              backgroundColor: Color(noteEntry.value.tag!.color),
+                                              backgroundColor: Color(
+                                                  noteEntry.value.tag!.color),
                                               label: Text(
                                                 noteEntry.value.tag!.name,
                                                 style: TextStyle(
                                                   fontSize: 14,
-                                                  color: useWhiteForeground(Color(noteEntry.value.tag!.color))
+                                                  color: useWhiteForeground(
+                                                          Color(noteEntry.value
+                                                              .tag!.color))
                                                       ? Colors.white
                                                       : Colors.black,
                                                 ),
@@ -693,7 +763,10 @@ class _Home extends ConsumerState<Home> {
                                                   context: context,
                                                   builder: (context) {
                                                     return _updateTagBS(
-                                                        context, globalKey, noteEntry.value, noteEntry.key);
+                                                        context,
+                                                        globalKey,
+                                                        noteEntry.value,
+                                                        noteEntry.key);
                                                   },
                                                 );
                                               },
@@ -709,13 +782,17 @@ class _Home extends ConsumerState<Home> {
                                                 showModalBottomSheet(
                                                   context: context,
                                                   builder: (context) {
-                                                    return _shareNoteWithUserBS(context, globalKey, noteEntry);
+                                                    return _shareNoteWithUserBS(
+                                                        context,
+                                                        globalKey,
+                                                        noteEntry);
                                                   },
                                                 );
                                                 // _shareNote(globalKey.currentContext, noteEntry.value.text.toString());
                                                 break;
                                               case "delete":
-                                                await _deleteNote(context, ref, noteEntry.value.id);
+                                                await _deleteNote(context, ref,
+                                                    noteEntry.value.id);
                                                 break;
 
                                               default:
@@ -733,18 +810,23 @@ class _Home extends ConsumerState<Home> {
                                                   Gap(10),
                                                   Text(
                                                     "Share",
-                                                    style: TextStyle(color: Color(0xFF3A568E)),
+                                                    style: TextStyle(
+                                                        color:
+                                                            Color(0xFF3A568E)),
                                                   )
                                                 ]),
                                               ),
                                               const PopupMenuItem<String>(
                                                 value: "delete",
                                                 child: Row(children: [
-                                                  Icon(Icons.delete, color: Color(0xFF3A568E)),
+                                                  Icon(Icons.delete,
+                                                      color: Color(0xFF3A568E)),
                                                   Gap(10),
                                                   Text(
                                                     "Delete",
-                                                    style: TextStyle(color: Color(0xFF3A568E)),
+                                                    style: TextStyle(
+                                                        color:
+                                                            Color(0xFF3A568E)),
                                                   )
                                                 ]),
                                               ),
@@ -758,25 +840,34 @@ class _Home extends ConsumerState<Home> {
                                 ),
                                 subtitle: noteEntry.value.is_obscure
                                     ? ImageFiltered(
-                                        imageFilter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                        imageFilter: ImageFilter.blur(
+                                            sigmaX: 4, sigmaY: 4),
                                         child: Linkify(
                                           text: noteEntry.value.text,
-                                          options: const LinkifyOptions(humanize: false),
-                                          linkStyle: const TextStyle(fontSize: 16),
+                                          options: const LinkifyOptions(
+                                              humanize: false),
+                                          linkStyle:
+                                              const TextStyle(fontSize: 16),
                                           onOpen: (LinkableElement link) async {
-                                            if (!await launchUrl(Uri.parse(link.url))) {
-                                              throw Exception('Could not launch ${link.url}');
+                                            if (!await launchUrl(
+                                                Uri.parse(link.url))) {
+                                              throw Exception(
+                                                  'Could not launch ${link.url}');
                                             }
                                           },
                                         ),
                                       )
                                     : Linkify(
                                         text: noteEntry.value.text,
-                                        options: const LinkifyOptions(humanize: false),
-                                        linkStyle: const TextStyle(fontSize: 16),
+                                        options: const LinkifyOptions(
+                                            humanize: false),
+                                        linkStyle:
+                                            const TextStyle(fontSize: 16),
                                         onOpen: (LinkableElement link) async {
-                                          if (!await launchUrl(Uri.parse(link.url))) {
-                                            throw Exception('Could not launch ${link.url}');
+                                          if (!await launchUrl(
+                                              Uri.parse(link.url))) {
+                                            throw Exception(
+                                                'Could not launch ${link.url}');
                                           }
                                         },
                                       ),
@@ -789,7 +880,9 @@ class _Home extends ConsumerState<Home> {
                                 padding: EdgeInsets.all(50),
                                 child: Text(
                                   "No Notes Found",
-                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
