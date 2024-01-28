@@ -12,7 +12,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest,windows-latest]
+        os: [ubuntu-latest] #,windows-latest]
     runs-on: ${{ matrix.os }}
     # env:
     #   bin_name: api
@@ -68,11 +68,11 @@ jobs:
         rm  build/chrome_ext/flutter.js
         rm  build/chrome_ext/flutter_service_worker.js
   
-    - name: Windows Build
-      if: matrix.os == 'windows-latest'
-      run: |
-        flutter pub get
-        flutter build windows --release
+    # - name: Windows Build
+    #   if: matrix.os == 'windows-latest'
+    #   run: |
+    #     flutter pub get
+    #     flutter build windows --release
 
     - name: Zip Web dist
       if: matrix.os == 'ubuntu-latest'
@@ -86,16 +86,16 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: cd build/chrome_ext/ && zip -r chrome-dist.zip .
 
-    - name: Zip Windows dist
-      if: matrix.os == 'windows-latest'
-      run: cd build/windows/runner/Release && Compress-Archive .  windows-dist.zip
+    # - name: Zip Windows dist
+    #   if: matrix.os == 'windows-latest'
+    #   run: cd build/windows/runner/Release && Compress-Archive .  windows-dist.zip
     
-    - uses: actions/upload-artifact@v3
-      if: matrix.os == 'windows-latest'
-      with:
-        name: zotit-${{ matrix.os }}
-        path: build/windows/runner/Release/windows-dist.zip
-        retention-days: 1 
+    # - uses: actions/upload-artifact@v3
+    #   if: matrix.os == 'windows-latest'
+    #   with:
+    #     name: zotit-${{ matrix.os }}
+    #     path: build/windows/runner/Release/windows-dist.zip
+    #     retention-days: 1 
     
     - uses: actions/upload-artifact@v3
       if: matrix.os == 'ubuntu-latest'
@@ -138,7 +138,7 @@ jobs:
           title: ${{ github.event.head_commit.message }}
           files: |
             zotit-ubuntu-latest/*.zip
-            zotit-windows-latest/*.zip
+            # zotit-windows-latest/*.zip
       
       
     # - name: release
