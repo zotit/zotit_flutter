@@ -51,9 +51,9 @@ jobs:
         flutter build web --web-renderer html --csp --release --output build/firefox_ext
         cp ext_data/manifests/manifest2.json build/firefox_ext/manifest.json
         cp ext_data/index.html build/firefox_ext/index.html
-        cp ext_data/override.js build/firefox_ext/override.js
+        cp ext_data/init.js build/firefox_ext/init.js
+        cp ext_data/flutter.js build/firefox_ext/flutter.js
         rm -rf build/firefox_ext/canvaskit
-        rm  build/firefox_ext/flutter.js
         rm  build/firefox_ext/flutter_service_worker.js
       
     - name: Chrome Extension Build
@@ -63,9 +63,9 @@ jobs:
         flutter build web --web-renderer html --csp --release --output build/chrome_ext
         cp ext_data/manifests/manifest3.json build/chrome_ext/manifest.json
         cp ext_data/index.html build/chrome_ext/index.html
-        cp ext_data/override.js build/chrome_ext/override.js
+        cp ext_data/init.js build/chrome_ext/init.js
+        cp ext_data/flutter.js build/chrome_ext/flutter.js
         rm -rf build/chrome_ext/canvaskit
-        rm  build/chrome_ext/flutter.js
         rm  build/chrome_ext/flutter_service_worker.js
   
     # - name: Windows Build

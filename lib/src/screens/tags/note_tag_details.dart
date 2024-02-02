@@ -28,14 +28,21 @@ class NoteTagDetails extends ConsumerWidget {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/tags");
+    final uri = Uri(
+        scheme: config.scheme,
+        host: config.host,
+        port: config.port,
+        path: "api/tags");
 
     try {
       Response res;
       if (noteIndex == -1) {
         res = await http.post(
           uri,
-          headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+          headers: {
+            "Authorization": "Bearer $token",
+            "Content-Type": "application/json"
+          },
           body: jsonEncode({
             "name": name,
             "color": color,
@@ -44,7 +51,10 @@ class NoteTagDetails extends ConsumerWidget {
       } else {
         res = await http.put(
           uri,
-          headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+          headers: {
+            "Authorization": "Bearer $token",
+            "Content-Type": "application/json"
+          },
           body: jsonEncode({
             "name": name,
             "id": noteTag.id,
@@ -108,7 +118,9 @@ class NoteTagDetails extends ConsumerWidget {
     Color selectedColor = Color(noteTag.color);
     return Scaffold(
       appBar: AppBar(
-        title: noteIndex == -1 ? const Text("Create Tag") : const Text("Update Tag"),
+        title: noteIndex == -1
+            ? const Text("Create Tag")
+            : const Text("Update Tag"),
         backgroundColor: const Color(0xFF3A568E),
       ),
       body: Center(
@@ -142,18 +154,22 @@ class NoteTagDetails extends ConsumerWidget {
                         ElevatedButton(
                           onPressed: () async {
                             if (textC.text != '') {
-                              await _submit(context, textC.text, selectedColor.value, notesData);
+                              await _submit(context, textC.text,
+                                  selectedColor.value, notesData);
                               final _ = ref.refresh(noteTagListProvider.future);
                               if (noteIndex != -1) {
-                                notesData.updateLocalNoteTag(textC.text, selectedColor.value, noteIndex);
+                                notesData.updateLocalNoteTag(
+                                    textC.text, selectedColor.value, noteIndex);
                               }
 
                               textC.text = '';
                             }
                           },
                           style: ButtonStyle(
-                              padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 20)),
-                              backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.symmetric(vertical: 20)),
+                              backgroundColor: MaterialStateProperty.all(
+                                  const Color(0xFF3A568E))),
                           child: const Icon(Icons.done),
                         ),
                       ],
@@ -181,19 +197,24 @@ class NoteTagDetails extends ConsumerWidget {
                                   crossAxisSpacing: 6.0,
                                   mainAxisSpacing: 6.0,
                                   shrinkWrap: true,
-                                  children: colors.map((e) => child(e)).toList(),
+                                  children:
+                                      colors.map((e) => child(e)).toList(),
                                 ),
                               )
                             ],
                           )),
-                      itemBuilder: (Color color, bool isCurrentColor, void Function() changeColor) {
+                      itemBuilder: (Color color, bool isCurrentColor,
+                          void Function() changeColor) {
                         return Container(
                           margin: const EdgeInsets.all(7),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: color,
                             boxShadow: [
-                              BoxShadow(color: color.withOpacity(0.8), offset: const Offset(1, 2), blurRadius: 5)
+                              BoxShadow(
+                                  color: color.withOpacity(0.8),
+                                  offset: const Offset(1, 2),
+                                  blurRadius: 5)
                             ],
                           ),
                           child: Material(
@@ -204,7 +225,10 @@ class NoteTagDetails extends ConsumerWidget {
                               child: AnimatedOpacity(
                                 duration: const Duration(milliseconds: 210),
                                 opacity: isCurrentColor ? 1 : 0,
-                                child: Icon(Icons.done, color: useWhiteForeground(color) ? Colors.white : Colors.black),
+                                child: Icon(Icons.done,
+                                    color: useWhiteForeground(color)
+                                        ? Colors.white
+                                        : Colors.black),
                               ),
                             ),
                           ),

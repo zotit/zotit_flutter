@@ -34,6 +34,29 @@ class MyApp extends StatelessWidget {
         fontFamily: GoogleFonts.notoSans().fontFamily,
         //text style
         textTheme: const TextTheme(),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF3A568E),
+          foregroundColor: Color(0xFFFFFFFF),
+        ),
+        drawerTheme: const DrawerThemeData(shape: BeveledRectangleBorder()),
+        cardTheme: const CardTheme(color: Colors.white),
+        elevatedButtonTheme: const ElevatedButtonThemeData(
+          style: ButtonStyle(
+            shape: MaterialStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(5),
+                ),
+              ),
+            ),
+            foregroundColor: MaterialStatePropertyAll(Colors.white),
+            backgroundColor: MaterialStatePropertyAll(
+              Color(0xFF3A568E),
+            ),
+          ),
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+            foregroundColor: Colors.white, shape: CircleBorder()),
       ),
       debugShowCheckedModeBanner: false,
       // home: const StartupPage(),
@@ -73,7 +96,8 @@ class StartupPage extends ConsumerWidget {
           child: CircularProgressIndicator(),
         ),
       ),
-      error: (error, st) => ErrorPage(message: error.toString() + st.toString()),
+      error: (error, st) =>
+          ErrorPage(message: error.toString() + st.toString()),
     );
   }
 }

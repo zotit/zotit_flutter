@@ -38,12 +38,19 @@ class _NoteTagsBS extends ConsumerState<NoteTagsBS> {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/notes/assign-tag");
+    final uri = Uri(
+        scheme: config.scheme,
+        host: config.host,
+        port: config.port,
+        path: "api/notes/assign-tag");
 
     try {
       Response res = await http.put(
         uri,
-        headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
         body: jsonEncode({
           "id": widget.noteId,
           "tag_id": selectedId,
@@ -103,12 +110,19 @@ class _NoteTagsBS extends ConsumerState<NoteTagsBS> {
     final prefs = await fPrefs;
     final token = prefs.getString('token');
     final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/notes/remove-tag");
+    final uri = Uri(
+        scheme: config.scheme,
+        host: config.host,
+        port: config.port,
+        path: "api/notes/remove-tag");
 
     try {
       Response res = await http.put(
         uri,
-        headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
         body: jsonEncode({
           "id": widget.noteId,
         }),
@@ -165,7 +179,8 @@ class _NoteTagsBS extends ConsumerState<NoteTagsBS> {
   @override
   void initState() {
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
         ref.read(noteTagListProvider.notifier).getNoteTagsByPage();
       }
     });
@@ -188,9 +203,6 @@ class _NoteTagsBS extends ConsumerState<NoteTagsBS> {
                         Navigator.of(context).pop();
                         Navigator.of(context).pushNamed(AppRoutes.tagList);
                       },
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
-                          backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
                       child: const Icon(Icons.settings),
                     ),
                   ),
@@ -198,17 +210,23 @@ class _NoteTagsBS extends ConsumerState<NoteTagsBS> {
                     return Padding(
                       padding: const EdgeInsets.all(5),
                       child: ChoiceChip(
-                        avatar: noteTagEntry.value.id == selectedId
-                            ? Icon(
-                                Icons.done,
-                                color:
-                                    useWhiteForeground(Color(noteTagEntry.value.color)) ? Colors.white : Colors.black,
-                              )
-                            : null,
+                        showCheckmark: true,
+                        padding: const EdgeInsets.symmetric(vertical: 0),
+                        checkmarkColor:
+                            useWhiteForeground(Color(noteTagEntry.value.color))
+                                ? Colors.white
+                                : Colors.black,
+                        shape: const RoundedRectangleBorder(
+                            side: BorderSide(style: BorderStyle.none),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20))),
                         label: Text(
                           noteTagEntry.value.name,
                           style: TextStyle(
-                            color: useWhiteForeground(Color(noteTagEntry.value.color)) ? Colors.white : Colors.black,
+                            color: useWhiteForeground(
+                                    Color(noteTagEntry.value.color))
+                                ? Colors.white
+                                : Colors.black,
                           ),
                         ),
                         backgroundColor: Color(noteTagEntry.value.color),
@@ -222,12 +240,14 @@ class _NoteTagsBS extends ConsumerState<NoteTagsBS> {
                             assignTag(context);
                             ref
                                 .watch(noteListProvider.notifier)
-                                .updateLocalNote(null, null, widget.noteIndex, noteTagEntry.value, false);
+                                .updateLocalNote(null, null, widget.noteIndex,
+                                    noteTagEntry.value, false);
                           } else {
                             removeTag(context);
                             ref
                                 .watch(noteListProvider.notifier)
-                                .updateLocalNote(null, null, widget.noteIndex, null, true);
+                                .updateLocalNote(
+                                    null, null, widget.noteIndex, null, true);
                           }
                         },
                       ),
@@ -242,17 +262,21 @@ class _NoteTagsBS extends ConsumerState<NoteTagsBS> {
                           children: [
                             const Text(
                               "No Tags Found",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                             const Gap(20),
                             ElevatedButton(
                               style: ButtonStyle(
                                   padding: MaterialStateProperty.all(
-                                      const EdgeInsets.symmetric(vertical: 20, horizontal: 10)),
-                                  backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                                      const EdgeInsets.symmetric(
+                                          vertical: 20, horizontal: 10)),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      const Color(0xFF3A568E))),
                               onPressed: () {
                                 Navigator.of(context).pop();
-                                Navigator.of(context).pushNamed(AppRoutes.tagList);
+                                Navigator.of(context)
+                                    .pushNamed(AppRoutes.tagList);
                               },
                               child: const Text("Manage Tags"),
                             )

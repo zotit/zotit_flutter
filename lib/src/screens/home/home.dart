@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
@@ -550,13 +551,19 @@ class _Home extends ConsumerState<Home> {
       backgroundColor: Colors.white,
       drawer: const SideDrawer(),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3A568E),
         title: Row(children: [
           const Text(
             "ZotIt ",
-            style: TextStyle(fontFamily: 'Satisfy', fontSize: 35),
+            style: TextStyle(fontFamily: 'Satisfy', fontSize: 30),
           ),
-          Text("  |  @${loginData.getData().username}"),
+          Gap(10),
+          Flexible(
+            child: Text(
+              "@${loginData.getData().username}",
+              style: const TextStyle(
+                  fontSize: 14, overflow: TextOverflow.ellipsis),
+            ),
+          )
         ]),
         actions: [
           IconButton(
@@ -581,6 +588,62 @@ class _Home extends ConsumerState<Home> {
           ),
         ],
       ),
+      // floatingActionButtonLocation: ExpandableFab.location,
+      // floatingActionButton: ExpandableFab(
+      //   openButtonBuilder: RotateFloatingActionButtonBuilder(
+      //     child: const Icon(Icons.add),
+      //     fabSize: ExpandableFabSize.regular,
+      //     foregroundColor: Colors.white,
+      //     backgroundColor: const Color(0xFF3A568E),
+      //     shape: const CircleBorder(),
+      //   ),
+      //   closeButtonBuilder: DefaultFloatingActionButtonBuilder(
+      //     child: const Icon(Icons.close),
+      //     fabSize: ExpandableFabSize.small,
+      //     foregroundColor: Colors.white,
+      //     backgroundColor: const Color(0xFF3A568E),
+      //     shape: const CircleBorder(),
+      //   ),
+      //   overlayStyle: ExpandableFabOverlayStyle(
+      //     // color: Colors.black.withOpacity(0.5),
+      //     blur: 5,
+      //   ),
+      //   onOpen: () {
+      //     debugPrint('onOpen');
+      //   },
+      //   afterOpen: () {
+      //     debugPrint('afterOpen');
+      //   },
+      //   onClose: () {
+      //     debugPrint('onClose');
+      //   },
+      //   afterClose: () {
+      //     debugPrint('afterClose');
+      //   },
+      //   children: [
+      //     FloatingActionButton.small(
+      //       // shape: const CircleBorder(),
+      //       heroTag: null,
+      //       backgroundColor: Color(0xFF3A568E),
+      //       child: const Icon(Icons.lock),
+      //       onPressed: () {},
+      //     ),
+      //     FloatingActionButton.small(
+      //       // shape: const CircleBorder(),
+      //       heroTag: null,
+      //       backgroundColor: Color(0xFF3A568E),
+      //       child: const Icon(Icons.search),
+      //       onPressed: () {},
+      //     ),
+      //     FloatingActionButton.small(
+      //       // shape: const CircleBorder(),
+      //       heroTag: null,
+      //       backgroundColor: Color(0xFF3A568E),
+      //       child: const Icon(Icons.share),
+      //       onPressed: () {},
+      //     ),
+      //   ],
+      // ),
       body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 600),
@@ -601,6 +664,9 @@ class _Home extends ConsumerState<Home> {
                         child: Column(
                           children: [
                             TextFormField(
+                              onTapOutside: (b) {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              },
                               decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   labelText: 'Search here...',
@@ -745,6 +811,15 @@ class _Home extends ConsumerState<Home> {
                                           children: [
                                             ActionChip(
                                               padding: const EdgeInsets.all(2),
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                          style:
+                                                              BorderStyle.none),
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  20))),
                                               backgroundColor: Color(
                                                   noteEntry.value.tag!.color),
                                               label: Text(
@@ -848,13 +923,6 @@ class _Home extends ConsumerState<Home> {
                                               humanize: false),
                                           linkStyle:
                                               const TextStyle(fontSize: 16),
-                                          onOpen: (LinkableElement link) async {
-                                            if (!await launchUrl(
-                                                Uri.parse(link.url))) {
-                                              throw Exception(
-                                                  'Could not launch ${link.url}');
-                                            }
-                                          },
                                         ),
                                       )
                                     : Linkify(

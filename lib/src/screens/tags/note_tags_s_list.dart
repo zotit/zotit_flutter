@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +26,8 @@ class _NoteTagSList extends ConsumerState<NoteTagSList> {
   @override
   void initState() {
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
         ref.read(noteTagListProvider.notifier).getNoteTagsByPage();
       }
     });
@@ -48,16 +48,23 @@ class _NoteTagSList extends ConsumerState<NoteTagSList> {
                     return Padding(
                       padding: const EdgeInsets.all(2),
                       child: ChoiceChip(
-                        avatar: noteEntry.value.id == selectedId
-                            ? Icon(
-                                Icons.done,
-                                color: useWhiteForeground(Color(noteEntry.value.color)) ? Colors.white : Colors.black,
-                              )
-                            : null,
+                        showCheckmark: true,
+                        padding: const EdgeInsets.symmetric(vertical: 0),
+                        checkmarkColor:
+                            useWhiteForeground(Color(noteEntry.value.color))
+                                ? Colors.white
+                                : Colors.black,
+                        shape: const RoundedRectangleBorder(
+                            side: BorderSide(style: BorderStyle.none),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20))),
                         label: Text(
                           noteEntry.value.name,
                           style: TextStyle(
-                            color: useWhiteForeground(Color(noteEntry.value.color)) ? Colors.white : Colors.black,
+                            color:
+                                useWhiteForeground(Color(noteEntry.value.color))
+                                    ? Colors.white
+                                    : Colors.black,
                           ),
                         ),
                         backgroundColor: Color(noteEntry.value.color),
