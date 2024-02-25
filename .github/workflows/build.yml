@@ -42,13 +42,11 @@ jobs:
     - name: Web Build
       if: matrix.os == 'ubuntu-latest'
       run: |
-        flutter pub get
         flutter build web --release
     
     - name: Firefox Extension Build
       if: matrix.os == 'ubuntu-latest'
       run: |
-        flutter pub get
         flutter build web --web-renderer html --csp --release --output build/firefox_ext
         cp ext_data/manifests/manifest2.json build/firefox_ext/manifest.json
         cp ext_data/index.html build/firefox_ext/index.html
@@ -60,7 +58,6 @@ jobs:
     - name: Chrome Extension Build
       if: matrix.os == 'ubuntu-latest'
       run: |
-        flutter pub get
         flutter build web --web-renderer html --csp --release --output build/chrome_ext
         cp ext_data/manifests/manifest3.json build/chrome_ext/manifest.json
         cp ext_data/index.html build/chrome_ext/index.html
