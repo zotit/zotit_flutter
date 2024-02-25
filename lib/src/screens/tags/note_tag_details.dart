@@ -10,6 +10,7 @@ import 'package:zotit/config.dart';
 import 'package:http/http.dart' as http;
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
 import 'package:zotit/src/screens/tags/providers/note_tags_provider.dart';
+import 'package:zotit/src/utils/httpn.dart';
 
 @immutable
 class NoteTagDetails extends ConsumerWidget {
@@ -37,30 +38,16 @@ class NoteTagDetails extends ConsumerWidget {
     try {
       Response res;
       if (noteIndex == -1) {
-        res = await http.post(
-          uri,
-          headers: {
-            "Authorization": "Bearer $token",
-            "Content-Type": "application/json"
-          },
-          body: jsonEncode({
-            "name": name,
-            "color": color,
-          }),
-        );
+        res = await httpPost("api/tags", {}, {
+          "name": name,
+          "color": color,
+        });
       } else {
-        res = await http.put(
-          uri,
-          headers: {
-            "Authorization": "Bearer $token",
-            "Content-Type": "application/json"
-          },
-          body: jsonEncode({
-            "name": name,
-            "id": noteTag.id,
-            "color": color,
-          }),
-        );
+        res = await httpPut("api/tags", {}, {
+          "name": name,
+          "id": noteTag.id,
+          "color": color,
+        });
       }
 
       if (res.statusCode == 200) {

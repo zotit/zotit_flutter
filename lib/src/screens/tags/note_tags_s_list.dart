@@ -41,45 +41,42 @@ class _NoteTagSList extends ConsumerState<NoteTagSList> {
       data: (noteTags) => noteTags.noteTags.isNotEmpty
           ? SizedBox(
               height: 50,
-              child: SingleChildScrollView(
+              child: ListView(
                 scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: noteTags.noteTags.asMap().entries.map((noteEntry) {
-                    return Padding(
-                      padding: const EdgeInsets.all(2),
-                      child: ChoiceChip(
-                        showCheckmark: true,
-                        padding: const EdgeInsets.symmetric(vertical: 0),
-                        checkmarkColor:
-                            useWhiteForeground(Color(noteEntry.value.color))
-                                ? Colors.white
-                                : Colors.black,
-                        shape: const RoundedRectangleBorder(
-                            side: BorderSide(style: BorderStyle.none),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
-                        label: Text(
-                          noteEntry.value.name,
-                          style: TextStyle(
-                            color:
-                                useWhiteForeground(Color(noteEntry.value.color))
-                                    ? Colors.white
-                                    : Colors.black,
-                          ),
+                children: noteTags.noteTags.asMap().entries.map((noteEntry) {
+                  return Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: ChoiceChip(
+                      showCheckmark: true,
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      checkmarkColor:
+                          useWhiteForeground(Color(noteEntry.value.color))
+                              ? Colors.white
+                              : Colors.black,
+                      shape: const RoundedRectangleBorder(
+                          side: BorderSide(style: BorderStyle.none),
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
+                      label: Text(
+                        noteEntry.value.name,
+                        style: TextStyle(
+                          color:
+                              useWhiteForeground(Color(noteEntry.value.color))
+                                  ? Colors.white
+                                  : Colors.black,
                         ),
-                        backgroundColor: Color(noteEntry.value.color),
-                        selectedColor: Color(noteEntry.value.color),
-                        selected: noteEntry.value.id == selectedId,
-                        onSelected: (bool selected) {
-                          setState(() {
-                            selectedId = selected ? noteEntry.value.id : "";
-                          });
-                          widget.onSelected(selected ? noteEntry.value : null);
-                        },
                       ),
-                    );
-                  }).toList(),
-                ),
+                      backgroundColor: Color(noteEntry.value.color),
+                      selectedColor: Color(noteEntry.value.color),
+                      selected: noteEntry.value.id == selectedId,
+                      onSelected: (bool selected) {
+                        setState(() {
+                          selectedId = selected ? noteEntry.value.id : "";
+                        });
+                        widget.onSelected(selected ? noteEntry.value : null);
+                      },
+                    ),
+                  );
+                }).toList(),
               ),
             )
           : const Center(

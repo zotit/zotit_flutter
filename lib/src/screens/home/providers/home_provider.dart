@@ -9,6 +9,7 @@ import 'package:zotit/src/screens/home/providers/note.dart';
 import 'package:http/http.dart' as http;
 import 'package:zotit/src/screens/home/providers/note_list.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
+import 'package:zotit/src/utils/httpn.dart';
 
 part 'home_provider.g.dart';
 
@@ -20,17 +21,18 @@ class NoteList extends _$NoteList {
   }
 
   Future<NoteListRepo> _loadNotes() async {
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    final token = prefs.getString('token');
-    final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/notes");
-    final res = await http.get(uri, headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"});
-    if (res.body == "Invalid or expired JWT") {
-      final loginData = ref.read(loginTokenProvider.notifier);
-      loginData.logout();
-      return NoteListRepo(notes: [], page: 0);
-    }
+    // final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
+    // final prefs = await fPrefs;
+    // final token = prefs.getString('token');
+    // final config = Config();
+    // final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/notes");
+    // final res = await http.get(uri, headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"});
+    // if (res.body == "Invalid or expired JWT") {
+    //   final loginData = ref.read(loginTokenProvider.notifier);
+    //   loginData.logout();
+    //   return NoteListRepo(notes: [], page: 0);
+    // }
+    final res = await httpGet("api/notes", {});
     final notes = jsonDecode(res.body) as List<dynamic>;
     return NoteListRepo(
         notes: notes.map((item) {
@@ -40,32 +42,47 @@ class NoteList extends _$NoteList {
             text: utf8.decode(runes),
             is_obscure: item['is_obscure'],
             tag: item['tag'] != null
-                ? NoteTag(id: item['tag']['id'], name: item['tag']['name'], color: item['tag']['color'])
-                : NoteTag(id: "", name: "Assign Tag", color: const Color(0xff9e9e9e).value),
+                ? NoteTag(
+                    id: item['tag']['id'],
+                    name: item['tag']['name'],
+                    color: item['tag']['color'])
+                : NoteTag(
+                    id: "",
+                    name: "Assign Tag",
+                    color: const Color(0xff9e9e9e).value),
           );
         }).toList(),
         page: 1);
   }
 
   getNotesByPage(text, tagId) async {
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    final token = prefs.getString('token');
+    // final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
+    // final prefs = await fPrefs;
+    // final token = prefs.getString('token');
     final newPage = state.value!.page + 1;
-    final config = Config();
-    final uri = Uri(
-      scheme: config.scheme,
-      host: config.host,
-      port: config.port,
-      path: "/api/notes",
-      queryParameters: {
-        'page': newPage.toString(),
-        'text': text,
-        'tag_id': tagId,
-      },
-    );
-    // final uri = Uri.https('zotit.twobits.in', '/notes', {'page': newPage.toString()});
-    final res = await http.get(uri, headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"});
+    // final config = Config();
+    // final uri = Uri(
+    //   scheme: config.scheme,
+    //   host: config.host,
+    //   port: config.port,
+    //   path: "/api/notes",
+    //   queryParameters: {
+    //     'page': newPage.toString(),
+    //     'text': text,
+    //     'tag_id': tagId,
+    //   },
+    // );
+    // // final uri = Uri.https('zotit.twobits.in', '/notes', {'page': newPage.toString()});
+
+    // final res = await http.get(uri, headers: {
+    //   "Authorization": "Bearer $token",
+    //   "Content-Type": "application/json"
+    // });
+    final res = await httpGet("api/notes", {
+      'page': newPage.toString(),
+      'text': text,
+      'tag_id': tagId,
+    });
     if (res.body == "Invalid or expired JWT") {
       final loginData = ref.read(loginTokenProvider.notifier);
       loginData.logout();
@@ -79,33 +96,29 @@ class NoteList extends _$NoteList {
                 text: item['text'],
                 is_obscure: item['is_obscure'],
                 tag: item['tag'] != null
-                    ? NoteTag(id: item['tag']['id'], name: item['tag']['name'], color: item['tag']['color'])
-                    : NoteTag(id: "", name: "Assign Tag", color: const Color(0xff9e9e9e).value),
+                    ? NoteTag(
+                        id: item['tag']['id'],
+                        name: item['tag']['name'],
+                        color: item['tag']['color'])
+                    : NoteTag(
+                        id: "",
+                        name: "Assign Tag",
+                        color: const Color(0xff9e9e9e).value),
               ))
           .toList();
       var stateValue = state.value != null ? state.value?.notes : [];
-      state = AsyncValue.data(NoteListRepo(notes: [...?stateValue, ...noteList], page: newPage));
+      state = AsyncValue.data(
+          NoteListRepo(notes: [...?stateValue, ...noteList], page: newPage));
     } catch (e) {
       state = AsyncError("error ${res.body}", StackTrace.current);
     }
   }
 
   searchNotes(text, tagId) async {
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    final token = prefs.getString('token');
-    final config = Config();
-    final uri = Uri(
-      scheme: config.scheme,
-      host: config.host,
-      port: config.port,
-      path: "/api/notes",
-      queryParameters: {
-        'text': text,
-        'tag_id': tagId,
-      },
-    );
-    final res = await http.get(uri, headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"});
+    final res = await httpGet("api/notes", {
+      'text': text,
+      'tag_id': tagId,
+    });
     if (res.body == "Invalid or expired JWT") {
       final loginData = ref.read(loginTokenProvider.notifier);
       loginData.logout();
@@ -119,26 +132,38 @@ class NoteList extends _$NoteList {
                 text: item['text'],
                 is_obscure: item['is_obscure'],
                 tag: item['tag'] != null
-                    ? NoteTag(id: item['tag']['id'], name: item['tag']['name'], color: item['tag']['color'])
-                    : NoteTag(id: "", name: "Assign Tag", color: const Color(0xff9e9e9e).value),
+                    ? NoteTag(
+                        id: item['tag']['id'],
+                        name: item['tag']['name'],
+                        color: item['tag']['color'])
+                    : NoteTag(
+                        id: "",
+                        name: "Assign Tag",
+                        color: const Color(0xff9e9e9e).value),
               ))
           .toList();
-      state = AsyncValue.data(NoteListRepo(notes: [...noteList], page: state.value!.page));
+      state = AsyncValue.data(
+          NoteListRepo(notes: [...noteList], page: state.value!.page));
     } catch (e) {
       state = AsyncError("error ${res.body}", StackTrace.current);
     }
   }
 
-  updateLocalNote(String? text, bool? isObscure, index, NoteTag? tag, bool isRemoveTag) {
+  updateLocalNote(
+      String? text, bool? isObscure, index, NoteTag? tag, bool isRemoveTag) {
     if (state.asData != null) {
       var stateValue = state.value?.notes.toList();
       stateValue?[index] = Note(
         id: stateValue[index].id,
         text: text ?? stateValue[index].text,
         is_obscure: isObscure ?? stateValue[index].is_obscure,
-        tag: tag ?? (isRemoveTag ? NoteTag(id: "", name: "Assign Tag", color: 0xff9e9e9e) : stateValue[index].tag),
+        tag: tag ??
+            (isRemoveTag
+                ? NoteTag(id: "", name: "Assign Tag", color: 0xff9e9e9e)
+                : stateValue[index].tag),
       );
-      state = AsyncValue.data(NoteListRepo(notes: [...?stateValue], page: state.value!.page));
+      state = AsyncValue.data(
+          NoteListRepo(notes: [...?stateValue], page: state.value!.page));
     }
   }
 }

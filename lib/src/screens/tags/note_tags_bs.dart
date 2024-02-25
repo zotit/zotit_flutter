@@ -12,6 +12,7 @@ import 'package:zotit/src/app_router.dart';
 import 'package:zotit/src/screens/home/providers/home_provider.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
 import 'package:zotit/src/screens/tags/providers/note_tags_provider.dart';
+import 'package:zotit/src/utils/httpn.dart';
 
 class NoteTagsBS extends ConsumerStatefulWidget {
   final NoteTag noteTag;
@@ -34,28 +35,11 @@ class _NoteTagsBS extends ConsumerState<NoteTagsBS> {
   TextEditingController textC = TextEditingController(text: "");
   final ScrollController _scrollController = ScrollController();
   assignTag(context) async {
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    final token = prefs.getString('token');
-    final config = Config();
-    final uri = Uri(
-        scheme: config.scheme,
-        host: config.host,
-        port: config.port,
-        path: "api/notes/assign-tag");
-
     try {
-      Response res = await http.put(
-        uri,
-        headers: {
-          "Authorization": "Bearer $token",
-          "Content-Type": "application/json"
-        },
-        body: jsonEncode({
-          "id": widget.noteId,
-          "tag_id": selectedId,
-        }),
-      );
+      Response res = await httpPut("api/notes/assign-tag", {}, {
+        "id": widget.noteId,
+        "tag_id": selectedId,
+      });
 
       if (res.statusCode == 200) {
         Navigator.pop(context, 'OK');
@@ -106,27 +90,10 @@ class _NoteTagsBS extends ConsumerState<NoteTagsBS> {
   }
 
   removeTag(context) async {
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    final token = prefs.getString('token');
-    final config = Config();
-    final uri = Uri(
-        scheme: config.scheme,
-        host: config.host,
-        port: config.port,
-        path: "api/notes/remove-tag");
-
     try {
-      Response res = await http.put(
-        uri,
-        headers: {
-          "Authorization": "Bearer $token",
-          "Content-Type": "application/json"
-        },
-        body: jsonEncode({
-          "id": widget.noteId,
-        }),
-      );
+      Response res = await httpPut("api/notes/remove-tag", {}, {
+        "id": widget.noteId,
+      });
 
       if (res.statusCode == 200) {
         Navigator.pop(context, 'OK');

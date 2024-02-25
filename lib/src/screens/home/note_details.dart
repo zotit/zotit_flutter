@@ -7,6 +7,7 @@ import 'package:zotit/config.dart';
 import 'package:zotit/src/screens/home/providers/home_provider.dart';
 import 'package:zotit/src/screens/home/providers/note.dart';
 import 'package:http/http.dart' as http;
+import 'package:zotit/src/utils/httpn.dart';
 
 @immutable
 class NoteDetails extends ConsumerWidget {
@@ -21,21 +22,12 @@ class NoteDetails extends ConsumerWidget {
   });
 
   _submit(context, text, NoteList noteList) async {
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    final token = prefs.getString('token');
-    final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/notes");
-
     try {
-      final res = await http.put(
-        uri,
-        headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
-        body: jsonEncode({
-          "text": text,
-          "id": note.id,
-        }),
-      );
+      final res = await httpPut("api/notes", {}, {
+        "text": text,
+        "id": note.id,
+      });
+
       if (res.statusCode == 200) {
         Navigator.pop(context, 'OK');
       } else {
@@ -101,8 +93,10 @@ class NoteDetails extends ConsumerWidget {
               padding: const EdgeInsets.all(10),
               child: TextFormField(
                 controller: textC,
-                decoration:
-                    const InputDecoration(border: OutlineInputBorder(), labelText: 'Text', hintText: 'Zot it ...'),
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Text',
+                    hintText: 'Zot it ...'),
                 minLines: 5,
                 maxLines: 20,
               ),
@@ -111,7 +105,9 @@ class NoteDetails extends ConsumerWidget {
               height: 40,
               width: 250,
               child: ElevatedButton(
-                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E))),
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(const Color(0xFF3A568E))),
                 onPressed: () {
                   _submit(context, textC.text, notesData);
                   notesData.updateLocalNote(

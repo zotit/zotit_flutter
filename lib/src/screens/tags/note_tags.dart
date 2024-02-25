@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:zotit/src/screens/tags/note_tag_details.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
 import 'package:zotit/src/screens/tags/providers/note_tags_provider.dart';
+import 'package:zotit/src/utils/httpn.dart';
 
 class NoteTags extends ConsumerStatefulWidget {
   const NoteTags({super.key});
@@ -21,11 +22,6 @@ class NoteTags extends ConsumerStatefulWidget {
 class _NoteTags extends ConsumerState<NoteTags> {
   bool isVisible = true;
   _deleteNote(context, ref, id) async {
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    final token = prefs.getString('token');
-    final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/tags");
     return showDialog<void>(
       context: context,
       builder: (c) {
@@ -39,13 +35,10 @@ class _NoteTags extends ConsumerState<NoteTags> {
                 onPressed: () async {
                   Navigator.pop(context, 'OK');
                   try {
-                    final res = await http.delete(
-                      uri,
-                      headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
-                      body: jsonEncode({
-                        "id": id,
-                      }),
-                    );
+                    final res = await httpDelete("api/tags", {}, {
+                      "id": id,
+                    });
+
                     if (res.statusCode == 200) {
                       final _ = ref.refresh(noteTagListProvider.future);
                     } else {
@@ -109,7 +102,8 @@ class _NoteTags extends ConsumerState<NoteTags> {
   @override
   void initState() {
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
         ref.read(noteTagListProvider.notifier).getNoteTagsByPage();
       }
     });
@@ -147,7 +141,8 @@ class _NoteTags extends ConsumerState<NoteTags> {
       body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 600),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(
               child: noteTagsData.when(
                 data: (noteTags) => ListView(
@@ -157,16 +152,19 @@ class _NoteTags extends ConsumerState<NoteTags> {
                             final globalKey = GlobalKey();
                             return Card(
                               elevation: 2.0,
-                              margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 6.0),
                               child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0, vertical: 10.0),
                                 dense: true,
                                 trailing: PopupMenuButton<String>(
                                   icon: const Icon(Icons.more_vert),
                                   onSelected: (val) async {
                                     switch (val) {
                                       case "edit":
-                                        Navigator.of(context).push(MaterialPageRoute<dynamic>(
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute<dynamic>(
                                           builder: (_) => NoteTagDetails(
                                             noteTag: noteEntry.value,
                                             noteIndex: noteEntry.key,
@@ -174,7 +172,8 @@ class _NoteTags extends ConsumerState<NoteTags> {
                                         ));
                                         break;
                                       case "delete":
-                                        await _deleteNote(context, ref, noteEntry.value.id);
+                                        await _deleteNote(
+                                            context, ref, noteEntry.value.id);
                                         break;
 
                                       default:
@@ -192,18 +191,21 @@ class _NoteTags extends ConsumerState<NoteTags> {
                                           Gap(10),
                                           Text(
                                             "Edit",
-                                            style: TextStyle(color: Color(0xFF3A568E)),
+                                            style: TextStyle(
+                                                color: Color(0xFF3A568E)),
                                           )
                                         ]),
                                       ),
                                       const PopupMenuItem<String>(
                                         value: "delete",
                                         child: Row(children: [
-                                          Icon(Icons.delete, color: Color(0xFF3A568E)),
+                                          Icon(Icons.delete,
+                                              color: Color(0xFF3A568E)),
                                           Gap(10),
                                           Text(
                                             "Delete",
-                                            style: TextStyle(color: Color(0xFF3A568E)),
+                                            style: TextStyle(
+                                                color: Color(0xFF3A568E)),
                                           )
                                         ]),
                                       ),
@@ -220,8 +222,10 @@ class _NoteTags extends ConsumerState<NoteTags> {
                                   child: Icon(
                                     Icons.local_offer_outlined,
                                     size: 16,
-                                    color:
-                                        useWhiteForeground(Color(noteEntry.value.color)) ? Colors.white : Colors.black,
+                                    color: useWhiteForeground(
+                                            Color(noteEntry.value.color))
+                                        ? Colors.white
+                                        : Colors.black,
                                   ),
                                 ),
 
@@ -252,7 +256,9 @@ class _NoteTags extends ConsumerState<NoteTags> {
                                 padding: EdgeInsets.all(50),
                                 child: Text(
                                   "No Tags Found",
-                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),

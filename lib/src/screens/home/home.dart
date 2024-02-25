@@ -21,6 +21,7 @@ import 'package:zotit/src/screens/home/providers/note.dart';
 import 'package:zotit/src/screens/home/side_drawer.dart';
 import 'package:zotit/src/screens/tags/note_tags_s_list.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
+import 'package:zotit/src/utils/httpn.dart';
 
 import '../tags/note_tags_bs.dart';
 
@@ -35,25 +36,13 @@ class _Home extends ConsumerState<Home> {
   bool isSearching = false;
   NoteTag selectedTag = NoteTag(id: "", name: "default", color: 0xff9e9e9e);
   _submit(context, text, isVisible) async {
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    final token = prefs.getString('token');
-    final config = Config();
-    final uri = Uri(
-        scheme: config.scheme,
-        host: config.host,
-        port: config.port,
-        path: "api/notes");
-
     try {
-      final res = await http.post(
-        uri,
-        headers: {
-          "Authorization": "Bearer $token",
-          "Content-Type": "application/json"
-        },
-        body: jsonEncode({"text": text, "is_obscure": isVisible}),
+      final res = await httpPost(
+        "api/notes",
+        {},
+        {"text": text, "is_obscure": isVisible},
       );
+
       if (res.statusCode == 200) {
       } else {
         showDialog<void>(
@@ -117,23 +106,12 @@ class _Home extends ConsumerState<Home> {
   }
 
   _updateNote(context, id, String isObScure) async {
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    final token = prefs.getString('token');
-    final config = Config();
-    final uri = Uri(
-        scheme: config.scheme,
-        host: config.host,
-        port: config.port,
-        path: "api/notes");
-
     try {
-      final res = await http.put(uri,
-          headers: {
-            "Authorization": "Bearer $token",
-            "Content-Type": "application/json"
-          },
-          body: jsonEncode({"id": id, "is_obscure": isObScure}));
+      final res = await httpPut(
+        "api/notes",
+        {},
+        {"id": id, "is_obscure": isObScure},
+      );
       if (res.statusCode != 200) {
         showDialog<void>(
           context: context,
@@ -181,15 +159,6 @@ class _Home extends ConsumerState<Home> {
   }
 
   _shareNoteWithUser(context, userName, noteId) async {
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    final token = prefs.getString('token');
-    final config = Config();
-    final uri = Uri(
-        scheme: config.scheme,
-        host: config.host,
-        port: config.port,
-        path: "api/share-note");
     if (userName == "") {
       return showDialog<void>(
         context: context,
@@ -213,13 +182,10 @@ class _Home extends ConsumerState<Home> {
       );
     }
     try {
-      final res = await http.post(
-        uri,
-        headers: {
-          "Authorization": "Bearer $token",
-          "Content-Type": "application/json"
-        },
-        body: jsonEncode({"user_name": userName, "note_id": noteId}),
+      final res = await httpPost(
+        "api/share-note",
+        {},
+        {"user_name": userName, "note_id": noteId},
       );
       if (res.statusCode == 200) {
         showDialog<void>(
@@ -348,15 +314,6 @@ class _Home extends ConsumerState<Home> {
   }
 
   _deleteNote(context, ref, id) async {
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    final token = prefs.getString('token');
-    final config = Config();
-    final uri = Uri(
-        scheme: config.scheme,
-        host: config.host,
-        port: config.port,
-        path: "api/notes");
     return showDialog<void>(
       context: context,
       builder: (c) {
@@ -370,16 +327,10 @@ class _Home extends ConsumerState<Home> {
                 onPressed: () async {
                   Navigator.pop(context, 'OK');
                   try {
-                    final res = await http.delete(
-                      uri,
-                      headers: {
-                        "Authorization": "Bearer $token",
-                        "Content-Type": "application/json"
-                      },
-                      body: jsonEncode({
-                        "id": id,
-                      }),
-                    );
+                    final res = await httpPut("api/notes", {}, {
+                      "id": id,
+                    });
+
                     if (res.statusCode == 200) {
                       final _ = ref.refresh(noteListProvider.future);
                     } else {

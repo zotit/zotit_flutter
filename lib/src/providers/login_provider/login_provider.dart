@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zotit/config.dart';
 import 'package:zotit/src/screens/login/login_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:zotit/src/utils/httpn.dart';
 
 part 'login_provider.g.dart';
 
@@ -17,7 +18,11 @@ class LoginToken extends _$LoginToken {
 
   Future<String> _getProfile(String token) async {
     final config = Config();
-    final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/me");
+    final uri = Uri(
+        scheme: config.scheme,
+        host: config.host,
+        port: config.port,
+        path: "api/me");
     final res = await http.get(uri, headers: {
       "Authorization": "Bearer $token",
       "Content-Type": "application/json",
@@ -39,9 +44,15 @@ class LoginToken extends _$LoginToken {
     final page = prefs.getString('page') ?? "";
     if (token != "") {
       final emailId = await _getProfile(token);
-      return LoginData(token: token, error: "", username: username, page: page, emailId: emailId);
+      return LoginData(
+          token: token,
+          error: "",
+          username: username,
+          page: page,
+          emailId: emailId);
     }
-    return LoginData(token: token, error: "", username: username, page: page, emailId: "");
+    return LoginData(
+        token: token, error: "", username: username, page: page, emailId: "");
   }
 
   Future<void> setToken(String token) async {
@@ -68,7 +79,11 @@ class LoginToken extends _$LoginToken {
     final prefs = await fPrefs;
     state = await AsyncValue.guard(() async {
       final config = Config();
-      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/login");
+      final uri = Uri(
+          scheme: config.scheme,
+          host: config.host,
+          port: config.port,
+          path: "api/login");
       final res = await http.post(uri,
           body: jsonEncode({
             "username": username,
@@ -80,6 +95,7 @@ class LoginToken extends _$LoginToken {
         final resData = jsonDecode(res.body);
 
         prefs.setString("token", resData["token"]!);
+        prefs.setString("refresh_token", resData["refresh_token"]!);
         prefs.setString("username", username);
 
         if (!resData['is_active']) {
@@ -89,7 +105,12 @@ class LoginToken extends _$LoginToken {
         prefs.remove("page");
         return _loadToken();
       } catch (e) {
-        return LoginData(token: "", error: res.body.replaceAll("\"", ""), username: '', page: '', emailId: '');
+        return LoginData(
+            token: "",
+            error: res.body.replaceAll("\"", ""),
+            username: '',
+            page: '',
+            emailId: '');
       }
     });
   }
@@ -102,7 +123,11 @@ class LoginToken extends _$LoginToken {
     final prefs = await fPrefs;
     state = await AsyncValue.guard(() async {
       final config = Config();
-      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/forgotpw");
+      final uri = Uri(
+          scheme: config.scheme,
+          host: config.host,
+          port: config.port,
+          path: "api/forgotpw");
       final res = await http.post(uri,
           body: jsonEncode({
             "username": username,
@@ -135,7 +160,11 @@ class LoginToken extends _$LoginToken {
     state = await AsyncValue.guard(() async {
       final token = prefs.getString('token');
       final config = Config();
-      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/activate");
+      final uri = Uri(
+          scheme: config.scheme,
+          host: config.host,
+          port: config.port,
+          path: "api/activate");
       final res = await http.post(uri,
           body: jsonEncode({
             "username": username,
@@ -165,13 +194,18 @@ class LoginToken extends _$LoginToken {
     });
   }
 
-  Future<void> register(String username, String password, String emailID) async {
+  Future<void> register(
+      String username, String password, String emailID) async {
     state = const AsyncLoading();
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     state = await AsyncValue.guard(() async {
       final config = Config();
-      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/register");
+      final uri = Uri(
+          scheme: config.scheme,
+          host: config.host,
+          port: config.port,
+          path: "api/register");
       final res = await http.post(
         uri,
         body: jsonEncode({
@@ -198,11 +232,17 @@ class LoginToken extends _$LoginToken {
   }
 
   setPage(String page) {
-    state = AsyncData(LoginData(token: '', error: '', username: '', page: page, emailId: state.value!.emailId));
+    state = AsyncData(LoginData(
+        token: '',
+        error: '',
+        username: '',
+        page: page,
+        emailId: state.value!.emailId));
   }
 
   LoginData getData() {
-    return state.value ?? LoginData(token: "", error: "", username: "", page: "", emailId: "");
+    return state.value ??
+        LoginData(token: "", error: "", username: "", page: "", emailId: "");
   }
 
   Future<void> updateProfile(String username, String emailId) async {
@@ -212,11 +252,17 @@ class LoginToken extends _$LoginToken {
     state = await AsyncValue.guard(() async {
       final token = prefs.getString('token');
       final config = Config();
-      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/me");
-      final res = await http.patch(uri, body: jsonEncode({"username": username, "email_id": emailId}), headers: {
-        "Authorization": "Bearer $token",
-        "Content-Type": "application/json",
-      });
+      final uri = Uri(
+          scheme: config.scheme,
+          host: config.host,
+          port: config.port,
+          path: "api/me");
+      final res = await http.patch(uri,
+          body: jsonEncode({"username": username, "email_id": emailId}),
+          headers: {
+            "Authorization": "Bearer $token",
+            "Content-Type": "application/json",
+          });
 
       try {
         final _ = jsonDecode(res.body);
@@ -233,29 +279,29 @@ class LoginToken extends _$LoginToken {
     });
   }
 
-  Future<void> deleteAccount(String password, String reason, String otherReason) async {
+  Future<void> deleteAccount(
+      String password, String reason, String otherReason) async {
     state = const AsyncLoading();
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     state = await AsyncValue.guard(() async {
-      final token = prefs.getString('token');
-      final config = Config();
-      final uri = Uri(scheme: config.scheme, host: config.host, port: config.port, path: "api/me");
-      final res = await http.delete(uri,
-          body: jsonEncode({
-            "password": password,
-            "reason": reason,
-            "reason_other": otherReason,
-          }),
-          headers: {
-            "Authorization": "Bearer $token",
-            "Content-Type": "application/json",
-          });
+      final res = await httpDelete("api/me", {}, {
+        "password": password,
+        "reason": reason,
+        "reason_other": otherReason,
+      });
+
       if (res.statusCode == 200) {
         await prefs.clear();
-        return LoginData(token: "", error: "", username: "", page: '', emailId: "");
+        return LoginData(
+            token: "", error: "", username: "", page: '', emailId: "");
       } else {
-        return LoginData(token: "", error: res.body.replaceAll("\"", ""), username: "", page: '', emailId: "");
+        return LoginData(
+            token: "",
+            error: res.body.replaceAll("\"", ""),
+            username: "",
+            page: '',
+            emailId: "");
       }
     });
   }
