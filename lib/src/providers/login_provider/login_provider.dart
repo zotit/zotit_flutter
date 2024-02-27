@@ -45,8 +45,8 @@ class LoginToken extends _$LoginToken {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     await prefs.clear();
-    final loginData = await _loadToken();
-    state = AsyncData(loginData);
+    state =
+        AsyncData(LoginData(error: "", username: "", emailId: "", page: ""));
   }
 
   Future<void> login(String username, String password) async {

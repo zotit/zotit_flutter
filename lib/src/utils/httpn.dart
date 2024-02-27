@@ -22,13 +22,17 @@ Future<Response> httpGet(
     "Content-Type": "application/json"
   });
   if (res.body == "Invalid or expired JWT") {
-    await refreshToken(prefs.getString('refresh_token'));
-    token = prefs.getString('token');
-    final ress = await http.get(uri, headers: {
-      "Authorization": "Bearer $token",
-      "Content-Type": "application/json"
-    });
-    return ress;
+    final isSuccessful = await refreshToken(prefs);
+    if (isSuccessful) {
+      token = prefs.getString('token');
+      final ress = await http.get(uri, headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json"
+      });
+      return ress;
+    } else {
+      return Response("Unauthorized", 401);
+    }
   } else {
     return res;
   }
@@ -54,17 +58,21 @@ Future<Response> httpPost(String path, Map<String, dynamic> queryParameters,
     body: jsonEncode(body),
   );
   if (res.body == "Invalid or expired JWT") {
-    await refreshToken(prefs.getString('refresh_token'));
-    token = prefs.getString('token');
-    final ress = await http.post(
-      uri,
-      headers: {
-        "Authorization": "Bearer $token",
-        "Content-Type": "application/json"
-      },
-      body: jsonEncode(body),
-    );
-    return ress;
+    final isSuccessful = await refreshToken(prefs);
+    if (isSuccessful) {
+      token = prefs.getString('token');
+      final ress = await http.post(
+        uri,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+        body: jsonEncode(body),
+      );
+      return ress;
+    } else {
+      return Response("Unauthorized", 401);
+    }
   } else {
     return res;
   }
@@ -90,17 +98,21 @@ Future<Response> httpPut(String path, Map<String, dynamic> queryParameters,
     body: jsonEncode(body),
   );
   if (res.body == "Invalid or expired JWT") {
-    await refreshToken(prefs.getString('refresh_token'));
-    token = prefs.getString('token');
-    final ress = await http.put(
-      uri,
-      headers: {
-        "Authorization": "Bearer $token",
-        "Content-Type": "application/json"
-      },
-      body: jsonEncode(body),
-    );
-    return ress;
+    final isSuccessful = await refreshToken(prefs);
+    if (isSuccessful) {
+      token = prefs.getString('token');
+      final ress = await http.put(
+        uri,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+        body: jsonEncode(body),
+      );
+      return ress;
+    } else {
+      return Response("Unauthorized", 401);
+    }
   } else {
     return res;
   }
@@ -126,23 +138,28 @@ Future<Response> httpDelete(String path, Map<String, dynamic> queryParameters,
     body: jsonEncode(body),
   );
   if (res.body == "Invalid or expired JWT") {
-    await refreshToken(prefs.getString('refresh_token'));
-    token = prefs.getString('token');
-    final ress = await http.delete(
-      uri,
-      headers: {
-        "Authorization": "Bearer $token",
-        "Content-Type": "application/json"
-      },
-      body: jsonEncode(body),
-    );
-    return ress;
+    final isSuccessful = await refreshToken(prefs);
+    if (isSuccessful) {
+      token = prefs.getString('token');
+      final ress = await http.delete(
+        uri,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+        body: jsonEncode(body),
+      );
+      return ress;
+    } else {
+      return Response("Unauthorized", 401);
+    }
   } else {
     return res;
   }
 }
 
-refreshToken(String? token) async {
+Future<bool> refreshToken(SharedPreferences prefs) async {
+  final token = prefs.getString('token');
   final uri = Uri(
       scheme: config.scheme,
       host: config.host,
@@ -151,9 +168,12 @@ refreshToken(String? token) async {
   final res = await http.post(uri, headers: {
     "Authorization": "Bearer $token",
   });
+  if (res.statusCode == 401) {
+    prefs.clear();
+    return false;
+  }
   final resData = jsonDecode(res.body);
-  final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-  final prefs = await fPrefs;
   prefs.setString("token", resData["token"]!);
   prefs.setString("refresh_token", resData["refresh_token"]!);
+  return true;
 }

@@ -96,8 +96,7 @@ class StartupPage extends ConsumerWidget {
           child: CircularProgressIndicator(),
         ),
       ),
-      error: (error, st) =>
-          ErrorPage(message: error.toString() + st.toString()),
+      error: (error, st) => ErrorPage(message: error.toString()),
     );
   }
 }
