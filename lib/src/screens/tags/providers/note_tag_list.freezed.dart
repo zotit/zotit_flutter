@@ -68,22 +68,22 @@ class _$NoteTagListRepoCopyWithImpl<$Res, $Val extends NoteTagListRepo>
 }
 
 /// @nodoc
-abstract class _$$_NoteTagListRepoCopyWith<$Res>
+abstract class _$$NoteTagListRepoImplCopyWith<$Res>
     implements $NoteTagListRepoCopyWith<$Res> {
-  factory _$$_NoteTagListRepoCopyWith(
-          _$_NoteTagListRepo value, $Res Function(_$_NoteTagListRepo) then) =
-      __$$_NoteTagListRepoCopyWithImpl<$Res>;
+  factory _$$NoteTagListRepoImplCopyWith(_$NoteTagListRepoImpl value,
+          $Res Function(_$NoteTagListRepoImpl) then) =
+      __$$NoteTagListRepoImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({List<NoteTag> noteTags, int page});
 }
 
 /// @nodoc
-class __$$_NoteTagListRepoCopyWithImpl<$Res>
-    extends _$NoteTagListRepoCopyWithImpl<$Res, _$_NoteTagListRepo>
-    implements _$$_NoteTagListRepoCopyWith<$Res> {
-  __$$_NoteTagListRepoCopyWithImpl(
-      _$_NoteTagListRepo _value, $Res Function(_$_NoteTagListRepo) _then)
+class __$$NoteTagListRepoImplCopyWithImpl<$Res>
+    extends _$NoteTagListRepoCopyWithImpl<$Res, _$NoteTagListRepoImpl>
+    implements _$$NoteTagListRepoImplCopyWith<$Res> {
+  __$$NoteTagListRepoImplCopyWithImpl(
+      _$NoteTagListRepoImpl _value, $Res Function(_$NoteTagListRepoImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -92,7 +92,7 @@ class __$$_NoteTagListRepoCopyWithImpl<$Res>
     Object? noteTags = null,
     Object? page = null,
   }) {
-    return _then(_$_NoteTagListRepo(
+    return _then(_$NoteTagListRepoImpl(
       noteTags: null == noteTags
           ? _value._noteTags
           : noteTags // ignore: cast_nullable_to_non_nullable
@@ -107,15 +107,15 @@ class __$$_NoteTagListRepoCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_NoteTagListRepo
+class _$NoteTagListRepoImpl
     with DiagnosticableTreeMixin
     implements _NoteTagListRepo {
-  _$_NoteTagListRepo(
+  _$NoteTagListRepoImpl(
       {required final List<NoteTag> noteTags, required this.page})
       : _noteTags = noteTags;
 
-  factory _$_NoteTagListRepo.fromJson(Map<String, dynamic> json) =>
-      _$$_NoteTagListRepoFromJson(json);
+  factory _$NoteTagListRepoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$NoteTagListRepoImplFromJson(json);
 
   final List<NoteTag> _noteTags;
   @override
@@ -143,10 +143,10 @@ class _$_NoteTagListRepo
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_NoteTagListRepo &&
+            other is _$NoteTagListRepoImpl &&
             const DeepCollectionEquality().equals(other._noteTags, _noteTags) &&
             (identical(other.page, page) || other.page == page));
   }
@@ -159,12 +159,13 @@ class _$_NoteTagListRepo
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_NoteTagListRepoCopyWith<_$_NoteTagListRepo> get copyWith =>
-      __$$_NoteTagListRepoCopyWithImpl<_$_NoteTagListRepo>(this, _$identity);
+  _$$NoteTagListRepoImplCopyWith<_$NoteTagListRepoImpl> get copyWith =>
+      __$$NoteTagListRepoImplCopyWithImpl<_$NoteTagListRepoImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_NoteTagListRepoToJson(
+    return _$$NoteTagListRepoImplToJson(
       this,
     );
   }
@@ -173,10 +174,10 @@ class _$_NoteTagListRepo
 abstract class _NoteTagListRepo implements NoteTagListRepo {
   factory _NoteTagListRepo(
       {required final List<NoteTag> noteTags,
-      required final int page}) = _$_NoteTagListRepo;
+      required final int page}) = _$NoteTagListRepoImpl;
 
   factory _NoteTagListRepo.fromJson(Map<String, dynamic> json) =
-      _$_NoteTagListRepo.fromJson;
+      _$NoteTagListRepoImpl.fromJson;
 
   @override
   List<NoteTag> get noteTags;
@@ -184,6 +185,6 @@ abstract class _NoteTagListRepo implements NoteTagListRepo {
   int get page;
   @override
   @JsonKey(ignore: true)
-  _$$_NoteTagListRepoCopyWith<_$_NoteTagListRepo> get copyWith =>
+  _$$NoteTagListRepoImplCopyWith<_$NoteTagListRepoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

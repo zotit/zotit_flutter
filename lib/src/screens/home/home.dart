@@ -313,7 +313,7 @@ class _Home extends ConsumerState<Home> {
     );
   }
 
-  _deleteNote(context, ref, id) async {
+  _deleteNote(context, id, int noteIndex) async {
     return showDialog<void>(
       context: context,
       builder: (c) {
@@ -327,12 +327,14 @@ class _Home extends ConsumerState<Home> {
                 onPressed: () async {
                   Navigator.pop(context, 'OK');
                   try {
-                    final res = await httpPut("api/notes", {}, {
+                    final res = await httpDelete("api/notes", {}, {
                       "id": id,
                     });
 
                     if (res.statusCode == 200) {
-                      final _ = ref.refresh(noteListProvider.future);
+                      ref
+                          .watch(noteListProvider.notifier)
+                          .deleteLocalNote(noteIndex);
                     } else {
                       showDialog<void>(
                         context: context,
@@ -817,8 +819,11 @@ class _Home extends ConsumerState<Home> {
                                                 // _shareNote(globalKey.currentContext, noteEntry.value.text.toString());
                                                 break;
                                               case "delete":
-                                                await _deleteNote(context, ref,
-                                                    noteEntry.value.id);
+                                                await _deleteNote(
+                                                  context,
+                                                  noteEntry.value.id,
+                                                  noteEntry.key,
+                                                );
                                                 break;
 
                                               default:

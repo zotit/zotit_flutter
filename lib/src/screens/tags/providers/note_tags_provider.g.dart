@@ -6,7 +6,7 @@ part of 'note_tags_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$noteTagListHash() => r'cd7d16c7881591e61e6c3a2e316e52825ca54428';
+String _$noteTagListHash() => r'59fc4bfebf967d81379f9b0dfda09e38ce47434b';
 
 /// See also [NoteTagList].
 @ProviderFor(NoteTagList)
@@ -22,4 +22,4 @@ final noteTagListProvider =
 
 typedef _$NoteTagList = AutoDisposeAsyncNotifier<NoteTagListRepo>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

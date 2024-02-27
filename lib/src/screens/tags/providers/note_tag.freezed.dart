@@ -72,20 +72,21 @@ class _$NoteTagCopyWithImpl<$Res, $Val extends NoteTag>
 }
 
 /// @nodoc
-abstract class _$$_NoteTagCopyWith<$Res> implements $NoteTagCopyWith<$Res> {
-  factory _$$_NoteTagCopyWith(
-          _$_NoteTag value, $Res Function(_$_NoteTag) then) =
-      __$$_NoteTagCopyWithImpl<$Res>;
+abstract class _$$NoteTagImplCopyWith<$Res> implements $NoteTagCopyWith<$Res> {
+  factory _$$NoteTagImplCopyWith(
+          _$NoteTagImpl value, $Res Function(_$NoteTagImpl) then) =
+      __$$NoteTagImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String id, String name, int color});
 }
 
 /// @nodoc
-class __$$_NoteTagCopyWithImpl<$Res>
-    extends _$NoteTagCopyWithImpl<$Res, _$_NoteTag>
-    implements _$$_NoteTagCopyWith<$Res> {
-  __$$_NoteTagCopyWithImpl(_$_NoteTag _value, $Res Function(_$_NoteTag) _then)
+class __$$NoteTagImplCopyWithImpl<$Res>
+    extends _$NoteTagCopyWithImpl<$Res, _$NoteTagImpl>
+    implements _$$NoteTagImplCopyWith<$Res> {
+  __$$NoteTagImplCopyWithImpl(
+      _$NoteTagImpl _value, $Res Function(_$NoteTagImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -95,7 +96,7 @@ class __$$_NoteTagCopyWithImpl<$Res>
     Object? name = null,
     Object? color = null,
   }) {
-    return _then(_$_NoteTag(
+    return _then(_$NoteTagImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -114,11 +115,11 @@ class __$$_NoteTagCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_NoteTag with DiagnosticableTreeMixin implements _NoteTag {
-  _$_NoteTag({required this.id, required this.name, required this.color});
+class _$NoteTagImpl with DiagnosticableTreeMixin implements _NoteTag {
+  _$NoteTagImpl({required this.id, required this.name, required this.color});
 
-  factory _$_NoteTag.fromJson(Map<String, dynamic> json) =>
-      _$$_NoteTagFromJson(json);
+  factory _$NoteTagImpl.fromJson(Map<String, dynamic> json) =>
+      _$$NoteTagImplFromJson(json);
 
   @override
   final String id;
@@ -143,10 +144,10 @@ class _$_NoteTag with DiagnosticableTreeMixin implements _NoteTag {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_NoteTag &&
+            other is _$NoteTagImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.color, color) || other.color == color));
@@ -159,12 +160,12 @@ class _$_NoteTag with DiagnosticableTreeMixin implements _NoteTag {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_NoteTagCopyWith<_$_NoteTag> get copyWith =>
-      __$$_NoteTagCopyWithImpl<_$_NoteTag>(this, _$identity);
+  _$$NoteTagImplCopyWith<_$NoteTagImpl> get copyWith =>
+      __$$NoteTagImplCopyWithImpl<_$NoteTagImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_NoteTagToJson(
+    return _$$NoteTagImplToJson(
       this,
     );
   }
@@ -174,9 +175,9 @@ abstract class _NoteTag implements NoteTag {
   factory _NoteTag(
       {required final String id,
       required final String name,
-      required final int color}) = _$_NoteTag;
+      required final int color}) = _$NoteTagImpl;
 
-  factory _NoteTag.fromJson(Map<String, dynamic> json) = _$_NoteTag.fromJson;
+  factory _NoteTag.fromJson(Map<String, dynamic> json) = _$NoteTagImpl.fromJson;
 
   @override
   String get id;
@@ -186,6 +187,6 @@ abstract class _NoteTag implements NoteTag {
   int get color;
   @override
   @JsonKey(ignore: true)
-  _$$_NoteTagCopyWith<_$_NoteTag> get copyWith =>
+  _$$NoteTagImplCopyWith<_$NoteTagImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

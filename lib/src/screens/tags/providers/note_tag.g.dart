@@ -6,13 +6,14 @@ part of 'note_tag.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_NoteTag _$$_NoteTagFromJson(Map<String, dynamic> json) => _$_NoteTag(
+_$NoteTagImpl _$$NoteTagImplFromJson(Map<String, dynamic> json) =>
+    _$NoteTagImpl(
       id: json['id'] as String,
       name: json['name'] as String,
       color: json['color'] as int,
     );
 
-Map<String, dynamic> _$$_NoteTagToJson(_$_NoteTag instance) =>
+Map<String, dynamic> _$$NoteTagImplToJson(_$NoteTagImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,

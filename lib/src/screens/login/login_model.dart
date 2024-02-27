@@ -9,12 +9,12 @@ part 'login_model.g.dart';
 @freezed
 class LoginData with _$LoginData {
   factory LoginData({
-    required String token,
     required String error,
     required String username,
     required String emailId,
     required String page,
   }) = _LoginData;
 
-  factory LoginData.fromJson(Map<String, dynamic> json) => _$LoginDataFromJson(json);
+  factory LoginData.fromJson(Map<String, dynamic> json) =>
+      _$LoginDataFromJson(json);
 }

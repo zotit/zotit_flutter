@@ -92,9 +92,10 @@ class _$NoteCopyWithImpl<$Res, $Val extends Note>
 }
 
 /// @nodoc
-abstract class _$$_NoteCopyWith<$Res> implements $NoteCopyWith<$Res> {
-  factory _$$_NoteCopyWith(_$_Note value, $Res Function(_$_Note) then) =
-      __$$_NoteCopyWithImpl<$Res>;
+abstract class _$$NoteImplCopyWith<$Res> implements $NoteCopyWith<$Res> {
+  factory _$$NoteImplCopyWith(
+          _$NoteImpl value, $Res Function(_$NoteImpl) then) =
+      __$$NoteImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String id, String text, bool is_obscure, NoteTag? tag});
@@ -104,9 +105,10 @@ abstract class _$$_NoteCopyWith<$Res> implements $NoteCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_NoteCopyWithImpl<$Res> extends _$NoteCopyWithImpl<$Res, _$_Note>
-    implements _$$_NoteCopyWith<$Res> {
-  __$$_NoteCopyWithImpl(_$_Note _value, $Res Function(_$_Note) _then)
+class __$$NoteImplCopyWithImpl<$Res>
+    extends _$NoteCopyWithImpl<$Res, _$NoteImpl>
+    implements _$$NoteImplCopyWith<$Res> {
+  __$$NoteImplCopyWithImpl(_$NoteImpl _value, $Res Function(_$NoteImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -117,7 +119,7 @@ class __$$_NoteCopyWithImpl<$Res> extends _$NoteCopyWithImpl<$Res, _$_Note>
     Object? is_obscure = null,
     Object? tag = freezed,
   }) {
-    return _then(_$_Note(
+    return _then(_$NoteImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -140,14 +142,15 @@ class __$$_NoteCopyWithImpl<$Res> extends _$NoteCopyWithImpl<$Res, _$_Note>
 
 /// @nodoc
 @JsonSerializable()
-class _$_Note with DiagnosticableTreeMixin implements _Note {
-  _$_Note(
+class _$NoteImpl with DiagnosticableTreeMixin implements _Note {
+  _$NoteImpl(
       {required this.id,
       required this.text,
       required this.is_obscure,
       required this.tag});
 
-  factory _$_Note.fromJson(Map<String, dynamic> json) => _$$_NoteFromJson(json);
+  factory _$NoteImpl.fromJson(Map<String, dynamic> json) =>
+      _$$NoteImplFromJson(json);
 
   @override
   final String id;
@@ -175,10 +178,10 @@ class _$_Note with DiagnosticableTreeMixin implements _Note {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Note &&
+            other is _$NoteImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.text, text) || other.text == text) &&
             (identical(other.is_obscure, is_obscure) ||
@@ -193,12 +196,12 @@ class _$_Note with DiagnosticableTreeMixin implements _Note {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_NoteCopyWith<_$_Note> get copyWith =>
-      __$$_NoteCopyWithImpl<_$_Note>(this, _$identity);
+  _$$NoteImplCopyWith<_$NoteImpl> get copyWith =>
+      __$$NoteImplCopyWithImpl<_$NoteImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_NoteToJson(
+    return _$$NoteImplToJson(
       this,
     );
   }
@@ -209,9 +212,9 @@ abstract class _Note implements Note {
       {required final String id,
       required final String text,
       required final bool is_obscure,
-      required final NoteTag? tag}) = _$_Note;
+      required final NoteTag? tag}) = _$NoteImpl;
 
-  factory _Note.fromJson(Map<String, dynamic> json) = _$_Note.fromJson;
+  factory _Note.fromJson(Map<String, dynamic> json) = _$NoteImpl.fromJson;
 
   @override
   String get id;
@@ -223,5 +226,6 @@ abstract class _Note implements Note {
   NoteTag? get tag;
   @override
   @JsonKey(ignore: true)
-  _$$_NoteCopyWith<_$_Note> get copyWith => throw _privateConstructorUsedError;
+  _$$NoteImplCopyWith<_$NoteImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
