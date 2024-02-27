@@ -16,18 +16,8 @@ class LoginToken extends _$LoginToken {
     return _loadToken();
   }
 
-  Future<String> _getProfile(String token) async {
-    final config = Config();
-    final uri = Uri(
-        scheme: config.scheme,
-        host: config.host,
-        port: config.port,
-        path: "api/me");
-    final res = await http.get(uri, headers: {
-      "Authorization": "Bearer $token",
-      "Content-Type": "application/json",
-    });
-
+  Future<String> _getProfile() async {
+    final res = await httpGet("api/me", {});
     try {
       final resData = jsonDecode(res.body);
       return resData['email_id'];
@@ -39,29 +29,15 @@ class LoginToken extends _$LoginToken {
   Future<LoginData> _loadToken() async {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
-    final token = prefs.getString('token') ?? "";
     final username = prefs.getString('username') ?? "";
     final page = prefs.getString('page') ?? "";
-    if (token != "") {
-      final emailId = await _getProfile(token);
+    final emailId = await _getProfile();
+    if (emailId != "") {
       return LoginData(
-          token: token,
-          error: "",
-          username: username,
-          page: page,
-          emailId: emailId);
+          error: "", username: username, page: page, emailId: emailId);
     }
-    return LoginData(
-        token: token, error: "", username: username, page: page, emailId: "");
-  }
 
-  Future<void> setToken(String token) async {
-    state = const AsyncLoading();
-    final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
-    final prefs = await fPrefs;
-    await prefs.setString('token', token);
-    final loginData = await _loadToken();
-    state = AsyncData(loginData);
+    return LoginData(error: "", username: username, page: page, emailId: "");
   }
 
   Future<void> logout() async {
@@ -106,7 +82,6 @@ class LoginToken extends _$LoginToken {
         return _loadToken();
       } catch (e) {
         return LoginData(
-            token: "",
             error: res.body.replaceAll("\"", ""),
             username: '',
             page: '',
@@ -142,7 +117,6 @@ class LoginToken extends _$LoginToken {
         return _loadToken();
       } catch (e) {
         return LoginData(
-          token: "",
           error: res.body.replaceAll("\"", ""),
           username: '',
           page: 'forgotpw',
@@ -185,7 +159,6 @@ class LoginToken extends _$LoginToken {
         return _loadToken();
       } catch (e) {
         return LoginData(
-            token: "",
             error: res.body.replaceAll("\"", ""),
             username: '',
             page: 'resetpw',
@@ -222,7 +195,6 @@ class LoginToken extends _$LoginToken {
         return _loadToken();
       } catch (e) {
         return LoginData(
-            token: "",
             error: res.body.replaceAll("\"", ""),
             username: '',
             page: 'register',
@@ -233,16 +205,12 @@ class LoginToken extends _$LoginToken {
 
   setPage(String page) {
     state = AsyncData(LoginData(
-        token: '',
-        error: '',
-        username: '',
-        page: page,
-        emailId: state.value!.emailId));
+        error: '', username: '', page: page, emailId: state.value!.emailId));
   }
 
   LoginData getData() {
     return state.value ??
-        LoginData(token: "", error: "", username: "", page: "", emailId: "");
+        LoginData(error: "", username: "", page: "", emailId: "");
   }
 
   Future<void> updateProfile(String username, String emailId) async {
@@ -270,7 +238,6 @@ class LoginToken extends _$LoginToken {
         return _loadToken();
       } catch (e) {
         return LoginData(
-            token: token!,
             error: res.body.replaceAll("\"", ""),
             username: username,
             page: '',
@@ -293,11 +260,9 @@ class LoginToken extends _$LoginToken {
 
       if (res.statusCode == 200) {
         await prefs.clear();
-        return LoginData(
-            token: "", error: "", username: "", page: '', emailId: "");
+        return LoginData(error: "", username: "", page: '', emailId: "");
       } else {
         return LoginData(
-            token: "",
             error: res.body.replaceAll("\"", ""),
             username: "",
             page: '',

@@ -68,22 +68,22 @@ class _$NoteListRepoCopyWithImpl<$Res, $Val extends NoteListRepo>
 }
 
 /// @nodoc
-abstract class _$$_NoteListRepoCopyWith<$Res>
+abstract class _$$NoteListRepoImplCopyWith<$Res>
     implements $NoteListRepoCopyWith<$Res> {
-  factory _$$_NoteListRepoCopyWith(
-          _$_NoteListRepo value, $Res Function(_$_NoteListRepo) then) =
-      __$$_NoteListRepoCopyWithImpl<$Res>;
+  factory _$$NoteListRepoImplCopyWith(
+          _$NoteListRepoImpl value, $Res Function(_$NoteListRepoImpl) then) =
+      __$$NoteListRepoImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({List<Note> notes, int page});
 }
 
 /// @nodoc
-class __$$_NoteListRepoCopyWithImpl<$Res>
-    extends _$NoteListRepoCopyWithImpl<$Res, _$_NoteListRepo>
-    implements _$$_NoteListRepoCopyWith<$Res> {
-  __$$_NoteListRepoCopyWithImpl(
-      _$_NoteListRepo _value, $Res Function(_$_NoteListRepo) _then)
+class __$$NoteListRepoImplCopyWithImpl<$Res>
+    extends _$NoteListRepoCopyWithImpl<$Res, _$NoteListRepoImpl>
+    implements _$$NoteListRepoImplCopyWith<$Res> {
+  __$$NoteListRepoImplCopyWithImpl(
+      _$NoteListRepoImpl _value, $Res Function(_$NoteListRepoImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -92,7 +92,7 @@ class __$$_NoteListRepoCopyWithImpl<$Res>
     Object? notes = null,
     Object? page = null,
   }) {
-    return _then(_$_NoteListRepo(
+    return _then(_$NoteListRepoImpl(
       notes: null == notes
           ? _value._notes
           : notes // ignore: cast_nullable_to_non_nullable
@@ -107,12 +107,12 @@ class __$$_NoteListRepoCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_NoteListRepo with DiagnosticableTreeMixin implements _NoteListRepo {
-  _$_NoteListRepo({required final List<Note> notes, required this.page})
+class _$NoteListRepoImpl with DiagnosticableTreeMixin implements _NoteListRepo {
+  _$NoteListRepoImpl({required final List<Note> notes, required this.page})
       : _notes = notes;
 
-  factory _$_NoteListRepo.fromJson(Map<String, dynamic> json) =>
-      _$$_NoteListRepoFromJson(json);
+  factory _$NoteListRepoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$NoteListRepoImplFromJson(json);
 
   final List<Note> _notes;
   @override
@@ -140,10 +140,10 @@ class _$_NoteListRepo with DiagnosticableTreeMixin implements _NoteListRepo {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_NoteListRepo &&
+            other is _$NoteListRepoImpl &&
             const DeepCollectionEquality().equals(other._notes, _notes) &&
             (identical(other.page, page) || other.page == page));
   }
@@ -156,12 +156,12 @@ class _$_NoteListRepo with DiagnosticableTreeMixin implements _NoteListRepo {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_NoteListRepoCopyWith<_$_NoteListRepo> get copyWith =>
-      __$$_NoteListRepoCopyWithImpl<_$_NoteListRepo>(this, _$identity);
+  _$$NoteListRepoImplCopyWith<_$NoteListRepoImpl> get copyWith =>
+      __$$NoteListRepoImplCopyWithImpl<_$NoteListRepoImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_NoteListRepoToJson(
+    return _$$NoteListRepoImplToJson(
       this,
     );
   }
@@ -170,10 +170,10 @@ class _$_NoteListRepo with DiagnosticableTreeMixin implements _NoteListRepo {
 abstract class _NoteListRepo implements NoteListRepo {
   factory _NoteListRepo(
       {required final List<Note> notes,
-      required final int page}) = _$_NoteListRepo;
+      required final int page}) = _$NoteListRepoImpl;
 
   factory _NoteListRepo.fromJson(Map<String, dynamic> json) =
-      _$_NoteListRepo.fromJson;
+      _$NoteListRepoImpl.fromJson;
 
   @override
   List<Note> get notes;
@@ -181,6 +181,6 @@ abstract class _NoteListRepo implements NoteListRepo {
   int get page;
   @override
   @JsonKey(ignore: true)
-  _$$_NoteListRepoCopyWith<_$_NoteListRepo> get copyWith =>
+  _$$NoteListRepoImplCopyWith<_$NoteListRepoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

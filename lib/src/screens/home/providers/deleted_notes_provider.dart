@@ -11,17 +11,17 @@ import 'package:zotit/src/screens/home/providers/note_list.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
 import 'package:zotit/src/utils/httpn.dart';
 
-part 'home_provider.g.dart';
+part 'deleted_notes_provider.g.dart';
 
 @riverpod
-class NoteList extends _$NoteList {
+class DeletedNoteList extends _$DeletedNoteList {
   @override
   FutureOr<NoteListRepo> build() async {
     return _loadNotes();
   }
 
   Future<NoteListRepo> _loadNotes() async {
-    final res = await httpGet("api/notes", {});
+    final res = await httpGet("api/notes", {"is_deleted": "true"});
     final notes = jsonDecode(res.body) as List<dynamic>;
     return NoteListRepo(
         notes: notes.map((item) {
@@ -44,13 +44,13 @@ class NoteList extends _$NoteList {
         page: 1);
   }
 
-  getNotesByPage(text, tagId) async {
+  getNotesByPage(text) async {
     final newPage = state.value!.page + 1;
 
     final res = await httpGet("api/notes", {
+      "is_deleted": "true",
       'page': newPage.toString(),
       'text': text,
-      'tag_id': tagId,
     });
     if (res.body == "Invalid or expired JWT") {
       final loginData = ref.read(loginTokenProvider.notifier);

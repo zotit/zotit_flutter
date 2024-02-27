@@ -74,7 +74,7 @@ class StartupPage extends ConsumerWidget {
     final loginData = ref.watch(loginTokenProvider);
     return loginData.when(
       data: (user) {
-        if (user.token != "") {
+        if (user.username != "") {
           if (user.page == 'resetpw') {
             return const Resetpw();
           }

@@ -27,9 +27,16 @@ class SideDrawer extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.home_outlined),
-            title: const Text('Home'),
+            title: const Text('Notes'),
             onTap: () {
               Navigator.of(context).pop();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.auto_delete),
+            title: const Text('Deleted Notes'),
+            onTap: () {
+              Navigator.of(context).pushNamed(AppRoutes.deletedNotesPage);
             },
           ),
           ListTile(

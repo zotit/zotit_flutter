@@ -6,15 +6,15 @@ part of 'note_list.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_NoteListRepo _$$_NoteListRepoFromJson(Map<String, dynamic> json) =>
-    _$_NoteListRepo(
+_$NoteListRepoImpl _$$NoteListRepoImplFromJson(Map<String, dynamic> json) =>
+    _$NoteListRepoImpl(
       notes: (json['notes'] as List<dynamic>)
           .map((e) => Note.fromJson(e as Map<String, dynamic>))
           .toList(),
       page: json['page'] as int,
     );
 
-Map<String, dynamic> _$$_NoteListRepoToJson(_$_NoteListRepo instance) =>
+Map<String, dynamic> _$$NoteListRepoImplToJson(_$NoteListRepoImpl instance) =>
     <String, dynamic>{
       'notes': instance.notes,
       'page': instance.page,
