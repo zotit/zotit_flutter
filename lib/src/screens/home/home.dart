@@ -18,6 +18,7 @@ import 'package:zotit/src/screens/home/providers/home_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 import 'package:zotit/src/screens/home/providers/note.dart';
+import 'package:zotit/src/screens/home/providers/note_text_provider.dart';
 import 'package:zotit/src/screens/home/side_drawer.dart';
 import 'package:zotit/src/screens/tags/note_tags_s_list.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
@@ -481,7 +482,6 @@ class _Home extends ConsumerState<Home> {
   TextEditingController searchC = TextEditingController(text: "");
   TextEditingController rcvrUsernameC = TextEditingController(text: "");
   final ScrollController _scrollController = ScrollController();
-
   @override
   void initState() {
     _scrollController.addListener(() {
@@ -492,6 +492,7 @@ class _Home extends ConsumerState<Home> {
             .getNotesByPage(searchC.text, selectedTag.id);
       }
     });
+    textC.text = ref.read(noteTextProvider).value ?? "";
     super.initState();
   }
 
@@ -499,6 +500,8 @@ class _Home extends ConsumerState<Home> {
   Widget build(BuildContext context) {
     final loginData = ref.watch(loginTokenProvider.notifier);
     final notesData = ref.watch(noteListProvider);
+    final textDataNotifier = ref.watch(noteTextProvider.notifier);
+    final textData = ref.read(noteTextProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -692,30 +695,40 @@ class _Home extends ConsumerState<Home> {
                             Row(
                               children: [
                                 Expanded(
-                                  child: TextFormField(
-                                    onTapOutside: (b) {
-                                      FocusManager.instance.primaryFocus
-                                          ?.unfocus();
-                                    },
-                                    controller: textC,
-                                    decoration: const InputDecoration(
-                                        hintStyle: TextStyle(
-                                          fontFamily: 'Satisfy',
-                                        ),
-                                        border: OutlineInputBorder(),
-                                        labelText: 'Zot it',
-                                        hintText: 'What needs to be zoted...'),
-                                    minLines: 1,
-                                    maxLines: 20,
+                                  child: textData.when(
+                                    data: (value) => TextFormField(
+                                      onTapOutside: (b) {
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
+                                      },
+                                      initialValue: value,
+                                      onChanged: (value) async {
+                                        textDataNotifier.setText(value);
+                                      },
+                                      decoration: const InputDecoration(
+                                          hintStyle: TextStyle(
+                                            fontFamily: 'Satisfy',
+                                          ),
+                                          border: OutlineInputBorder(),
+                                          labelText: 'Zot it',
+                                          hintText:
+                                              'What needs to be zoted...'),
+                                      minLines: 1,
+                                      maxLines: 20,
+                                    ),
+                                    loading: () => const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                    error: (err, stack) => Text('Error: $err'),
                                   ),
                                 ),
                                 const Gap(10),
                                 ElevatedButton(
                                   onPressed: () async {
-                                    if (textC.text != '') {
+                                    if (textData.value != '') {
                                       await _submit(
-                                          context, textC.text, !isVisible);
-                                      textC.text = '';
+                                          context, textData.value, !isVisible);
+                                      textDataNotifier.setText('');
                                       final _ = ref.refresh(noteListProvider);
                                     }
                                   },
