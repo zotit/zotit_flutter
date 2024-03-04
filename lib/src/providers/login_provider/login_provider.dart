@@ -29,15 +29,15 @@ class LoginToken extends _$LoginToken {
   Future<LoginData> _loadToken() async {
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
-    final username = prefs.getString('username') ?? "";
     final page = prefs.getString('page') ?? "";
     final emailId = await _getProfile();
     if (emailId != "") {
+      final username = prefs.getString('username') ?? "";
       return LoginData(
           error: "", username: username, page: page, emailId: emailId);
     }
 
-    return LoginData(error: "", username: username, page: page, emailId: "");
+    return LoginData(error: "", username: "", page: page, emailId: "");
   }
 
   Future<void> logout() async {
