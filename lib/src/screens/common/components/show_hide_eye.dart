@@ -25,10 +25,6 @@ class _ShowHideEyeState extends State<ShowHideEye> {
     final bool isBigScreen = MediaQuery.of(context).size.width > 400;
     if (isBigScreen) {
       return TextButton.icon(
-        style: ButtonStyle(
-          foregroundColor:
-              MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
-        ),
         icon: Icon(!isVisible ? Icons.visibility : Icons.visibility_off),
         label: isVisible ? const Text("Hide") : const Text("Show"),
         onPressed: () {

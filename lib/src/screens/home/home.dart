@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zotit/config.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
+import 'package:zotit/src/providers/theme_provider/darkmode_provider.dart';
 import 'package:zotit/src/screens/common/components/show_hide_eye.dart';
 import 'package:zotit/src/screens/home/note_details.dart';
 import 'package:zotit/src/screens/home/providers/home_provider.dart';
@@ -45,6 +46,10 @@ class _Home extends ConsumerState<Home> {
       );
 
       if (res.statusCode == 200) {
+        final newNote = jsonDecode(res.body);
+        ref
+            .watch(noteListProvider.notifier)
+            .prependLocalNote(newNote["id"], newNote["text"], isVisible);
       } else {
         showDialog<void>(
           context: context,
@@ -398,10 +403,6 @@ class _Home extends ConsumerState<Home> {
           onPressed: () {
             Clipboard.setData(ClipboardData(text: noteEntry.value.text));
           },
-          style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
-          ),
           icon: const Icon(
             Icons.copy,
             size: 16,
@@ -417,10 +418,6 @@ class _Home extends ConsumerState<Home> {
               ),
             ));
           },
-          style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(const Color(0xFF3A568E)),
-          ),
           icon: const Icon(
             Icons.edit_document,
             size: 16,
@@ -444,7 +441,6 @@ class _Home extends ConsumerState<Home> {
     } else {
       return [
         IconButton(
-          color: const Color(0xFF3A568E),
           onPressed: () {
             Clipboard.setData(ClipboardData(text: noteEntry.value.text));
           },
@@ -452,7 +448,6 @@ class _Home extends ConsumerState<Home> {
         ),
         IconButton(
             icon: const Icon(Icons.edit_document),
-            color: const Color(0xFF3A568E),
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute<dynamic>(
                 builder: (_) => NoteDetails(
@@ -482,6 +477,7 @@ class _Home extends ConsumerState<Home> {
   TextEditingController searchC = TextEditingController(text: "");
   TextEditingController rcvrUsernameC = TextEditingController(text: "");
   final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     _scrollController.addListener(() {
@@ -492,7 +488,6 @@ class _Home extends ConsumerState<Home> {
             .getNotesByPage(searchC.text, selectedTag.id);
       }
     });
-    textC.text = ref.read(noteTextProvider).value ?? "";
     super.initState();
   }
 
@@ -501,10 +496,10 @@ class _Home extends ConsumerState<Home> {
     final loginData = ref.watch(loginTokenProvider.notifier);
     final notesData = ref.watch(noteListProvider);
     final textDataNotifier = ref.watch(noteTextProvider.notifier);
-    final textData = ref.read(noteTextProvider);
+    final textData = ref.watch(noteTextProvider);
+    final darkMode = ref.watch(darkModeProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       drawer: const SideDrawer(),
       appBar: AppBar(
         title: Row(children: [
@@ -512,7 +507,7 @@ class _Home extends ConsumerState<Home> {
             "ZotIt ",
             style: TextStyle(fontFamily: 'Satisfy', fontSize: 30),
           ),
-          Gap(10),
+          const Gap(10),
           Flexible(
             child: Text(
               "@${loginData.getData().username}",
@@ -522,6 +517,18 @@ class _Home extends ConsumerState<Home> {
           )
         ]),
         actions: [
+          Switch(
+            activeColor: darkMode.value == true
+                ? Colors.black12
+                : const Color.fromARGB(255, 77, 114, 189),
+            activeTrackColor: darkMode.value == true
+                ? Colors.white12
+                : const Color.fromARGB(255, 17, 25, 42),
+            value: darkMode.value == true ? !true : !false,
+            onChanged: (bool value) {
+              ref.watch(darkModeProvider.notifier).setMode(!value);
+            },
+          ),
           IconButton(
             onPressed: () {
               setState(() {
@@ -696,26 +703,30 @@ class _Home extends ConsumerState<Home> {
                               children: [
                                 Expanded(
                                   child: textData.when(
-                                    data: (value) => TextFormField(
-                                      onTapOutside: (b) {
-                                        FocusManager.instance.primaryFocus
-                                            ?.unfocus();
-                                      },
-                                      initialValue: value,
-                                      onChanged: (value) async {
-                                        textDataNotifier.setText(value);
-                                      },
-                                      decoration: const InputDecoration(
-                                          hintStyle: TextStyle(
-                                            fontFamily: 'Satisfy',
-                                          ),
-                                          border: OutlineInputBorder(),
-                                          labelText: 'Zot it',
-                                          hintText:
-                                              'What needs to be zoted...'),
-                                      minLines: 1,
-                                      maxLines: 20,
-                                    ),
+                                    data: (value) {
+                                      textC.text = value;
+                                      return TextFormField(
+                                        onTapOutside: (b) {
+                                          FocusManager.instance.primaryFocus
+                                              ?.unfocus();
+                                        },
+                                        controller: textC,
+                                        onChanged: (value) async {
+                                          textDataNotifier.setText(
+                                              value, false);
+                                        },
+                                        decoration: const InputDecoration(
+                                            hintStyle: TextStyle(
+                                              fontFamily: 'Satisfy',
+                                            ),
+                                            border: OutlineInputBorder(),
+                                            labelText: 'Zot it',
+                                            hintText:
+                                                'What needs to be zoted...'),
+                                        minLines: 1,
+                                        maxLines: 20,
+                                      );
+                                    },
                                     loading: () => const Center(
                                       child: CircularProgressIndicator(),
                                     ),
@@ -725,11 +736,11 @@ class _Home extends ConsumerState<Home> {
                                 const Gap(10),
                                 ElevatedButton(
                                   onPressed: () async {
-                                    if (textData.value != '') {
+                                    if (textC.text != '') {
                                       await _submit(
-                                          context, textData.value, !isVisible);
-                                      textDataNotifier.setText('');
-                                      final _ = ref.refresh(noteListProvider);
+                                          context, textC.text, !isVisible);
+                                      textDataNotifier.setText("", true);
+                                      // final _ = ref.refresh(noteListProvider);
                                     }
                                   },
                                   style: ButtonStyle(
@@ -849,28 +860,22 @@ class _Home extends ConsumerState<Home> {
                                                 child: Row(children: [
                                                   Icon(
                                                     Icons.share,
-                                                    color: Color(0xFF3A568E),
                                                   ),
                                                   Gap(10),
                                                   Text(
                                                     "Share",
-                                                    style: TextStyle(
-                                                        color:
-                                                            Color(0xFF3A568E)),
                                                   )
                                                 ]),
                                               ),
                                               const PopupMenuItem<String>(
                                                 value: "delete",
                                                 child: Row(children: [
-                                                  Icon(Icons.delete,
-                                                      color: Color(0xFF3A568E)),
+                                                  Icon(
+                                                    Icons.delete,
+                                                  ),
                                                   Gap(10),
                                                   Text(
                                                     "Delete",
-                                                    style: TextStyle(
-                                                        color:
-                                                            Color(0xFF3A568E)),
                                                   )
                                                 ]),
                                               ),

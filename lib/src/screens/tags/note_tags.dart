@@ -112,10 +112,8 @@ class _NoteTags extends ConsumerState<NoteTags> {
 
   @override
   Widget build(BuildContext context) {
-    final loginData = ref.watch(loginTokenProvider.notifier);
     final noteTagsData = ref.watch(noteTagListProvider);
     return Scaffold(
-      backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute<dynamic>(

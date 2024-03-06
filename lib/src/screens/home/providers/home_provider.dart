@@ -136,6 +136,23 @@ class NoteList extends _$NoteList {
     }
   }
 
+  prependLocalNote(String id, String text, bool isObscure) {
+    if (state.asData != null) {
+      var stateValue = state.value?.notes.toList();
+      var newNote = Note(
+          id: id,
+          text: text,
+          is_obscure: isObscure,
+          tag: NoteTag(
+              id: "",
+              name: "Assign Tag",
+              color: const Color(0xff9e9e9e).value));
+
+      state = AsyncValue.data(NoteListRepo(
+          notes: [newNote, ...?stateValue], page: state.value!.page));
+    }
+  }
+
   deleteLocalNote(index) {
     if (state.asData != null) {
       var stateValue = state.value?.notes.toList();

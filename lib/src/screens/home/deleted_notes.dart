@@ -119,7 +119,6 @@ class _DeletedNotes extends ConsumerState<DeletedNotes> {
     final notesData = ref.watch(deletedNoteListProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Column(
           children: [
@@ -197,12 +196,6 @@ class _DeletedNotes extends ConsumerState<DeletedNotes> {
                                                     noteEntry.value.id,
                                                     noteEntry.key);
                                               },
-                                              style: ButtonStyle(
-                                                foregroundColor:
-                                                    MaterialStateProperty
-                                                        .all<Color>(const Color(
-                                                            0xFF3A568E)),
-                                              ),
                                               icon: const Icon(
                                                 Icons.restore,
                                                 size: 16,

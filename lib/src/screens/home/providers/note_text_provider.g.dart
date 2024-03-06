@@ -6,7 +6,7 @@ part of 'note_text_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$noteTextHash() => r'd29ddd081f7197a04fbee9f41784b14743861303';
+String _$noteTextHash() => r'a1da2d8a27f717a7db3e1ff2b89c803895c65379';
 
 /// See also [NoteText].
 @ProviderFor(NoteText)

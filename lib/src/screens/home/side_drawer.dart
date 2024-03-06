@@ -15,9 +15,6 @@ class SideDrawer extends ConsumerWidget {
         physics: const BouncingScrollPhysics(),
         children: <Widget>[
           const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 221, 229, 243),
-            ),
             margin: EdgeInsets.all(0),
             child: Center(
                 child: Text(

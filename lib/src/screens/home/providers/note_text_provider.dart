@@ -5,22 +5,24 @@ part 'note_text_provider.g.dart';
 @riverpod
 class NoteText extends _$NoteText {
   final Future<SharedPreferences> _fPrefs = SharedPreferences.getInstance();
+  late SharedPreferences _prefs;
 
   @override
   FutureOr<String> build() async {
+    _prefs = await _fPrefs;
     return _loadText();
   }
 
   FutureOr<String> _loadText() async {
-    final prefs = await _fPrefs;
-    final username = prefs.getString('text') ?? "";
+    final username = _prefs.getString('text') ?? "";
     return username;
   }
 
-  setText(String text) async {
-    state = const AsyncLoading();
-    final prefs = await _fPrefs;
-    prefs.setString('text', text);
-    state = AsyncData(text);
+  setText(String text, bool updateState) async {
+    _prefs.setString('text', text);
+    if (updateState) {
+      state = const AsyncLoading();
+      state = AsyncData(text);
+    }
   }
 }
