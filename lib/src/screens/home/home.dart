@@ -712,8 +712,7 @@ class _Home extends ConsumerState<Home> {
                                         },
                                         controller: textC,
                                         onChanged: (value) async {
-                                          textDataNotifier.setText(
-                                              value, false);
+                                          textDataNotifier.setText(value, true);
                                         },
                                         decoration: const InputDecoration(
                                             hintStyle: TextStyle(
@@ -740,7 +739,6 @@ class _Home extends ConsumerState<Home> {
                                       await _submit(
                                           context, textC.text, !isVisible);
                                       textDataNotifier.setText("", true);
-                                      // final _ = ref.refresh(noteListProvider);
                                     }
                                   },
                                   style: ButtonStyle(
