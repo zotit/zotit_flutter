@@ -110,11 +110,12 @@ class LoginToken extends _$LoginToken {
           headers: {"Content-Type": "application/json"});
 
       try {
-        final resData = jsonDecode(res.body);
-
-        prefs.setString("token", resData["token"]!);
-        await prefs.setString("username", username);
-        return _loadToken();
+        await prefs.clear();
+        return LoginData(
+            error: res.body.replaceAll("\"", ""),
+            username: "",
+            emailId: "",
+            page: "");
       } catch (e) {
         return LoginData(
           error: res.body.replaceAll("\"", ""),
@@ -151,17 +152,17 @@ class LoginToken extends _$LoginToken {
           });
 
       try {
-        final resData = jsonDecode(res.body);
-
-        prefs.setString("token", resData["token"]!);
-        prefs.setString("username", username);
-        prefs.remove('page');
-        return _loadToken();
+        await prefs.clear();
+        return LoginData(
+            error: res.body.replaceAll("\"", ""),
+            username: "",
+            emailId: "",
+            page: "");
       } catch (e) {
         return LoginData(
             error: res.body.replaceAll("\"", ""),
             username: '',
-            page: 'resetpw',
+            page: '',
             emailId: state.value!.emailId);
       }
     });
@@ -190,6 +191,7 @@ class LoginToken extends _$LoginToken {
       );
       try {
         final resData = jsonDecode(res.body);
+        prefs.setString("refresh_token", resData["refresh_token"]!);
         prefs.setString("token", resData["token"]!);
         prefs.setString('username', username);
         return _loadToken();

@@ -43,21 +43,21 @@ class MyApp extends ConsumerWidget {
         ),
         iconTheme: IconThemeData(
           color: darkMode.value == true
-              ? Color.fromARGB(255, 195, 195, 195)
+              ? const Color.fromARGB(255, 195, 195, 195)
               : const Color(0xFF3A568E),
         ),
         switchTheme: SwitchThemeData(
           thumbIcon: darkMode.value == true
-              ? MaterialStatePropertyAll(Icon(Icons.light_mode))
-              : MaterialStatePropertyAll(Icon(Icons.dark_mode)),
+              ? const MaterialStatePropertyAll(Icon(Icons.light_mode))
+              : const MaterialStatePropertyAll(Icon(Icons.dark_mode)),
         ),
         scaffoldBackgroundColor: darkMode.value == true
             ? Colors.white
-            : Color.fromARGB(255, 97, 97, 97),
+            : const Color.fromARGB(255, 97, 97, 97),
         popupMenuTheme: PopupMenuThemeData(
             iconColor: darkMode.value == true
                 ? const Color(0xFF3A568E)
-                : Color.fromARGB(255, 195, 195, 195)),
+                : const Color.fromARGB(255, 195, 195, 195)),
         drawerTheme: const DrawerThemeData(shape: BeveledRectangleBorder()),
         cardTheme: CardTheme(
             color: darkMode.value == true
@@ -69,16 +69,16 @@ class MyApp extends ConsumerWidget {
           foregroundColor: darkMode.value == true
               ? MaterialStateProperty.all<Color>(const Color(0xFF3A568E))
               : MaterialStateProperty.all<Color>(
-                  Color.fromARGB(255, 195, 195, 195)),
+                  const Color.fromARGB(255, 195, 195, 195)),
         )),
         iconButtonTheme: IconButtonThemeData(
             style: ButtonStyle(
-          iconColor: MaterialStatePropertyAll(Colors.white),
+          iconColor: const MaterialStatePropertyAll(Colors.white),
           textStyle: MaterialStatePropertyAll(
             TextStyle(
                 color: darkMode.value == true
                     ? Colors.white
-                    : Color.fromARGB(255, 68, 72, 74)),
+                    : const Color.fromARGB(255, 68, 72, 74)),
           ),
         )),
         elevatedButtonTheme: const ElevatedButtonThemeData(
@@ -116,11 +116,11 @@ class StartupPage extends ConsumerWidget {
     return loginData.when(
       data: (user) {
         if (user.username != "") {
+          return const Home();
+        } else {
           if (user.page == 'resetpw') {
             return const Resetpw();
           }
-          return const Home();
-        } else {
           if (user.page == 'register') {
             return const Register();
           }

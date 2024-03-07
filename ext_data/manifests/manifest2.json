@@ -1,6 +1,6 @@
 {
   "name": "ZotIt",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Synched clipboard across browsers",
   "browser_action": {
     "default_icon": {
