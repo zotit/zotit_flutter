@@ -180,24 +180,25 @@ class LoginToken extends _$LoginToken {
           host: config.host,
           port: config.port,
           path: "api/register");
-      final res = await http.post(
-        uri,
-        body: jsonEncode({
-          "username": username,
-          "password": password,
-          "email_id": emailID,
-        }),
-        headers: {"Content-Type": "application/json"},
-      );
       try {
-        final resData = jsonDecode(res.body);
-        prefs.setString("refresh_token", resData["refresh_token"]!);
-        prefs.setString("token", resData["token"]!);
-        prefs.setString('username', username);
-        return _loadToken();
-      } catch (e) {
+        final res = await http.post(
+          uri,
+          body: jsonEncode({
+            "username": username,
+            "password": password,
+            "email_id": emailID,
+          }),
+          headers: {"Content-Type": "application/json"},
+        );
+        await prefs.clear();
         return LoginData(
             error: res.body.replaceAll("\"", ""),
+            username: '',
+            page: '',
+            emailId: state.value!.emailId);
+      } catch (e) {
+        return LoginData(
+            error: "Failed to register. Please try agian",
             username: '',
             page: 'register',
             emailId: state.value!.emailId);

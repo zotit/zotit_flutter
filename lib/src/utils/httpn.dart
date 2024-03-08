@@ -17,24 +17,28 @@ Future<Response> httpGet(
       port: config.port,
       path: path,
       queryParameters: queryParameters);
-  final res = await http.get(uri, headers: {
-    "Authorization": "Bearer $token",
-    "Content-Type": "application/json"
-  });
-  if (res.body == "Invalid or expired JWT") {
-    final isSuccessful = await refreshToken(prefs);
-    if (isSuccessful) {
-      token = prefs.getString('token');
-      final ress = await http.get(uri, headers: {
-        "Authorization": "Bearer $token",
-        "Content-Type": "application/json"
-      });
-      return ress;
+  try {
+    final res = await http.get(uri, headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json"
+    });
+    if (res.body == "Invalid or expired JWT") {
+      final isSuccessful = await refreshToken(prefs);
+      if (isSuccessful) {
+        token = prefs.getString('token');
+        final ress = await http.get(uri, headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        });
+        return ress;
+      } else {
+        return Response("Unauthorized", 401);
+      }
     } else {
-      return Response("Unauthorized", 401);
+      return res;
     }
-  } else {
-    return res;
+  } catch (e) {
+    return Response("Unauthorized", 401);
   }
 }
 
