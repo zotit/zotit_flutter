@@ -1,7 +1,7 @@
 name: zotit
 description: Zot It Anywhere.
 publish_to: 'none'
-version: 1.4.3+31
+version: 1.4.4+32
 environment:
   sdk: '>=3.0.0 <4.0.0'
 dependencies:
