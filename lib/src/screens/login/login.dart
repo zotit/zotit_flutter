@@ -50,7 +50,8 @@ class _Logo extends StatelessWidget {
         // FlutterLogo(size: isSmallScreen ? 100 : 200),
         Text(
           "ZotIt",
-          style: TextStyle(fontFamily: 'Satisfy', fontSize: isSmallScreen ? 60 : 80),
+          style: TextStyle(
+              fontFamily: 'Satisfy', fontSize: isSmallScreen ? 60 : 80),
         ),
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -59,7 +60,10 @@ class _Logo extends StatelessWidget {
             textAlign: TextAlign.center,
             style: isSmallScreen
                 ? Theme.of(context).textTheme.headlineSmall
-                : Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.black),
+                : Theme.of(context)
+                    .textTheme
+                    .headlineMedium
+                    ?.copyWith(color: Colors.black),
           ),
         )
       ],
@@ -81,7 +85,8 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
 
   @override
   Widget build(BuildContext context) {
-    final loginData = ref.read(loginTokenProvider.notifier);
+    final loginData = ref.watch(loginTokenProvider.notifier);
+    final loginformData = ref.watch(loginTokenProvider);
     return Container(
       constraints: const BoxConstraints(maxWidth: 300),
       child: Form(
@@ -92,12 +97,22 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15),
-              child: Text(
-                loginData.getData().error,
-                style: const TextStyle(
-                  color: Colors.red,
-                ),
-              ),
+              child: loginformData.when(
+                  data: (data) => Text(
+                        data.error,
+                        style: const TextStyle(
+                          color: Colors.red,
+                        ),
+                      ),
+                  error: (err, st) => Text(
+                        ref.watch(loginTokenProvider).value!.error,
+                        style: const TextStyle(
+                          color: Colors.red,
+                        ),
+                      ),
+                  loading: () => const Center(
+                        child: CircularProgressIndicator(),
+                      )),
             ),
             TextFormField(
               controller: usernameC,
@@ -148,7 +163,8 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ButtonStyle(
-                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
+                  padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 10)),
                   backgroundColor: MaterialStateProperty.all(
                     const Color(0xFF3A568E),
                   ),
@@ -172,7 +188,8 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ButtonStyle(
-                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
+                  padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 10)),
                   backgroundColor: MaterialStateProperty.all(
                     const Color(0xFF3A568E),
                   ),

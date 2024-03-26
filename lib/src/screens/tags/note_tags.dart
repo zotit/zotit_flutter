@@ -147,7 +147,6 @@ class _NoteTags extends ConsumerState<NoteTags> {
                     controller: _scrollController,
                     children: noteTags.noteTags.isNotEmpty
                         ? noteTags.noteTags.asMap().entries.map((noteEntry) {
-                            final globalKey = GlobalKey();
                             return Card(
                               elevation: 2.0,
                               margin: const EdgeInsets.symmetric(
@@ -184,26 +183,20 @@ class _NoteTags extends ConsumerState<NoteTags> {
                                         child: Row(children: [
                                           Icon(
                                             Icons.edit,
-                                            color: Color(0xFF3A568E),
                                           ),
                                           Gap(10),
                                           Text(
                                             "Edit",
-                                            style: TextStyle(
-                                                color: Color(0xFF3A568E)),
                                           )
                                         ]),
                                       ),
                                       const PopupMenuItem<String>(
                                         value: "delete",
                                         child: Row(children: [
-                                          Icon(Icons.delete,
-                                              color: Color(0xFF3A568E)),
+                                          Icon(Icons.delete),
                                           Gap(10),
                                           Text(
                                             "Delete",
-                                            style: TextStyle(
-                                                color: Color(0xFF3A568E)),
                                           )
                                         ]),
                                       ),

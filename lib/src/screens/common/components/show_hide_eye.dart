@@ -38,7 +38,6 @@ class _ShowHideEyeState extends State<ShowHideEye> {
       );
     } else {
       return IconButton(
-          color: const Color(0xFF3A568E),
           icon: Icon(!isVisible ? Icons.visibility : Icons.visibility_off),
           onPressed: () {
             setState(
