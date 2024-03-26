@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:zotit/src/app_router.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
+import 'package:zotit/src/screens/update_profile/providers/profile.dart';
 import 'package:zotit/src/utils/utils.dart';
 
 class UpdateProfile extends ConsumerWidget {
@@ -10,8 +11,6 @@ class UpdateProfile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool isSmallScreen = MediaQuery.of(context).size.width < 600;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF3A568E),
@@ -30,10 +29,12 @@ class UpdateProfileFormContent extends ConsumerStatefulWidget {
   const UpdateProfileFormContent({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _UpdateProfileFormContent();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _UpdateProfileFormContent();
 }
 
-class _UpdateProfileFormContent extends ConsumerState<UpdateProfileFormContent> {
+class _UpdateProfileFormContent
+    extends ConsumerState<UpdateProfileFormContent> {
   final TextEditingController usernameC = TextEditingController(text: "");
   final TextEditingController pwC = TextEditingController(text: "");
   final TextEditingController emailC = TextEditingController(text: "");
@@ -42,10 +43,10 @@ class _UpdateProfileFormContent extends ConsumerState<UpdateProfileFormContent> 
 
   @override
   Widget build(BuildContext context) {
-    final loginData = ref.watch(loginTokenProvider.notifier);
-    final logDataRead = ref.read(loginTokenProvider);
+    final logDataRead = ref.watch(loginTokenProvider);
+    final profileData = ref.watch(profileProvider);
     usernameC.text = logDataRead.hasValue ? logDataRead.value!.username : "";
-    emailC.text = logDataRead.hasValue ? logDataRead.value!.emailId : "";
+    emailC.text = profileData.hasValue ? profileData.value! : "";
 
     return Container(
       constraints: const BoxConstraints(maxWidth: 300),
@@ -58,29 +59,19 @@ class _UpdateProfileFormContent extends ConsumerState<UpdateProfileFormContent> 
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15),
               child: Text(
-                logDataRead.asData?.value.error ?? "",
+                "",
                 style: const TextStyle(
                   color: Colors.red,
                 ),
               ),
             ),
             TextFormField(
-              // controller: usernameC,
-              initialValue: logDataRead.hasValue ? logDataRead.value!.username : "",
-              onChanged: (value) {
-                usernameC.text = value;
-              },
+              controller: usernameC,
               validator: (value) {
                 // add email validation
                 if (value == null || value.isEmpty) {
                   return 'Please enter some text';
                 }
-
-                // bool emailValid =
-                //     RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value);
-                // if (!emailValid) {
-                //   return 'Please enter a valid email';
-                // }
 
                 return null;
               },
@@ -102,10 +93,7 @@ class _UpdateProfileFormContent extends ConsumerState<UpdateProfileFormContent> 
                 }
                 return null;
               },
-              initialValue: logDataRead.hasValue ? logDataRead.value!.emailId : "",
-              onChanged: (value) {
-                emailC.text = value;
-              },
+              controller: emailC,
               decoration: const InputDecoration(
                 labelText: 'Email Id',
                 hintText: 'Enter your email Id',
@@ -118,7 +106,8 @@ class _UpdateProfileFormContent extends ConsumerState<UpdateProfileFormContent> 
               width: double.infinity,
               child: ElevatedButton(
                 style: ButtonStyle(
-                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
+                  padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 10)),
                   backgroundColor: MaterialStateProperty.all(
                     const Color(0xFF3A568E),
                   ),
@@ -132,7 +121,9 @@ class _UpdateProfileFormContent extends ConsumerState<UpdateProfileFormContent> 
                 ),
                 onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
-                    await loginData.updateProfile(usernameC.text, emailC.text);
+                    await ref
+                        .read(loginTokenProvider.notifier)
+                        .updateProfile(usernameC.text, emailC.text);
                     if (context.mounted) {
                       showDialog<void>(
                         context: context,

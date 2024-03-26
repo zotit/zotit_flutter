@@ -122,6 +122,46 @@ Future<Response> httpPut(String path, Map<String, dynamic> queryParameters,
   }
 }
 
+Future<Response> httpPatch(String path, Map<String, dynamic> queryParameters,
+    Map<String, dynamic> body) async {
+  final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
+  final prefs = await fPrefs;
+  var token = prefs.getString('token');
+  final uri = Uri(
+      scheme: config.scheme,
+      host: config.host,
+      port: config.port,
+      path: path,
+      queryParameters: queryParameters);
+  final res = await http.patch(
+    uri,
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json"
+    },
+    body: jsonEncode(body),
+  );
+  if (res.body == "Invalid or expired JWT") {
+    final isSuccessful = await refreshToken(prefs);
+    if (isSuccessful) {
+      token = prefs.getString('token');
+      final ress = await http.patch(
+        uri,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+        body: jsonEncode(body),
+      );
+      return ress;
+    } else {
+      return Response("Unauthorized", 401);
+    }
+  } else {
+    return res;
+  }
+}
+
 Future<Response> httpDelete(String path, Map<String, dynamic> queryParameters,
     Map<String, dynamic> body) async {
   final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
@@ -163,7 +203,7 @@ Future<Response> httpDelete(String path, Map<String, dynamic> queryParameters,
 }
 
 Future<bool> refreshToken(SharedPreferences prefs) async {
-  final token = prefs.getString('token');
+  final token = prefs.getString('refresh_token');
   final uri = Uri(
       scheme: config.scheme,
       host: config.host,

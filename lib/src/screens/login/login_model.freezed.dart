@@ -22,7 +22,6 @@ LoginData _$LoginDataFromJson(Map<String, dynamic> json) {
 mixin _$LoginData {
   String get error => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
-  String get emailId => throw _privateConstructorUsedError;
   String get page => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -36,7 +35,7 @@ abstract class $LoginDataCopyWith<$Res> {
   factory $LoginDataCopyWith(LoginData value, $Res Function(LoginData) then) =
       _$LoginDataCopyWithImpl<$Res, LoginData>;
   @useResult
-  $Res call({String error, String username, String emailId, String page});
+  $Res call({String error, String username, String page});
 }
 
 /// @nodoc
@@ -54,7 +53,6 @@ class _$LoginDataCopyWithImpl<$Res, $Val extends LoginData>
   $Res call({
     Object? error = null,
     Object? username = null,
-    Object? emailId = null,
     Object? page = null,
   }) {
     return _then(_value.copyWith(
@@ -65,10 +63,6 @@ class _$LoginDataCopyWithImpl<$Res, $Val extends LoginData>
       username: null == username
           ? _value.username
           : username // ignore: cast_nullable_to_non_nullable
-              as String,
-      emailId: null == emailId
-          ? _value.emailId
-          : emailId // ignore: cast_nullable_to_non_nullable
               as String,
       page: null == page
           ? _value.page
@@ -86,7 +80,7 @@ abstract class _$$LoginDataImplCopyWith<$Res>
       __$$LoginDataImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String error, String username, String emailId, String page});
+  $Res call({String error, String username, String page});
 }
 
 /// @nodoc
@@ -102,7 +96,6 @@ class __$$LoginDataImplCopyWithImpl<$Res>
   $Res call({
     Object? error = null,
     Object? username = null,
-    Object? emailId = null,
     Object? page = null,
   }) {
     return _then(_$LoginDataImpl(
@@ -113,10 +106,6 @@ class __$$LoginDataImplCopyWithImpl<$Res>
       username: null == username
           ? _value.username
           : username // ignore: cast_nullable_to_non_nullable
-              as String,
-      emailId: null == emailId
-          ? _value.emailId
-          : emailId // ignore: cast_nullable_to_non_nullable
               as String,
       page: null == page
           ? _value.page
@@ -130,10 +119,7 @@ class __$$LoginDataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$LoginDataImpl with DiagnosticableTreeMixin implements _LoginData {
   _$LoginDataImpl(
-      {required this.error,
-      required this.username,
-      required this.emailId,
-      required this.page});
+      {required this.error, required this.username, required this.page});
 
   factory _$LoginDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$LoginDataImplFromJson(json);
@@ -143,13 +129,11 @@ class _$LoginDataImpl with DiagnosticableTreeMixin implements _LoginData {
   @override
   final String username;
   @override
-  final String emailId;
-  @override
   final String page;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'LoginData(error: $error, username: $username, emailId: $emailId, page: $page)';
+    return 'LoginData(error: $error, username: $username, page: $page)';
   }
 
   @override
@@ -159,7 +143,6 @@ class _$LoginDataImpl with DiagnosticableTreeMixin implements _LoginData {
       ..add(DiagnosticsProperty('type', 'LoginData'))
       ..add(DiagnosticsProperty('error', error))
       ..add(DiagnosticsProperty('username', username))
-      ..add(DiagnosticsProperty('emailId', emailId))
       ..add(DiagnosticsProperty('page', page));
   }
 
@@ -171,13 +154,12 @@ class _$LoginDataImpl with DiagnosticableTreeMixin implements _LoginData {
             (identical(other.error, error) || other.error == error) &&
             (identical(other.username, username) ||
                 other.username == username) &&
-            (identical(other.emailId, emailId) || other.emailId == emailId) &&
             (identical(other.page, page) || other.page == page));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, error, username, emailId, page);
+  int get hashCode => Object.hash(runtimeType, error, username, page);
 
   @JsonKey(ignore: true)
   @override
@@ -197,7 +179,6 @@ abstract class _LoginData implements LoginData {
   factory _LoginData(
       {required final String error,
       required final String username,
-      required final String emailId,
       required final String page}) = _$LoginDataImpl;
 
   factory _LoginData.fromJson(Map<String, dynamic> json) =
@@ -207,8 +188,6 @@ abstract class _LoginData implements LoginData {
   String get error;
   @override
   String get username;
-  @override
-  String get emailId;
   @override
   String get page;
   @override

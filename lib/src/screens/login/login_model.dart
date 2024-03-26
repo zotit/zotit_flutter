@@ -11,7 +11,6 @@ class LoginData with _$LoginData {
   factory LoginData({
     required String error,
     required String username,
-    required String emailId,
     required String page,
   }) = _LoginData;
 
