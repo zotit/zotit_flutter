@@ -7,6 +7,7 @@ import 'package:zotit/src/screens/forgotpw/forgotpw.dart';
 import 'package:zotit/src/screens/home/deleted_notes.dart';
 import 'package:zotit/src/screens/home/home.dart';
 import 'package:zotit/src/screens/login/login.dart';
+import 'package:zotit/src/screens/login/login_model.dart';
 import 'package:zotit/src/screens/register/register.dart';
 import 'package:zotit/src/screens/tags/note_tags.dart';
 import 'package:zotit/src/screens/update_profile/update_profile.dart';
@@ -25,11 +26,12 @@ class AppRoutes {
 }
 
 class AppRouter {
-  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+  static Route<dynamic>? onGenerateRoute(
+      RouteSettings settings, LoginData user) {
     switch (settings.name) {
       case AppRoutes.startupPage:
         return MaterialPageRoute<dynamic>(
-          builder: (_) => const StartupPage(),
+          builder: (_) => StartupPage(),
           settings: settings,
         );
       case AppRoutes.homePage:
@@ -75,36 +77,25 @@ class AppRouter {
 }
 
 class StartupPage extends ConsumerWidget {
-  const StartupPage({super.key});
+  StartupPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final loginData = ref.watch(loginTokenProvider);
-    return loginData.when(
-      data: (user) {
-        if (user.username != "") {
-          return const Home();
-        } else {
-          if (user.page == 'resetpw') {
-            return const Resetpw();
-          }
-          if (user.page == 'register') {
-            return const Register();
-          }
-          if (user.page == 'forgotpw') {
-            return const Forgotpw();
-          }
+  Widget build(BuildContext context, ref) {
+    var loginData = ref.watch(loginTokenProvider);
+    if (loginData.value?.username != "" && loginData.value?.page == "") {
+      return const Home();
+    } else {
+      if (loginData.value?.page == 'resetpw') {
+        return const Resetpw();
+      }
+      if (loginData.value?.page == 'register') {
+        return const Register();
+      }
+      if (loginData.value?.page == 'forgotpw') {
+        return const Forgotpw();
+      }
 
-          return const Login();
-        }
-      },
-      loading: () => Container(
-        color: Colors.white,
-        child: const Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
-      error: (error, st) => ErrorPage(message: st.toString()),
-    );
+      return const Login();
+    }
   }
 }

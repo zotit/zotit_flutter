@@ -53,7 +53,8 @@ class _Logo extends StatelessWidget {
         // FlutterLogo(size: isSmallScreen ? 100 : 200),
         Text(
           "ZotIt",
-          style: TextStyle(fontFamily: 'Satisfy', fontSize: isSmallScreen ? 60 : 80),
+          style: TextStyle(
+              fontFamily: 'Satisfy', fontSize: isSmallScreen ? 60 : 80),
         ),
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -62,7 +63,10 @@ class _Logo extends StatelessWidget {
             textAlign: TextAlign.center,
             style: isSmallScreen
                 ? Theme.of(context).textTheme.headlineSmall
-                : Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.black),
+                : Theme.of(context)
+                    .textTheme
+                    .headlineMedium
+                    ?.copyWith(color: Colors.black),
           ),
         )
       ],
@@ -177,7 +181,8 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
                   Checkbox(
                     checkColor: Colors.white,
                     value: hasAggreedTNC,
-                    fillColor: MaterialStateProperty.all(const Color(0xFF3A568E)),
+                    fillColor:
+                        MaterialStateProperty.all(const Color(0xFF3A568E)),
                     onChanged: (bool? value) {
                       setState(() {
                         hasAggreedTNC = value!;
@@ -185,7 +190,9 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
                     },
                   ),
                   const Text("Check to accept our "),
-                  const LinkButton(urlLabel: "Privacy Policy", url: "https://zotit.app/privacy-policy-mapp.html"),
+                  const LinkButton(
+                      urlLabel: "Privacy Policy",
+                      url: "https://zotit.app/privacy-policy-mapp.html"),
                 ],
               ),
             ),
@@ -194,7 +201,8 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ButtonStyle(
-                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
+                  padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 10)),
                   backgroundColor: MaterialStateProperty.all(
                     const Color(0xFF3A568E),
                   ),
@@ -216,7 +224,8 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
                             parent: ProviderScope.containerOf(context),
                             child: AlertDialog(
                               title: const Text('Error'),
-                              content: const Text("Please acccet the Privacy Policy"),
+                              content: const Text(
+                                  "Please acccet the Privacy Policy"),
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () => {
@@ -230,7 +239,8 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
                         },
                       );
                     }
-                    await loginData.register(usernameC.text, pwC.text, emailC.text);
+                    await loginData.register(
+                        usernameC.text, pwC.text, emailC.text);
                   }
                 },
               ),
@@ -238,13 +248,7 @@ class _RegisterFormContent extends ConsumerState<RegisterFormContent> {
             _gap(),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
-                  backgroundColor: MaterialStateProperty.all(
-                    const Color(0xFF3A568E),
-                  ),
-                ),
+              child: OutlinedButton(
                 child: const Padding(
                   padding: EdgeInsets.all(10.0),
                   child: Text(

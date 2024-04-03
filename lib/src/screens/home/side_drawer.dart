@@ -8,18 +8,20 @@ class SideDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final loginData = ref.watch(loginTokenProvider.notifier);
+    final loginDataNotifier = ref.watch(loginTokenProvider.notifier);
+    final loginData = ref.watch(loginTokenProvider);
     return Drawer(
       child: ListView(
         padding: const EdgeInsets.all(0),
         physics: const BouncingScrollPhysics(),
         children: <Widget>[
-          const DrawerHeader(
+          DrawerHeader(
             margin: EdgeInsets.all(0),
             child: Center(
                 child: Text(
-              "ZotIt ",
-              style: TextStyle(fontFamily: 'Satisfy', fontSize: 35),
+              "Hi \n${loginData.value?.username} ",
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontFamily: 'Satisfy', fontSize: 35),
             )),
           ),
           ListTile(
@@ -54,7 +56,7 @@ class SideDrawer extends ConsumerWidget {
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Logout'),
             onTap: () async {
-              loginData.logout();
+              loginDataNotifier.logout();
             },
           ),
         ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
 
 class Login extends ConsumerWidget {
@@ -121,14 +122,12 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter some text';
                 }
-
-                // bool emailValid =
-                //     RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value);
-                // if (!emailValid) {
-                //   return 'Please enter a valid email';
-                // }
-
                 return null;
+              },
+              onFieldSubmitted: (s) async {
+                if (_formKey.currentState?.validate() ?? false) {
+                  await loginData.login(usernameC.text, pwC.text);
+                }
               },
               decoration: const InputDecoration(
                 labelText: 'Username',
@@ -150,6 +149,11 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
                 return null;
               },
               controller: pwC,
+              onFieldSubmitted: (s) async {
+                if (_formKey.currentState?.validate() ?? false) {
+                  await loginData.login(usernameC.text, pwC.text);
+                }
+              },
               obscureText: true,
               decoration: const InputDecoration(
                 labelText: 'Password',
@@ -183,50 +187,47 @@ class _LoginFormContent extends ConsumerState<LoginFormContent> {
                 },
               ),
             ),
-            _gap(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(vertical: 10)),
-                  backgroundColor: MaterialStateProperty.all(
-                    const Color(0xFF3A568E),
-                  ),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(
-                    'Register',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                onPressed: () {
-                  loginData.setPage('register');
-                },
-              ),
+            const Divider(
+              height: 40,
             ),
-            _gap(),
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all(
-                    const Color(0xFF3A568E),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 10)),
+                    backgroundColor: MaterialStateProperty.all(
+                      const Color(0xFF3A568E),
+                    ),
                   ),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(
-                    'Forgot password',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: Text(
+                      'Register',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                   ),
+                  onPressed: () {
+                    loginData.setPage('register');
+                  },
                 ),
-                onPressed: () {
-                  loginData.setPage('forgotpw');
-                },
-              ),
-            ),
+                TextButton(
+                  child: const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      'Forgot Password ?',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  onPressed: () {
+                    loginData.setPage('forgotpw');
+                  },
+                ),
+              ],
+            )
           ],
         ),
       ),

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zotit/src/app_router.dart';
+import 'package:zotit/src/providers/login_provider/login_provider.dart';
 import 'package:zotit/src/providers/theme_provider/darkmode_provider.dart';
+import 'package:zotit/src/screens/common/error_page.dart';
 
 void main() {
   runApp(
@@ -19,10 +21,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final darkMode = ref.watch(darkModeProvider);
-    return MaterialApp(
-      title: 'ZotIt : Note anywhere',
-      themeMode: darkMode.value == true ? ThemeMode.dark : ThemeMode.light,
-      theme: ThemeData(
+    final themeData = ThemeData(
         // UI
         brightness:
             darkMode.value == false ? Brightness.dark : Brightness.light,
@@ -30,13 +29,15 @@ class MyApp extends ConsumerWidget {
         fontFamily: GoogleFonts.notoSans().fontFamily,
         //text style
         textTheme: const TextTheme(),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF3A568E),
-          foregroundColor: Color(0xFFFFFFFF),
+        appBarTheme: AppBarTheme(
+          backgroundColor: darkMode.value == true
+              ? const Color(0xFF3A568E)
+              : const Color(0xFF585659),
+          foregroundColor: const Color(0xFFFFFFFF),
         ),
         iconTheme: IconThemeData(
           color: darkMode.value == true
-              ? const Color.fromARGB(255, 195, 195, 195)
+              ? const Color(0xFFAAAAAA)
               : const Color(0xFF3A568E),
         ),
         switchTheme: SwitchThemeData(
@@ -44,9 +45,8 @@ class MyApp extends ConsumerWidget {
               ? const MaterialStatePropertyAll(Icon(Icons.light_mode))
               : const MaterialStatePropertyAll(Icon(Icons.dark_mode)),
         ),
-        scaffoldBackgroundColor: darkMode.value == true
-            ? Colors.white
-            : const Color.fromARGB(255, 97, 97, 97),
+        scaffoldBackgroundColor:
+            darkMode.value == true ? Colors.white : const Color(0xFF272526),
         popupMenuTheme: PopupMenuThemeData(
             iconColor: darkMode.value == true
                 ? const Color(0xFF3A568E)
@@ -55,8 +55,7 @@ class MyApp extends ConsumerWidget {
         cardTheme: CardTheme(
             color: darkMode.value == true
                 ? Colors.white
-                : const Color.fromARGB(255, 68, 72, 74)),
-
+                : const Color(0xFF373737)),
         textButtonTheme: TextButtonThemeData(
             style: ButtonStyle(
           foregroundColor: darkMode.value == true
@@ -76,10 +75,13 @@ class MyApp extends ConsumerWidget {
         )),
         elevatedButtonTheme: const ElevatedButtonThemeData(
           style: ButtonStyle(
+            padding: MaterialStatePropertyAll(
+              EdgeInsets.symmetric(vertical: 4),
+            ),
             shape: MaterialStatePropertyAll(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
-                  Radius.circular(5),
+                  Radius.circular(10),
                 ),
               ),
             ),
@@ -89,13 +91,88 @@ class MyApp extends ConsumerWidget {
             ),
           ),
         ),
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-            foregroundColor: Colors.white, shape: CircleBorder()),
-      ),
-      debugShowCheckedModeBanner: false,
-      // home: const StartupPage(),
-      onGenerateRoute: (settings) => AppRouter.onGenerateRoute(settings),
-      home: null,
-    );
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          foregroundColor: Colors.white,
+          backgroundColor: darkMode.value == true
+              ? const Color(0xFF3A568E)
+              : const Color(0xFF3a3a3a),
+          shape: const CircleBorder(),
+        ),
+        outlinedButtonTheme: const OutlinedButtonThemeData(
+          style: ButtonStyle(
+            padding: MaterialStatePropertyAll(
+              EdgeInsets.symmetric(vertical: 4),
+            ),
+            foregroundColor: MaterialStatePropertyAll(Colors.white),
+            shape: MaterialStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                side: BorderSide(
+                  style: BorderStyle.solid,
+                ),
+              ),
+            ),
+          ),
+        ),
+        progressIndicatorTheme: ProgressIndicatorThemeData(
+          color:
+              darkMode.value == true ? const Color(0xFF3A568E) : Colors.white,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          labelStyle: TextStyle(
+              color: darkMode.value == true
+                  ? const Color(0xFF3A568E)
+                  : Colors.white),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+                color: darkMode.value == true
+                    ? const Color(0xFF3A568E)
+                    : Colors.white),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+                color: darkMode.value == true
+                    ? const Color(0xFF3A568E)
+                    : Colors.white),
+          ),
+        ),
+        textSelectionTheme: TextSelectionThemeData(
+            cursorColor: darkMode.value == true
+                ? const Color(0xFF3A568E)
+                : Colors.white));
+
+    final loginData = ref.watch(loginTokenProvider);
+    return loginData.when(
+        data: (user) {
+          if (user.username != "") {
+            return MaterialApp(
+              title: 'ZotIt : Note anywhere',
+              themeMode:
+                  darkMode.value == true ? ThemeMode.dark : ThemeMode.light,
+              theme: themeData,
+
+              debugShowCheckedModeBanner: false,
+              // home: const StartupPage(),
+              onGenerateRoute: (settings) =>
+                  AppRouter.onGenerateRoute(settings, user),
+              home: null,
+            );
+          } else {
+            return MaterialApp(
+              title: 'ZotIt : Note anywhere',
+              themeMode:
+                  darkMode.value == true ? ThemeMode.dark : ThemeMode.light,
+              theme: themeData,
+              debugShowCheckedModeBanner: false,
+              home: StartupPage(),
+            );
+          }
+        },
+        loading: () => const Center(
+              child: CircularProgressIndicator(),
+            ),
+        error: (error, st) => ErrorPage(message: st.toString()));
   }
 }

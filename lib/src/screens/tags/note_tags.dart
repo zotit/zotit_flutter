@@ -123,11 +123,9 @@ class _NoteTags extends ConsumerState<NoteTags> {
             ),
           ));
         },
-        backgroundColor: const Color(0xFF3A568E),
         child: const Icon(Icons.add),
       ),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3A568E),
         title: const Text("Tags"),
         actions: [
           IconButton(
