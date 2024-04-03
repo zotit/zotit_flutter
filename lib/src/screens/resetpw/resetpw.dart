@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_number_captcha/flutter_number_captcha.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
 
 class Resetpw extends ConsumerWidget {
@@ -47,10 +49,10 @@ class _Logo extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // FlutterLogo(size: isSmallScreen ? 100 : 200),
         Text(
           "ZotIt",
-          style: TextStyle(fontFamily: 'Satisfy', fontSize: isSmallScreen ? 60 : 80),
+          style: TextStyle(
+              fontFamily: 'Satisfy', fontSize: isSmallScreen ? 60 : 80),
         ),
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -59,9 +61,19 @@ class _Logo extends StatelessWidget {
             textAlign: TextAlign.center,
             style: isSmallScreen
                 ? Theme.of(context).textTheme.headlineSmall
-                : Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.black),
+                : Theme.of(context)
+                    .textTheme
+                    .headlineMedium
+                    ?.copyWith(color: Colors.black),
           ),
-        )
+        ),
+        const Padding(
+          padding: EdgeInsets.all(30),
+          child: Text(
+            "Seems like you have entered an one time password \n from reset password email.",
+            textAlign: TextAlign.center,
+          ),
+        ),
       ],
     );
   }
@@ -82,7 +94,7 @@ class _ResetpwFormContent extends ConsumerState<ResetpwFormContent> {
   @override
   Widget build(BuildContext context) {
     final loginData = ref.watch(loginTokenProvider.notifier);
-    final logDataRead = ref.read(loginTokenProvider);
+    final logDataRead = ref.watch(loginTokenProvider);
 
     return Container(
       constraints: const BoxConstraints(maxWidth: 300),
@@ -115,8 +127,8 @@ class _ResetpwFormContent extends ConsumerState<ResetpwFormContent> {
               controller: opwC,
               obscureText: true,
               decoration: const InputDecoration(
-                labelText: 'Password from Email',
-                hintText: 'Enter Password from Email',
+                labelText: 'New Password',
+                hintText: 'Enter New Password',
                 prefixIcon: Icon(Icons.lock_outline_rounded),
                 border: OutlineInputBorder(),
               ),
@@ -127,6 +139,9 @@ class _ResetpwFormContent extends ConsumerState<ResetpwFormContent> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter some text';
                 }
+                if (value != opwC.text) {
+                  return 'Confirm Password did not match';
+                }
 
                 if (value.length < 6) {
                   return 'Password must be at least 6 characters';
@@ -136,8 +151,8 @@ class _ResetpwFormContent extends ConsumerState<ResetpwFormContent> {
               controller: npwC,
               obscureText: true,
               decoration: const InputDecoration(
-                labelText: 'New Password',
-                hintText: 'Enter new password',
+                labelText: 'Re-Enter Password',
+                hintText: 'Re-Enter Password',
                 prefixIcon: Icon(Icons.lock_outline_rounded),
                 border: OutlineInputBorder(),
               ),
@@ -147,7 +162,8 @@ class _ResetpwFormContent extends ConsumerState<ResetpwFormContent> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ButtonStyle(
-                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 10)),
+                  padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 10)),
                   backgroundColor: MaterialStateProperty.all(
                     const Color(0xFF3A568E),
                   ),
@@ -161,12 +177,24 @@ class _ResetpwFormContent extends ConsumerState<ResetpwFormContent> {
                 ),
                 onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
-                    // bool isValid = await FlutterNumberCaptcha.show(context);
-                    // if (isValid) {
-
-                    await loginData.resetpw(opwC.text, npwC.text);
-                    // }
+                    await loginData.resetpw(npwC.text);
                   }
+                },
+              ),
+            ),
+            Gap(20),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                child: const Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(
+                    'Sign In',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                onPressed: () async {
+                  await loginData.logout();
                 },
               ),
             ),

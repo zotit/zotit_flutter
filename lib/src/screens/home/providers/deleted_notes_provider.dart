@@ -22,26 +22,31 @@ class DeletedNoteList extends _$DeletedNoteList {
 
   Future<NoteListRepo> _loadNotes() async {
     final res = await httpGet("api/notes", {"is_deleted": "true"});
-    final notes = jsonDecode(res.body) as List<dynamic>;
-    return NoteListRepo(
-        notes: notes.map((item) {
-          var runes = (item['text'] as String).runes.toList();
-          return Note(
-            id: item['id'],
-            text: utf8.decode(runes),
-            is_obscure: item['is_obscure'],
-            tag: item['tag'] != null
-                ? NoteTag(
-                    id: item['tag']['id'],
-                    name: item['tag']['name'],
-                    color: item['tag']['color'])
-                : NoteTag(
-                    id: "",
-                    name: "Assign Tag",
-                    color: const Color(0xff9e9e9e).value),
-          );
-        }).toList(),
-        page: 1);
+    try {
+      final notes = jsonDecode(res.body) as List<dynamic>;
+      return NoteListRepo(
+          notes: notes.map((item) {
+            var runes = (item['text'] as String).runes.toList();
+            return Note(
+              id: item['id'],
+              text: utf8.decode(runes),
+              is_obscure: item['is_obscure'],
+              tag: item['tag'] != null
+                  ? NoteTag(
+                      id: item['tag']['id'],
+                      name: item['tag']['name'],
+                      color: item['tag']['color'])
+                  : NoteTag(
+                      id: "",
+                      name: "Assign Tag",
+                      color: const Color(0xff9e9e9e).value),
+            );
+          }).toList(),
+          page: 1);
+    } catch (e) {
+      ref.watch(loginTokenProvider.notifier).logout();
+      return Future.error(e);
+    }
   }
 
   getNotesByPage(text) async {

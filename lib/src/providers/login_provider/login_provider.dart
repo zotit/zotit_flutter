@@ -63,6 +63,7 @@ class LoginToken extends _$LoginToken {
 
         if (!resData['is_active']) {
           prefs.setString("page", 'resetpw');
+          prefs.setString("_p", password);
           return _loadToken();
         }
         prefs.remove("page");
@@ -107,13 +108,14 @@ class LoginToken extends _$LoginToken {
     });
   }
 
-  Future<void> resetpw(String oldPassword, String newPassword) async {
+  Future<void> resetpw(String newPassword) async {
     state = const AsyncLoading();
     final Future<SharedPreferences> fPrefs = SharedPreferences.getInstance();
     final prefs = await fPrefs;
     String username = prefs.getString("username") ?? "";
     state = await AsyncValue.guard(() async {
       final token = prefs.getString('token');
+      final p = prefs.getString('_p');
       final config = Config();
       final uri = Uri(
           scheme: config.scheme,
@@ -123,7 +125,7 @@ class LoginToken extends _$LoginToken {
       final res = await http.post(uri,
           body: jsonEncode({
             "username": username,
-            "old_password": oldPassword,
+            "old_password": p,
             "new_password": newPassword,
           }),
           headers: {

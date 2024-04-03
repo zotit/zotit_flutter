@@ -4,19 +4,15 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:zotit/config.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
 import 'package:zotit/src/providers/theme_provider/darkmode_provider.dart';
 import 'package:zotit/src/screens/common/components/show_hide_eye.dart';
 import 'package:zotit/src/screens/home/note_details.dart';
 import 'package:zotit/src/screens/home/providers/home_provider.dart';
-import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 import 'package:zotit/src/screens/home/providers/note.dart';
 import 'package:zotit/src/screens/home/providers/note_text_provider.dart';
@@ -279,7 +275,7 @@ class _Home extends ConsumerState<Home> {
                       MaterialStateProperty.all(const Color(0xFF3A568E)),
                   padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
                 ),
-                child: const Icon(Icons.share),
+                child: const Icon(Icons.done),
               ),
               title: Padding(
                 padding: const EdgeInsets.all(2),
@@ -303,7 +299,7 @@ class _Home extends ConsumerState<Home> {
                 padding: MaterialStateProperty.all(
                     const EdgeInsets.symmetric(vertical: 10)),
               ),
-              child: const Text("Search via other apps"),
+              child: const Text("Share using other apps"),
             ),
           ),
         ],
@@ -502,20 +498,10 @@ class _Home extends ConsumerState<Home> {
     return Scaffold(
       drawer: const SideDrawer(),
       appBar: AppBar(
-        title: Row(children: [
-          const Text(
-            "ZotIt ",
-            style: TextStyle(fontFamily: 'Satisfy', fontSize: 30),
-          ),
-          const Gap(10),
-          Flexible(
-            child: Text(
-              "@${loginData.getData().username}",
-              style: const TextStyle(
-                  fontSize: 14, overflow: TextOverflow.ellipsis),
-            ),
-          )
-        ]),
+        title: const Text(
+          "ZotIt ",
+          style: TextStyle(fontFamily: 'Satisfy', fontSize: 30),
+        ),
         actions: [
           Switch(
             activeColor: darkMode.value == true

@@ -1,6 +1,12 @@
 class Config {
-  bool idDev = true;
   String scheme = "https";
   String host = "zotit.app";
   int? port;
+  Config() {
+    if (const String.fromEnvironment('ENV') != "PROD") {
+      scheme = "http";
+      port = 4001;
+      host = "192.168.0.198";
+    }
+  }
 }
