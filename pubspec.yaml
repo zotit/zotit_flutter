@@ -1,7 +1,7 @@
 name: zotit
 description: Zot It Anywhere.
 publish_to: 'none'
-version: 1.6.0+36
+version: 1.6.1+37
 environment:
   sdk: '>=3.0.0 <4.0.0'
 dependencies:
@@ -14,7 +14,7 @@ dependencies:
   flutter_riverpod: ^2.3.6
   freezed_annotation: ^2.2.0
   gap: ^3.0.0
-  google_fonts: ^6.0.0
+  google_fonts: 6.0.0
   http: ^1.0.0
   json_annotation: ^4.8.1
   riverpod_annotation: ^2.1.1

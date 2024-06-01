@@ -6,7 +6,7 @@ part of 'deleted_notes_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$deletedNoteListHash() => r'93611a2393ea5048697983c6dd170773e302a11f';
+String _$deletedNoteListHash() => r'c611de64fbd31b9672417f3361be5a2ef4c21b52';
 
 /// See also [DeletedNoteList].
 @ProviderFor(DeletedNoteList)

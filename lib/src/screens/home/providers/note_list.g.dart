@@ -11,7 +11,7 @@ _$NoteListRepoImpl _$$NoteListRepoImplFromJson(Map<String, dynamic> json) =>
       notes: (json['notes'] as List<dynamic>)
           .map((e) => Note.fromJson(e as Map<String, dynamic>))
           .toList(),
-      page: json['page'] as int,
+      page: (json['page'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$NoteListRepoImplToJson(_$NoteListRepoImpl instance) =>

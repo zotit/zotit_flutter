@@ -12,7 +12,7 @@ _$NoteTagListRepoImpl _$$NoteTagListRepoImplFromJson(
       noteTags: (json['noteTags'] as List<dynamic>)
           .map((e) => NoteTag.fromJson(e as Map<String, dynamic>))
           .toList(),
-      page: json['page'] as int,
+      page: (json['page'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$NoteTagListRepoImplToJson(

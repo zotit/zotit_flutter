@@ -10,7 +10,7 @@ _$NoteTagImpl _$$NoteTagImplFromJson(Map<String, dynamic> json) =>
     _$NoteTagImpl(
       id: json['id'] as String,
       name: json['name'] as String,
-      color: json['color'] as int,
+      color: (json['color'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$NoteTagImplToJson(_$NoteTagImpl instance) =>

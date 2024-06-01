@@ -1,9 +1,16 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-part 'note_text_provider.g.dart';
+
+part 'inital_text_provider.g.dart';
+
+// @riverpod
+// Future<String> initialText(InitialTextRef ref) async {
+//   final sharedPreferences = await ref.watch(localStorageProvider.future);
+//   return sharedPreferences.getString('text') ?? '';
+// }
 
 @riverpod
-class NoteText extends _$NoteText {
+class InitialText extends _$InitialText {
   final Future<SharedPreferences> _fPrefs = SharedPreferences.getInstance();
   late SharedPreferences _prefs;
 

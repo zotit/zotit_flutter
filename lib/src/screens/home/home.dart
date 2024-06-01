@@ -15,7 +15,7 @@ import 'package:zotit/src/screens/home/note_details.dart';
 import 'package:zotit/src/screens/home/providers/home_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:zotit/src/screens/home/providers/note.dart';
-import 'package:zotit/src/screens/home/providers/note_text_provider.dart';
+import 'package:zotit/src/screens/home/providers/inital_text_provider.dart';
 import 'package:zotit/src/screens/home/side_drawer.dart';
 import 'package:zotit/src/screens/tags/note_tags_s_list.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
@@ -484,6 +484,11 @@ class _Home extends ConsumerState<Home> {
             .getNotesByPage(searchC.text, selectedTag.id);
       }
     });
+
+    textC.addListener(() {
+      ref.read(initialTextProvider.notifier).setText(textC.text, false);
+    });
+
     super.initState();
   }
 
@@ -491,8 +496,10 @@ class _Home extends ConsumerState<Home> {
   Widget build(BuildContext context) {
     final loginData = ref.watch(loginTokenProvider.notifier);
     final notesData = ref.watch(noteListProvider);
-    final textDataNotifier = ref.watch(noteTextProvider.notifier);
-    final textData = ref.watch(noteTextProvider);
+    final textDataNotifier = ref.watch(initialTextProvider.notifier);
+    final textData = ref.read(initialTextProvider);
+    final initialTextAsyncValue = ref.watch(initialTextProvider);
+
     final darkMode = ref.watch(darkModeProvider);
 
     return Scaffold(
@@ -697,9 +704,9 @@ class _Home extends ConsumerState<Home> {
                                               ?.unfocus();
                                         },
                                         controller: textC,
-                                        onChanged: (value) async {
-                                          textDataNotifier.setText(value, true);
-                                        },
+                                        // onChanged: (value) async {
+                                        //   textDataNotifier.setText(value, true);
+                                        // },
                                         decoration: const InputDecoration(
                                             hintStyle: TextStyle(
                                               fontFamily: 'Satisfy',
