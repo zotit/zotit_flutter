@@ -173,6 +173,6 @@ class MyApp extends ConsumerWidget {
         loading: () => const Center(
               child: CircularProgressIndicator(),
             ),
-        error: (error, st) => ErrorPage(message: st.toString()));
+        error: (error, st) => ErrorPage(message: error.toString()));
   }
 }

@@ -98,7 +98,7 @@ class NoteDetails extends ConsumerWidget {
                     labelText: 'Text',
                     hintText: 'Zot it ...'),
                 minLines: 5,
-                maxLines: 20,
+                maxLines: 10,
               ),
             ),
             SizedBox(

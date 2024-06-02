@@ -17,10 +17,13 @@ class ErrorPage extends StatelessWidget {
         children: <Widget>[
           const Text(
             "Oops! Something went wrong",
+            textDirection: TextDirection.ltr,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 15),
-          Text(message, style: const TextStyle(fontSize: 16)),
+          Text(message,
+              textDirection: TextDirection.ltr,
+              style: const TextStyle(fontSize: 16)),
         ],
       ),
     );

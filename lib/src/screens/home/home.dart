@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
 import 'package:zotit/src/providers/theme_provider/darkmode_provider.dart';
 import 'package:zotit/src/screens/common/components/show_hide_eye.dart';
+import 'package:zotit/src/screens/common/components/textfield_new.dart';
 import 'package:zotit/src/screens/home/note_details.dart';
 import 'package:zotit/src/screens/home/providers/home_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -473,6 +474,8 @@ class _Home extends ConsumerState<Home> {
   TextEditingController searchC = TextEditingController(text: "");
   TextEditingController rcvrUsernameC = TextEditingController(text: "");
   final ScrollController _scrollController = ScrollController();
+  String _updatedText = '';
+  final GlobalKey<TextFieldState> _childKey = GlobalKey();
 
   @override
   void initState() {
@@ -484,22 +487,12 @@ class _Home extends ConsumerState<Home> {
             .getNotesByPage(searchC.text, selectedTag.id);
       }
     });
-
-    textC.addListener(() {
-      ref.read(initialTextProvider.notifier).setText(textC.text, false);
-    });
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final loginData = ref.watch(loginTokenProvider.notifier);
     final notesData = ref.watch(noteListProvider);
-    final textDataNotifier = ref.watch(initialTextProvider.notifier);
-    final textData = ref.read(initialTextProvider);
-    final initialTextAsyncValue = ref.watch(initialTextProvider);
-
     final darkMode = ref.watch(darkModeProvider);
 
     return Scaffold(
@@ -695,43 +688,22 @@ class _Home extends ConsumerState<Home> {
                             Row(
                               children: [
                                 Expanded(
-                                  child: textData.when(
-                                    data: (value) {
-                                      textC.text = value;
-                                      return TextFormField(
-                                        onTapOutside: (b) {
-                                          FocusManager.instance.primaryFocus
-                                              ?.unfocus();
-                                        },
-                                        controller: textC,
-                                        // onChanged: (value) async {
-                                        //   textDataNotifier.setText(value, true);
-                                        // },
-                                        decoration: const InputDecoration(
-                                            hintStyle: TextStyle(
-                                              fontFamily: 'Satisfy',
-                                            ),
-                                            border: OutlineInputBorder(),
-                                            labelText: 'Zot it',
-                                            hintText:
-                                                'What needs to be zoted...'),
-                                        minLines: 1,
-                                        maxLines: 20,
-                                      );
+                                  child: TextFieldNew(
+                                    key: _childKey,
+                                    onTextChanged: (String newText) {
+                                      setState(() {
+                                        _updatedText = newText;
+                                      });
                                     },
-                                    loading: () => const Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                    error: (err, stack) => Text('Error: $err'),
                                   ),
                                 ),
                                 const Gap(10),
                                 ElevatedButton(
                                   onPressed: () async {
-                                    if (textC.text != '') {
+                                    if (_updatedText != '') {
                                       await _submit(
-                                          context, textC.text, !isVisible);
-                                      textDataNotifier.setText("", true);
+                                          context, _updatedText, !isVisible);
+                                      _childKey.currentState?.resetText();
                                     }
                                   },
                                   style: ButtonStyle(
