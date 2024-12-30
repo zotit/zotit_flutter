@@ -38,7 +38,7 @@ class NoteList extends _$NoteList {
                       color: item['tag']['color'])
                   : NoteTag(
                       id: "",
-                      name: "Assign Tag",
+                      name: "+ Tag",
                       color: const Color(0xff9e9e9e).value),
             );
           }).toList(),
@@ -76,7 +76,7 @@ class NoteList extends _$NoteList {
                         color: item['tag']['color'])
                     : NoteTag(
                         id: "",
-                        name: "Assign Tag",
+                        name: "+ Tag",
                         color: const Color(0xff9e9e9e).value),
               ))
           .toList();
@@ -112,7 +112,7 @@ class NoteList extends _$NoteList {
                         color: item['tag']['color'])
                     : NoteTag(
                         id: "",
-                        name: "Assign Tag",
+                        name: "+ Tag",
                         color: const Color(0xff9e9e9e).value),
               ))
           .toList();
@@ -133,7 +133,7 @@ class NoteList extends _$NoteList {
         is_obscure: isObscure ?? stateValue[index].is_obscure,
         tag: tag ??
             (isRemoveTag
-                ? NoteTag(id: "", name: "Assign Tag", color: 0xff9e9e9e)
+                ? NoteTag(id: "", name: "+ Tag", color: 0xff9e9e9e)
                 : stateValue[index].tag),
       );
       state = AsyncValue.data(
@@ -149,9 +149,7 @@ class NoteList extends _$NoteList {
           text: text,
           is_obscure: isObscure,
           tag: NoteTag(
-              id: "",
-              name: "Assign Tag",
-              color: const Color(0xff9e9e9e).value));
+              id: "", name: "+ Tag", color: const Color(0xff9e9e9e).value));
 
       state = AsyncValue.data(NoteListRepo(
           notes: [newNote, ...?stateValue], page: state.value!.page));

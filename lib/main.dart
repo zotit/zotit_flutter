@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zotit/src/app_router.dart';
 import 'package:zotit/src/providers/login_provider/login_provider.dart';
-import 'package:zotit/src/providers/theme_provider/darkmode_provider.dart';
+import 'package:zotit/src/providers/theme_provider/apptheme_data_provider.dart';
 import 'package:zotit/src/screens/common/error_page.dart';
 
 void main() {
@@ -20,128 +20,181 @@ class MyApp extends ConsumerWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final darkMode = ref.watch(darkModeProvider);
+    final appThemeData = ref.watch(appThemeDataProvider);
     final themeData = ThemeData(
-        // UI
-        brightness:
-            darkMode.value == false ? Brightness.dark : Brightness.light,
-        // font
-        fontFamily: GoogleFonts.notoSans().fontFamily,
-        //text style
-        textTheme: const TextTheme(),
-        appBarTheme: AppBarTheme(
-          backgroundColor: darkMode.value == true
-              ? const Color(0xFF3A568E)
-              : const Color(0xFF585659),
-          foregroundColor: const Color(0xFFFFFFFF),
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF3A568E),
+        brightness: appThemeData.value?.isDarkMode == null
+            ? MediaQuery.platformBrightnessOf(context)
+            : appThemeData.value?.isDarkMode == true
+                ? Brightness.light
+                : Brightness.dark,
+      ),
+      // font
+      fontFamily: GoogleFonts.notoSans().fontFamily,
+
+      // AppBar theme
+      appBarTheme: AppBarTheme(
+        backgroundColor: appThemeData.value?.isDarkMode == true
+            ? const Color(0xFF3A568E)
+            : const Color(0xFF1F2937),
+        foregroundColor: Colors.white,
+        elevation: 2,
+      ),
+
+      // Card theme
+      cardTheme: CardTheme(
+        color: appThemeData.value?.isDarkMode == true
+            ? Colors.white
+            : const Color(0xFF1F2937),
+        elevation: 2,
+        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
-        iconTheme: IconThemeData(
-          color: darkMode.value == true
-              ? const Color(0xFFAAAAAA)
-              : const Color(0xFF3A568E),
-        ),
-        switchTheme: SwitchThemeData(
-          thumbIcon: darkMode.value == true
-              ? const MaterialStatePropertyAll(Icon(Icons.light_mode))
-              : const MaterialStatePropertyAll(Icon(Icons.dark_mode)),
-        ),
-        scaffoldBackgroundColor:
-            darkMode.value == true ? Colors.white : const Color(0xFF272526),
-        popupMenuTheme: PopupMenuThemeData(
-            iconColor: darkMode.value == true
+      ),
+
+      // Icon themes
+      iconTheme: IconThemeData(
+        color: appThemeData.value?.isDarkMode == true
+            ? const Color(0xFF3A568E)
+            : Colors.white70,
+        size: 24,
+      ),
+
+      // Switch theme
+      switchTheme: SwitchThemeData(
+        thumbColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return appThemeData.value?.isDarkMode == true
                 ? const Color(0xFF3A568E)
-                : const Color.fromARGB(255, 195, 195, 195)),
-        drawerTheme: const DrawerThemeData(shape: BeveledRectangleBorder()),
-        cardTheme: CardTheme(
-            color: darkMode.value == true
-                ? Colors.white
-                : const Color(0xFF373737)),
-        textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-          foregroundColor: darkMode.value == true
-              ? MaterialStateProperty.all<Color>(const Color(0xFF3A568E))
-              : MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 195, 195, 195)),
-        )),
-        iconButtonTheme: IconButtonThemeData(
-            style: ButtonStyle(
-          iconColor: const MaterialStatePropertyAll(Colors.white),
-          textStyle: MaterialStatePropertyAll(
-            TextStyle(
-                color: darkMode.value == true
-                    ? Colors.white
-                    : const Color.fromARGB(255, 68, 72, 74)),
-          ),
-        )),
-        elevatedButtonTheme: const ElevatedButtonThemeData(
-          style: ButtonStyle(
-            padding: MaterialStatePropertyAll(
-              EdgeInsets.symmetric(vertical: 4),
-            ),
-            shape: MaterialStatePropertyAll(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-              ),
-            ),
-            foregroundColor: MaterialStatePropertyAll(Colors.white),
-            backgroundColor: MaterialStatePropertyAll(
-              Color(0xFF3A568E),
-            ),
-          ),
-        ),
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          foregroundColor: Colors.white,
-          backgroundColor: darkMode.value == true
-              ? const Color(0xFF3A568E)
-              : const Color(0xFF3a3a3a),
-          shape: const CircleBorder(),
-        ),
-        outlinedButtonTheme: const OutlinedButtonThemeData(
-          style: ButtonStyle(
-            padding: MaterialStatePropertyAll(
-              EdgeInsets.symmetric(vertical: 4),
-            ),
-            foregroundColor: MaterialStatePropertyAll(Colors.white),
-            shape: MaterialStatePropertyAll(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                side: BorderSide(
-                  style: BorderStyle.solid,
-                ),
-              ),
-            ),
-          ),
-        ),
-        progressIndicatorTheme: ProgressIndicatorThemeData(
-          color:
-              darkMode.value == true ? const Color(0xFF3A568E) : Colors.white,
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          labelStyle: TextStyle(
-              color: darkMode.value == true
-                  ? const Color(0xFF3A568E)
-                  : Colors.white),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-                color: darkMode.value == true
-                    ? const Color(0xFF3A568E)
-                    : Colors.white),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-                color: darkMode.value == true
-                    ? const Color(0xFF3A568E)
-                    : Colors.white),
-          ),
-        ),
-        textSelectionTheme: TextSelectionThemeData(
-            cursorColor: darkMode.value == true
+                : Colors.white;
+          }
+          return null;
+        }),
+        trackColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return appThemeData.value?.isDarkMode == true
+                ? const Color(0xFF3A568E).withOpacity(0.5)
+                : Colors.white70;
+          }
+          return null;
+        }),
+        thumbIcon: appThemeData.value?.isDarkMode == true
+            ? const MaterialStatePropertyAll(Icon(Icons.light_mode))
+            : const MaterialStatePropertyAll(Icon(Icons.dark_mode)),
+      ),
+
+      // Scaffold background
+      scaffoldBackgroundColor: appThemeData.value?.isDarkMode == true
+          ? const Color(0xFFF8FAFC) // Light gray for light mode
+          : const Color(0xFF111827), // Dark gray for dark mode
+
+      // Text button theme
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+          foregroundColor: MaterialStateProperty.all(
+            appThemeData.value?.isDarkMode == true
                 ? const Color(0xFF3A568E)
-                : Colors.white));
+                : Colors.white70,
+          ),
+          padding: MaterialStateProperty.all(
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          ),
+          textStyle: MaterialStateProperty.all(
+            const TextStyle(fontWeight: FontWeight.w500),
+          ),
+        ),
+      ),
+
+      // Icon button theme
+      iconButtonTheme: IconButtonThemeData(
+        style: ButtonStyle(
+          foregroundColor: MaterialStateProperty.all(
+            appThemeData.value?.isDarkMode == true
+                ? const Color(0xFF3A568E)
+                : Colors.white70,
+          ),
+          padding: MaterialStateProperty.all(
+            const EdgeInsets.all(8),
+          ),
+        ),
+      ),
+
+      // Elevated button theme
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(const Color(0xFF3A568E)),
+          foregroundColor: MaterialStateProperty.all(Colors.white),
+          padding: MaterialStateProperty.all(
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+      ),
+
+      // Input decoration theme
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: appThemeData.value?.isDarkMode == true
+            ? Colors.grey[100]
+            : const Color(0xFF1F2937),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: appThemeData.value?.isDarkMode == true
+                ? const Color(0xFF3A568E)
+                : Colors.white70,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: appThemeData.value?.isDarkMode == true
+                ? const Color(0xFF3A568E).withOpacity(0.5)
+                : Colors.white24,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: appThemeData.value?.isDarkMode == true
+                ? const Color(0xFF3A568E)
+                : Colors.white,
+            width: 2,
+          ),
+        ),
+        labelStyle: TextStyle(
+          color: appThemeData.value?.isDarkMode == true
+              ? const Color(0xFF3A568E)
+              : Colors.white70,
+        ),
+      ),
+
+      // Divider theme
+      dividerTheme: DividerThemeData(
+        color: appThemeData.value?.isDarkMode == true
+            ? Colors.grey[300]
+            : Colors.white24,
+        thickness: 1,
+      ),
+
+      // Popup menu theme
+      popupMenuTheme: PopupMenuThemeData(
+        color: appThemeData.value?.isDarkMode == true
+            ? Colors.white
+            : const Color(0xFF1F2937),
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
 
     final loginData = ref.watch(loginTokenProvider);
     return loginData.when(
@@ -149,8 +202,11 @@ class MyApp extends ConsumerWidget {
           if (user.username != "") {
             return MaterialApp(
               title: 'ZotIt : Note anywhere',
-              themeMode:
-                  darkMode.value == true ? ThemeMode.dark : ThemeMode.light,
+              themeMode: appThemeData.value?.isDarkMode == null
+                  ? ThemeMode.system
+                  : appThemeData.value?.isDarkMode == true
+                      ? ThemeMode.dark
+                      : ThemeMode.light,
               theme: themeData,
 
               debugShowCheckedModeBanner: false,
@@ -162,8 +218,11 @@ class MyApp extends ConsumerWidget {
           } else {
             return MaterialApp(
               title: 'ZotIt : Note anywhere',
-              themeMode:
-                  darkMode.value == true ? ThemeMode.dark : ThemeMode.light,
+              themeMode: appThemeData.value?.isDarkMode == null
+                  ? ThemeMode.system
+                  : appThemeData.value?.isDarkMode == true
+                      ? ThemeMode.dark
+                      : ThemeMode.light,
               theme: themeData,
               debugShowCheckedModeBanner: false,
               home: StartupPage(),

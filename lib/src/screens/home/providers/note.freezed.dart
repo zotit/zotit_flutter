@@ -25,8 +25,12 @@ mixin _$Note {
   bool get is_obscure => throw _privateConstructorUsedError;
   NoteTag? get tag => throw _privateConstructorUsedError;
 
+  /// Serializes this Note to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Note
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $NoteCopyWith<Note> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -50,6 +54,8 @@ class _$NoteCopyWithImpl<$Res, $Val extends Note>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of Note
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -78,6 +84,8 @@ class _$NoteCopyWithImpl<$Res, $Val extends Note>
     ) as $Val);
   }
 
+  /// Create a copy of Note
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $NoteTagCopyWith<$Res>? get tag {
@@ -111,6 +119,8 @@ class __$$NoteImplCopyWithImpl<$Res>
   __$$NoteImplCopyWithImpl(_$NoteImpl _value, $Res Function(_$NoteImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of Note
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -189,11 +199,13 @@ class _$NoteImpl with DiagnosticableTreeMixin implements _Note {
             (identical(other.tag, tag) || other.tag == tag));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, text, is_obscure, tag);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Note
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$NoteImplCopyWith<_$NoteImpl> get copyWith =>
@@ -224,8 +236,11 @@ abstract class _Note implements Note {
   bool get is_obscure;
   @override
   NoteTag? get tag;
+
+  /// Create a copy of Note
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$NoteImplCopyWith<_$NoteImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

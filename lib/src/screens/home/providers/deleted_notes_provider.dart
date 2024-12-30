@@ -38,7 +38,7 @@ class DeletedNoteList extends _$DeletedNoteList {
                       color: item['tag']['color'])
                   : NoteTag(
                       id: "",
-                      name: "Assign Tag",
+                      name: "+ Tag",
                       color: const Color(0xff9e9e9e).value),
             );
           }).toList(),
@@ -76,7 +76,7 @@ class DeletedNoteList extends _$DeletedNoteList {
                         color: item['tag']['color'])
                     : NoteTag(
                         id: "",
-                        name: "Assign Tag",
+                        name: "+ Tag",
                         color: const Color(0xff9e9e9e).value),
               ))
           .toList();
@@ -112,7 +112,7 @@ class DeletedNoteList extends _$DeletedNoteList {
                         color: item['tag']['color'])
                     : NoteTag(
                         id: "",
-                        name: "Assign Tag",
+                        name: "+ Tag",
                         color: const Color(0xff9e9e9e).value),
               ))
           .toList();
@@ -133,7 +133,7 @@ class DeletedNoteList extends _$DeletedNoteList {
         is_obscure: isObscure ?? stateValue[index].is_obscure,
         tag: tag ??
             (isRemoveTag
-                ? NoteTag(id: "", name: "Assign Tag", color: 0xff9e9e9e)
+                ? NoteTag(id: "", name: "+ Tag", color: 0xff9e9e9e)
                 : stateValue[index].tag),
       );
       state = AsyncValue.data(

@@ -6,7 +6,7 @@ part of 'home_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$noteListHash() => r'adba73bfd4830e7c7bb2abb55241667fe1e1b139';
+String _$noteListHash() => r'c088f23b740ed98b98a745a81814e794a181ce9a';
 
 /// See also [NoteList].
 @ProviderFor(NoteList)
@@ -22,4 +22,4 @@ final noteListProvider =
 
 typedef _$NoteList = AutoDisposeAsyncNotifier<NoteListRepo>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

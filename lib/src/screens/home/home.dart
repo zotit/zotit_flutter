@@ -8,15 +8,14 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:zotit/src/providers/login_provider/login_provider.dart';
-import 'package:zotit/src/providers/theme_provider/darkmode_provider.dart';
+import 'package:zotit/src/providers/theme_provider/apptheme_data_provider.dart';
 import 'package:zotit/src/screens/common/components/show_hide_eye.dart';
 import 'package:zotit/src/screens/common/components/textfield_new.dart';
 import 'package:zotit/src/screens/home/note_details.dart';
 import 'package:zotit/src/screens/home/providers/home_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:zotit/src/screens/home/providers/note.dart';
-import 'package:zotit/src/screens/home/providers/inital_text_provider.dart';
+
 import 'package:zotit/src/screens/home/side_drawer.dart';
 import 'package:zotit/src/screens/tags/note_tags_s_list.dart';
 import 'package:zotit/src/screens/tags/providers/note_tag.dart';
@@ -34,6 +33,7 @@ class _Home extends ConsumerState<Home> {
   bool isVisible = true;
   bool isSearching = false;
   NoteTag selectedTag = NoteTag(id: "", name: "default", color: 0xff9e9e9e);
+
   _submit(context, text, isVisible) async {
     try {
       final res = await httpPost(
@@ -490,10 +490,19 @@ class _Home extends ConsumerState<Home> {
     super.initState();
   }
 
+  Widget _buildViewToggle(bool isListView) {
+    return IconButton(
+      icon: Icon(isListView ? Icons.view_list : Icons.grid_view),
+      onPressed: () {
+        ref.watch(appThemeDataProvider.notifier).setListView(!isListView);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final notesData = ref.watch(noteListProvider);
-    final darkMode = ref.watch(darkModeProvider);
+    final themeData = ref.watch(appThemeDataProvider);
 
     return Scaffold(
       drawer: const SideDrawer(),
@@ -503,16 +512,17 @@ class _Home extends ConsumerState<Home> {
           style: TextStyle(fontFamily: 'Satisfy', fontSize: 30),
         ),
         actions: [
+          _buildViewToggle(themeData.value?.isListView == true),
           Switch(
-            activeColor: darkMode.value == true
+            activeColor: themeData.value?.isDarkMode == true
                 ? Colors.black12
                 : const Color.fromARGB(255, 77, 114, 189),
-            activeTrackColor: darkMode.value == true
+            activeTrackColor: themeData.value?.isDarkMode == true
                 ? Colors.white12
                 : const Color.fromARGB(255, 17, 25, 42),
-            value: darkMode.value == true ? !true : !false,
+            value: themeData.value?.isDarkMode == true ? !true : !false,
             onChanged: (bool value) {
-              ref.watch(darkModeProvider.notifier).setMode(!value);
+              ref.watch(appThemeDataProvider.notifier).setMode(!value);
             },
           ),
           IconButton(
@@ -724,174 +734,371 @@ class _Home extends ConsumerState<Home> {
             ),
             Expanded(
               child: notesData.when(
-                data: (notes) => ListView(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    controller: _scrollController,
-                    children: notes.notes.isNotEmpty
-                        ? notes.notes.asMap().entries.map((noteEntry) {
-                            final globalKey = GlobalKey();
-                            return Card(
-                              elevation: 2.0,
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 10.0, vertical: 6.0),
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0, vertical: 0.0),
-                                dense: true,
-                                title: Column(
-                                  key: globalKey,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                data: (notes) => notes.notes.isNotEmpty
+                    ? themeData.value?.isListView == true
+                        ? GridView.builder(
+                            controller: _scrollController,
+                            padding: const EdgeInsets.all(10),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 1,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                            ),
+                            itemCount: notes.notes.length,
+                            itemBuilder: (context, index) {
+                              final noteEntry =
+                                  MapEntry(index, notes.notes[index]);
+                              final globalKey = GlobalKey();
+                              return Card(
+                                elevation: 2.0,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute<dynamic>(
+                                      builder: (_) => NoteDetails(
+                                        note: noteEntry.value,
+                                        noteIndex: noteEntry.key,
+                                      ),
+                                    ));
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            ActionChip(
-                                              padding: const EdgeInsets.all(2),
-                                              shape:
-                                                  const RoundedRectangleBorder(
-                                                      side: BorderSide(
-                                                          style:
-                                                              BorderStyle.none),
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  20))),
-                                              backgroundColor: Color(
-                                                  noteEntry.value.tag!.color),
-                                              label: Text(
-                                                noteEntry.value.tag!.name,
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: useWhiteForeground(
-                                                          Color(noteEntry.value
-                                                              .tag!.color))
-                                                      ? Colors.white
-                                                      : Colors.black,
+                                            Expanded(
+                                              child: ActionChip(
+                                                padding:
+                                                    const EdgeInsets.all(2),
+                                                shape:
+                                                    const RoundedRectangleBorder(
+                                                        side: BorderSide(
+                                                            style:
+                                                                BorderStyle
+                                                                    .none),
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    20))),
+                                                backgroundColor: Color(
+                                                    noteEntry.value.tag!.color),
+                                                label: Text(
+                                                  noteEntry.value.tag!.name,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: useWhiteForeground(
+                                                            Color(noteEntry
+                                                                .value
+                                                                .tag!
+                                                                .color))
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                  ),
                                                 ),
+                                                onPressed: () {
+                                                  showModalBottomSheet(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        _updateTagBS(
+                                                            context,
+                                                            globalKey,
+                                                            noteEntry.value,
+                                                            noteEntry.key),
+                                                  );
+                                                },
                                               ),
+                                            ),
+                                            ShowHideEye(
+                                                isVisible:
+                                                    !noteEntry.value.is_obscure,
+                                                onChange: (isTrue) async {
+                                                  ref
+                                                      .watch(noteListProvider
+                                                          .notifier)
+                                                      .updateLocalNote(
+                                                        noteEntry.value.text,
+                                                        !isTrue,
+                                                        noteEntry.key,
+                                                        null,
+                                                        false,
+                                                      );
+                                                  await _updateNote(
+                                                      context,
+                                                      noteEntry.value.id,
+                                                      !isTrue
+                                                          ? "true"
+                                                          : "false");
+                                                }),
+                                          ],
+                                        ),
+                                        const Divider(),
+                                        Expanded(
+                                          child: noteEntry.value.is_obscure
+                                              ? ImageFiltered(
+                                                  imageFilter: ImageFilter.blur(
+                                                      sigmaX: 4, sigmaY: 4),
+                                                  child: Text(
+                                                    noteEntry.value.text,
+                                                    overflow: TextOverflow.fade,
+                                                  ),
+                                                )
+                                              : Text(
+                                                  noteEntry.value.text,
+                                                  overflow: TextOverflow.fade,
+                                                ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(Icons.copy,
+                                                  size: 20),
+                                              onPressed: () {
+                                                Clipboard.setData(ClipboardData(
+                                                    text:
+                                                        noteEntry.value.text));
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.share,
+                                                  size: 20),
                                               onPressed: () {
                                                 showModalBottomSheet(
                                                   context: context,
-                                                  builder: (context) {
-                                                    return _updateTagBS(
-                                                        context,
-                                                        globalKey,
-                                                        noteEntry.value,
-                                                        noteEntry.key);
-                                                  },
+                                                  builder: (context) =>
+                                                      _shareNoteWithUserBS(
+                                                          context,
+                                                          globalKey,
+                                                          noteEntry),
                                                 );
                                               },
                                             ),
-                                            ..._actionList(context, noteEntry)
+                                            IconButton(
+                                              icon: const Icon(Icons.delete,
+                                                  size: 20),
+                                              onPressed: () => _deleteNote(
+                                                context,
+                                                noteEntry.value.id,
+                                                noteEntry.key,
+                                              ),
+                                            ),
                                           ],
-                                        ),
-                                        PopupMenuButton<String>(
-                                          icon: const Icon(Icons.more_vert),
-                                          onSelected: (val) async {
-                                            switch (val) {
-                                              case "share":
-                                                showModalBottomSheet(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return _shareNoteWithUserBS(
-                                                        context,
-                                                        globalKey,
-                                                        noteEntry);
-                                                  },
-                                                );
-                                                // _shareNote(globalKey.currentContext, noteEntry.value.text.toString());
-                                                break;
-                                              case "delete":
-                                                await _deleteNote(
-                                                  context,
-                                                  noteEntry.value.id,
-                                                  noteEntry.key,
-                                                );
-                                                break;
-
-                                              default:
-                                            }
-                                          },
-                                          itemBuilder: (BuildContext context) {
-                                            return [
-                                              const PopupMenuItem<String>(
-                                                value: "share",
-                                                child: Row(children: [
-                                                  Icon(
-                                                    Icons.share,
-                                                  ),
-                                                  Gap(10),
-                                                  Text(
-                                                    "Share",
-                                                  )
-                                                ]),
-                                              ),
-                                              const PopupMenuItem<String>(
-                                                value: "delete",
-                                                child: Row(children: [
-                                                  Icon(
-                                                    Icons.delete,
-                                                  ),
-                                                  Gap(10),
-                                                  Text(
-                                                    "Delete",
-                                                  )
-                                                ]),
-                                              ),
-                                            ];
-                                          },
                                         ),
                                       ],
                                     ),
-                                    const Divider(),
-                                  ],
+                                  ),
                                 ),
-                                subtitle: noteEntry.value.is_obscure
-                                    ? ImageFiltered(
-                                        imageFilter: ImageFilter.blur(
-                                            sigmaX: 4, sigmaY: 4),
-                                        child: Linkify(
-                                          text: noteEntry.value.text,
-                                          options: const LinkifyOptions(
-                                              humanize: false),
-                                          linkStyle:
-                                              const TextStyle(fontSize: 16),
+                              );
+                            },
+                          )
+                        : ListView(
+                            keyboardDismissBehavior:
+                                ScrollViewKeyboardDismissBehavior.onDrag,
+                            controller: _scrollController,
+                            children: notes.notes.isNotEmpty
+                                ? notes.notes.asMap().entries.map((noteEntry) {
+                                    final globalKey = GlobalKey();
+                                    return Card(
+                                      elevation: 2.0,
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 10.0, vertical: 6.0),
+                                      child: ListTile(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 8.0, vertical: 0.0),
+                                        dense: true,
+                                        title: Column(
+                                          key: globalKey,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    ActionChip(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              2),
+                                                      shape: const RoundedRectangleBorder(
+                                                          side: BorderSide(
+                                                              style: BorderStyle
+                                                                  .none),
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          20))),
+                                                      backgroundColor: Color(
+                                                          noteEntry.value.tag!
+                                                              .color),
+                                                      label: Text(
+                                                        noteEntry
+                                                            .value.tag!.name,
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          color: useWhiteForeground(
+                                                                  Color(noteEntry
+                                                                      .value
+                                                                      .tag!
+                                                                      .color))
+                                                              ? Colors.white
+                                                              : Colors.black,
+                                                        ),
+                                                      ),
+                                                      onPressed: () {
+                                                        showModalBottomSheet(
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return _updateTagBS(
+                                                                context,
+                                                                globalKey,
+                                                                noteEntry.value,
+                                                                noteEntry.key);
+                                                          },
+                                                        );
+                                                      },
+                                                    ),
+                                                    ..._actionList(
+                                                        context, noteEntry)
+                                                  ],
+                                                ),
+                                                PopupMenuButton<String>(
+                                                  icon: const Icon(
+                                                      Icons.more_vert),
+                                                  onSelected: (val) async {
+                                                    switch (val) {
+                                                      case "share":
+                                                        showModalBottomSheet(
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return _shareNoteWithUserBS(
+                                                                context,
+                                                                globalKey,
+                                                                noteEntry);
+                                                          },
+                                                        );
+                                                        // _shareNote(globalKey.currentContext, noteEntry.value.text.toString());
+                                                        break;
+                                                      case "delete":
+                                                        await _deleteNote(
+                                                          context,
+                                                          noteEntry.value.id,
+                                                          noteEntry.key,
+                                                        );
+                                                        break;
+
+                                                      default:
+                                                    }
+                                                  },
+                                                  itemBuilder:
+                                                      (BuildContext context) {
+                                                    return [
+                                                      const PopupMenuItem<
+                                                          String>(
+                                                        value: "share",
+                                                        child: Row(children: [
+                                                          Icon(
+                                                            Icons.share,
+                                                          ),
+                                                          Gap(10),
+                                                          Text(
+                                                            "Share",
+                                                          )
+                                                        ]),
+                                                      ),
+                                                      const PopupMenuItem<
+                                                          String>(
+                                                        value: "delete",
+                                                        child: Row(children: [
+                                                          Icon(
+                                                            Icons.delete,
+                                                          ),
+                                                          Gap(10),
+                                                          Text(
+                                                            "Delete",
+                                                          )
+                                                        ]),
+                                                      ),
+                                                    ];
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                            const Divider(),
+                                          ],
                                         ),
-                                      )
-                                    : Linkify(
-                                        text: noteEntry.value.text,
-                                        options: const LinkifyOptions(
-                                            humanize: false),
-                                        linkStyle:
-                                            const TextStyle(fontSize: 16),
-                                        onOpen: (LinkableElement link) async {
-                                          if (!await launchUrl(
-                                              Uri.parse(link.url))) {
-                                            throw Exception(
-                                                'Could not launch ${link.url}');
-                                          }
-                                        },
+                                        subtitle: noteEntry.value.is_obscure
+                                            ? SizedBox(
+                                                height: 20,
+                                                child: ImageFiltered(
+                                                  imageFilter: ImageFilter.blur(
+                                                      sigmaX: 4, sigmaY: 4),
+                                                  child: Linkify(
+                                                    text: noteEntry.value.text,
+                                                    options:
+                                                        const LinkifyOptions(
+                                                            humanize: false),
+                                                    linkStyle: const TextStyle(
+                                                        fontSize: 16),
+                                                  ),
+                                                ),
+                                              )
+                                            : Linkify(
+                                                text: noteEntry.value.text,
+                                                options: const LinkifyOptions(
+                                                    humanize: false),
+                                                linkStyle: const TextStyle(
+                                                    fontSize: 16),
+                                                onOpen: (LinkableElement
+                                                    link) async {
+                                                  if (!await launchUrl(
+                                                      Uri.parse(link.url))) {
+                                                    throw Exception(
+                                                        'Could not launch ${link.url}');
+                                                  }
+                                                },
+                                              ),
                                       ),
-                              ),
-                            );
-                          }).toList()
-                        : [
-                            const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(50),
-                                child: Text(
-                                  "No Notes Found",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ]),
+                                    );
+                                  }).toList()
+                                : [
+                                    const Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(50),
+                                        child: Text(
+                                          "No Notes Found",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                          )
+                    : const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(50),
+                          child: Text(
+                            "No Notes Found",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
                 loading: () => const Center(
                   child: CircularProgressIndicator(),
                 ),

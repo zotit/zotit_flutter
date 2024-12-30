@@ -23,8 +23,12 @@ mixin _$NoteListRepo {
   List<Note> get notes => throw _privateConstructorUsedError;
   int get page => throw _privateConstructorUsedError;
 
+  /// Serializes this NoteListRepo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of NoteListRepo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $NoteListRepoCopyWith<NoteListRepo> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -48,6 +52,8 @@ class _$NoteListRepoCopyWithImpl<$Res, $Val extends NoteListRepo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of NoteListRepo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -86,6 +92,8 @@ class __$$NoteListRepoImplCopyWithImpl<$Res>
       _$NoteListRepoImpl _value, $Res Function(_$NoteListRepoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of NoteListRepo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -148,12 +156,14 @@ class _$NoteListRepoImpl with DiagnosticableTreeMixin implements _NoteListRepo {
             (identical(other.page, page) || other.page == page));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, const DeepCollectionEquality().hash(_notes), page);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of NoteListRepo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$NoteListRepoImplCopyWith<_$NoteListRepoImpl> get copyWith =>
@@ -179,8 +189,11 @@ abstract class _NoteListRepo implements NoteListRepo {
   List<Note> get notes;
   @override
   int get page;
+
+  /// Create a copy of NoteListRepo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$NoteListRepoImplCopyWith<_$NoteListRepoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

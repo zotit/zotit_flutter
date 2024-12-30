@@ -24,8 +24,12 @@ mixin _$NoteTag {
   String get name => throw _privateConstructorUsedError;
   int get color => throw _privateConstructorUsedError;
 
+  /// Serializes this NoteTag to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of NoteTag
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $NoteTagCopyWith<NoteTag> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -47,6 +51,8 @@ class _$NoteTagCopyWithImpl<$Res, $Val extends NoteTag>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of NoteTag
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -89,6 +95,8 @@ class __$$NoteTagImplCopyWithImpl<$Res>
       _$NoteTagImpl _value, $Res Function(_$NoteTagImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of NoteTag
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -153,11 +161,13 @@ class _$NoteTagImpl with DiagnosticableTreeMixin implements _NoteTag {
             (identical(other.color, color) || other.color == color));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, color);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of NoteTag
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$NoteTagImplCopyWith<_$NoteTagImpl> get copyWith =>
@@ -185,8 +195,11 @@ abstract class _NoteTag implements NoteTag {
   String get name;
   @override
   int get color;
+
+  /// Create a copy of NoteTag
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$NoteTagImplCopyWith<_$NoteTagImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

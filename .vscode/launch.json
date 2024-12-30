@@ -8,7 +8,7 @@
             "name": "zotit_flutter",
             "request": "launch",
             "type": "dart",
-            "args": ["--dart-define=ENV=LOCAL"]
+            "args": ["--dart-define=ENV=PROD"]
         },
         {
             "name": "zotit_flutter (profile mode)",
