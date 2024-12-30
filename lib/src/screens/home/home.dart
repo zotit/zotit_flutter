@@ -738,13 +738,12 @@ class _Home extends ConsumerState<Home> {
                     ? themeData.value?.isListView == true
                         ? GridView.builder(
                             controller: _scrollController,
-                            padding: const EdgeInsets.all(10),
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               childAspectRatio: 1,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 1,
+                              mainAxisSpacing: 1,
                             ),
                             itemCount: notes.notes.length,
                             itemBuilder: (context, index) {
@@ -763,85 +762,79 @@ class _Home extends ConsumerState<Home> {
                                       ),
                                     ));
                                   },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                              child: ActionChip(
-                                                padding:
-                                                    const EdgeInsets.all(2),
-                                                shape:
-                                                    const RoundedRectangleBorder(
-                                                        side: BorderSide(
-                                                            style:
-                                                                BorderStyle
-                                                                    .none),
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    20))),
-                                                backgroundColor: Color(
-                                                    noteEntry.value.tag!.color),
-                                                label: Text(
-                                                  noteEntry.value.tag!.name,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: useWhiteForeground(
-                                                            Color(noteEntry
-                                                                .value
-                                                                .tag!
-                                                                .color))
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: ActionChip(
+                                              padding: const EdgeInsets.all(2),
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                          style:
+                                                              BorderStyle.none),
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  20))),
+                                              backgroundColor: Color(
+                                                  noteEntry.value.tag!.color),
+                                              label: Text(
+                                                noteEntry.value.tag!.name,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: useWhiteForeground(
+                                                          Color(noteEntry.value
+                                                              .tag!.color))
+                                                      ? Colors.white
+                                                      : Colors.black,
                                                 ),
-                                                onPressed: () {
-                                                  showModalBottomSheet(
-                                                    context: context,
-                                                    builder: (context) =>
-                                                        _updateTagBS(
-                                                            context,
-                                                            globalKey,
-                                                            noteEntry.value,
-                                                            noteEntry.key),
-                                                  );
-                                                },
                                               ),
+                                              onPressed: () {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      _updateTagBS(
+                                                          context,
+                                                          globalKey,
+                                                          noteEntry.value,
+                                                          noteEntry.key),
+                                                );
+                                              },
                                             ),
-                                            ShowHideEye(
-                                                isVisible:
-                                                    !noteEntry.value.is_obscure,
-                                                onChange: (isTrue) async {
-                                                  ref
-                                                      .watch(noteListProvider
-                                                          .notifier)
-                                                      .updateLocalNote(
-                                                        noteEntry.value.text,
-                                                        !isTrue,
-                                                        noteEntry.key,
-                                                        null,
-                                                        false,
-                                                      );
-                                                  await _updateNote(
-                                                      context,
-                                                      noteEntry.value.id,
-                                                      !isTrue
-                                                          ? "true"
-                                                          : "false");
-                                                }),
-                                          ],
-                                        ),
-                                        const Divider(),
-                                        Expanded(
+                                          ),
+                                          ShowHideEye(
+                                              isVisible:
+                                                  !noteEntry.value.is_obscure,
+                                              onChange: (isTrue) async {
+                                                ref
+                                                    .watch(noteListProvider
+                                                        .notifier)
+                                                    .updateLocalNote(
+                                                      noteEntry.value.text,
+                                                      !isTrue,
+                                                      noteEntry.key,
+                                                      null,
+                                                      false,
+                                                    );
+                                                await _updateNote(
+                                                    context,
+                                                    noteEntry.value.id,
+                                                    !isTrue ? "true" : "false");
+                                              }),
+                                        ],
+                                      ),
+                                      const Divider(),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 4),
                                           child: noteEntry.value.is_obscure
                                               ? ImageFiltered(
                                                   imageFilter: ImageFilter.blur(
@@ -856,46 +849,45 @@ class _Home extends ConsumerState<Home> {
                                                   overflow: TextOverflow.fade,
                                                 ),
                                         ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.copy,
-                                                  size: 20),
-                                              onPressed: () {
-                                                Clipboard.setData(ClipboardData(
-                                                    text:
-                                                        noteEntry.value.text));
-                                              },
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.copy,
+                                                size: 20),
+                                            onPressed: () {
+                                              Clipboard.setData(ClipboardData(
+                                                  text: noteEntry.value.text));
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.share,
+                                                size: 20),
+                                            onPressed: () {
+                                              showModalBottomSheet(
+                                                context: context,
+                                                builder: (context) =>
+                                                    _shareNoteWithUserBS(
+                                                        context,
+                                                        globalKey,
+                                                        noteEntry),
+                                              );
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.delete,
+                                                size: 20),
+                                            onPressed: () => _deleteNote(
+                                              context,
+                                              noteEntry.value.id,
+                                              noteEntry.key,
                                             ),
-                                            IconButton(
-                                              icon: const Icon(Icons.share,
-                                                  size: 20),
-                                              onPressed: () {
-                                                showModalBottomSheet(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      _shareNoteWithUserBS(
-                                                          context,
-                                                          globalKey,
-                                                          noteEntry),
-                                                );
-                                              },
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(Icons.delete,
-                                                  size: 20),
-                                              onPressed: () => _deleteNote(
-                                                context,
-                                                noteEntry.value.id,
-                                                noteEntry.key,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
                               );
